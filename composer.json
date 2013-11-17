@@ -1,0 +1,31 @@
+{
+	"name": "litipk/php-bignumbers",
+	"version": "0.1.0-dev",
+	"description": "An opensource library to handle immutable big numbers inside PHP applications",
+	"keywords": ["bignum", "number", "decimal", "gmp", "bcmath"],
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Andrés Correa Casablanca",
+			"email": "castarco@litipk.com"
+		}
+	],
+	"support": {
+		"email": "castarco@litipk.com",
+		"issues": "http://github.com/Litipk/php-bignumbers/issues",
+		"source": "http://github.com/Litipk/php-bignumbers"
+	},
+	"require": {
+		"php": ">=5.4.0",
+		"ext-bcmath": "*"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "3.7.*"
+	},
+	"minimum-stability": "dev",
+	"autoload": {
+		"psr-0": {
+			"Litipk\\BigNumbers": "src/"
+		}
+	}
+}
