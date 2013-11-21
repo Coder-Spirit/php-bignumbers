@@ -10,6 +10,24 @@ namespace \Litipk\BigNumbers;
 final class Decimal
 {
 	/**
+	 * [$NaN description]
+	 * @var [type]
+	 */
+	private static $NaN = null;
+
+	/**
+	 * [$pInf description]
+	 * @var [type]
+	 */
+	private static $pInf = null;
+
+	/**
+	 * [$nInf description]
+	 * @var [type]
+	 */
+	private static $nInf = null;
+
+	/**
 	 * Internal numeric value
 	 * @var string
 	 */
@@ -17,18 +35,28 @@ final class Decimal
 
 	/**
 	 * Number of decimals
-	 * @var int
+	 * @var integer
 	 */
 	private $scale;
 
 	/**
-	 * Decimal constructor.
+	 * Private constructor
+	 */
+	private function __construct ()
+	{
+
+	}
+
+	/**
+	 * Decimal "constructor".
 	 * 
 	 * @param mixed   $value
 	 * @param integer $scale
 	 */
-	public function __construct ($value, $scale = null)
+	public static function create ($value, $scale = null)
 	{
+		$decimal = new Decimal();
+
 		if ($value === null) {
 			throw new InvalidArgumentException('$value must be a non null number');
 		}
@@ -40,6 +68,15 @@ final class Decimal
 		if (is_int($value)) {
 			$value = (string)$value;
 		} elseif (is_float($value)) {
+
+			if ($value === INF) {
+				return self::getPositiveInfinite();
+			} elseif ($value === -INF) {
+				return self::getNegativeInfinite();
+			} elseif (is_nan($value)) {
+				return self::getNaN();
+			}
+
 			$value = number_format($value, ($scale === null) ? 8 : $scale, '.', '');	
 		} elseif (is_string($value)) {
 			if (preg_match('/^([1-9][0-9]*|0)(\.[0-9]+)?$/', $value) !== 1) {
@@ -48,68 +85,137 @@ final class Decimal
 		}
 
 		if ($scale !== null) {
-			$this->value = bcadd($value, '0', $scale);
-			$this->scale = $scale;
+			$decimal->value = bcadd($value, '0', $scale);
+			$decimal->scale = $scale;
 		} else {
-			$this->value = (string)$value;
-			$this->scale = strlen($value) - strpos($value, '.') - 1;
+			$decimal->value = (string)$value;
+
+			$point_pos = strpos($value, '.');
+
+			if ($point_pos !== false) {
+				$decimal->scale = strlen($value) - $point_pos - 1;
+			} else {
+				$decimal->scale = 0;
+			}
 		}
+
+		return $decimal;
 	}
 
 	/**
-	 * [add description]
-	 * @param Decimal $b     [description]
-	 * @param [type]  $scale [description]
+	 * [getPositiveInfinite description]
+	 * @return Decimal
+	 */
+	public static function getPositiveInfinite ()
+	{
+		if (self::$pInf === null) {
+			self::$pInf = new Decimal();
+
+			self::$pInf->value = "+INF";
+			self::$pInf->scale = 0;
+		}
+
+		return self::$pInf;
+	}
+
+	/**
+	 * [getNegativeInfinite description]
+	 * @return Decimal
+	 */
+	public static function getNegativeInfinite ()
+	{
+		if (self::$nInf === null) {
+			self::$nInf = new Decimal();
+
+			self::$nInf->value = "-INF";
+			self::$nInf->scale = 0;
+		}
+
+		return self::$nInf;
+	}
+
+	/**
+	 * Returns a "Not a Number" object
+	 * @return Decimal
+	 */
+	public static function getNaN ()
+	{
+		if (self::$NaN === null) {
+			self::$NaN = new Decimal();
+
+			self::$NaN->value = "nan";
+			self::$NaN->scale = 0;
+		}
+
+		return self::$NaN;
+	}
+
+	/**
+	 * Adds two Decimal objects
+	 * @param  Decimal $b
+	 * @param  integer $scale
+	 * @return Decimal
 	 */
 	public function add (Decimal $b, $scale = null)
 	{
 		$this->internal_operator_validation($b, $scale);
 
-		return new Decimal(bcadd($this->value, $b->value, max($this->scale, $b->scale)), $scale);
+		return self::create(bcadd($this->value, $b->value, max($this->scale, $b->scale)), $scale);
 	}
 
 	/**
-	 * [sub description]
-	 * @param  Decimal $b     [description]
-	 * @param  [type]  $scale [description]
-	 * @return [type]         [description]
+	 * Subtracts two Decimal objects
+	 * @param  Decimal $b
+	 * @param  integer $scale
+	 * @return Decimal
 	 */
 	public function sub (Decimal $b, $scale = null)
 	{
 		$this->internal_operator_validation($b, $scale);
 
-		return new Decimal(bcsub($this->value, $b->value, max($this->scale, $b->scale)), $scale);
+		return self::create(bcsub($this->value, $b->value, max($this->scale, $b->scale)), $scale);
 	}
 
 	/**
-	 * [mul description]
-	 * @param  Decimal $b     [description]
-	 * @param  [type]  $scale [description]
-	 * @return [type]         [description]
+	 * Multiplies two Decimal objects
+	 * @param  Decimal $b
+	 * @param  integer $scale
+	 * @return Decimal
 	 */
 	public function mul (Decimal $b, $scale = null)
 	{
 		$this->internal_operator_validation($b, $scale);
 
-		return new Decimal(bcmul($this->value, $b->value, $this->scale + $b->scale), $scale);
+		return self::create(bcmul($this->value, $b->value, $this->scale + $b->scale), $scale);
 	}
 
 	/**
-	 * [div description]
-	 * @param  Decimal $b     [description]
-	 * @param  [type]  $scale [description]
-	 * @return [type]         [description]
+	 * Divides the object by $b
+	 * @param  Decimal $b
+	 * @param  integer $scale
+	 * @return Decimal
 	 */
 	public function div (Decimal $b, $scale = null)
 	{
 		$this->internal_operator_validation($b, $scale);
 
-		return new Decimal(bcdiv($this->value, $b->value, $this->scale + $b->scale), $scale);
+		$maxscale = max($this->scale, $b->scale);
+
+		if ($maxscale === 0) {
+			if ($this->value >= $b->value) {
+				$divscale = 2;
+			} else {
+				$divscale = log10($b->value) + 2;
+			}
+		} else {
+			$divscale = $this->scale + $b->scale;
+		}
+
+		return self::create(bcdiv($this->value, $b->value, $divscale), $scale);
 	}
 
 	/**
-	 * [__toString description]
-	 * @return string [description]
+	 * @return string
 	 */
 	public function __toString ()
 	{
@@ -117,10 +223,9 @@ final class Decimal
 	}
 
 	/**
-	 * [internal_operator_validation description]
-	 * @param  Decimal $b     [description]
-	 * @param  [type]  $scale [description]
-	 * @return [type]         [description]
+	 * Validates basic operator's arguments
+	 * @param  Decimal $b     operand
+	 * @param  int     $scale bcmath scale param
 	 */
 	private function internal_operator_validation (Decimal $b, $scale)
 	{
