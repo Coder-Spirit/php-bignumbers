@@ -10,20 +10,20 @@ namespace \Litipk\BigNumbers;
 final class Decimal
 {
 	/**
-	 * [$NaN description]
-	 * @var [type]
+	 * Single instance of "NaN"
+	 * @var Decimal
 	 */
 	private static $NaN = null;
 
 	/**
-	 * [$pInf description]
-	 * @var [type]
+	 * Single instance of "Positive Infinite"
+	 * @var Decimal
 	 */
 	private static $pInf = null;
 
 	/**
-	 * [$nInf description]
-	 * @var [type]
+	 * Single instance of "Negative Infinite"
+	 * @var Decimal
 	 */
 	private static $nInf = null;
 
@@ -55,8 +55,6 @@ final class Decimal
 	 */
 	public static function create ($value, $scale = null)
 	{
-		$decimal = new Decimal();
-
 		if ($value === null) {
 			throw new InvalidArgumentException('$value must be a non null number');
 		}
@@ -83,6 +81,8 @@ final class Decimal
 				throw new InvalidArgumentException('$value passed as string must be something like 456.78 (with no leading zeros)');
 			}
 		}
+
+		$decimal = new Decimal();
 
 		if ($scale !== null) {
 			$decimal->value = bcadd($value, '0', $scale);
