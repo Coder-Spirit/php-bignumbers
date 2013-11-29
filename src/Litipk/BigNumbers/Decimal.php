@@ -1,32 +1,22 @@
 <?php
 
-namespace \Litipk\BigNumbers;
+namespace Litipk\BigNumbers;
+
+use Litipk\BigNumbers\BigNumber as BigNumber;
+use Litipk\BigNumbers\IComparableNumber as IComparableNumber;
+use Litipk\BigNumbers\AbelianAdditiveGroup as AbelianAdditiveGroup;
+
+use Litipk\BigNumbers\NaN as NaN;
+use Litipk\BigNumbers\Zero as Zero;
+use Litipk\BigNumbers\Infinite as Infinite;
 
 /**
  * Immutable object that represents a rational number
  * 
  * @author Andreu Correa Casablanca <castarco@litipk.com>
  */
-final class Decimal
+final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGroup
 {
-	/**
-	 * Single instance of "NaN"
-	 * @var Decimal
-	 */
-	private static $NaN = null;
-
-	/**
-	 * Single instance of "Positive Infinite"
-	 * @var Decimal
-	 */
-	private static $pInf = null;
-
-	/**
-	 * Single instance of "Negative Infinite"
-	 * @var Decimal
-	 */
-	private static $nInf = null;
-
 	/**
 	 * Internal numeric value
 	 * @var string
@@ -42,10 +32,8 @@ final class Decimal
 	/**
 	 * Private constructor
 	 */
-	private function __construct ()
-	{
-
-	}
+	private function __construct () {}
+	private function __clone () {}
 
 	/**
 	 * Decimal "constructor".
@@ -103,11 +91,11 @@ final class Decimal
 		}
 
 		if ($fltValue === INF) {
-			return self::getPositiveInfinite();
+			return Infinite::getPositiveInfinite();
 		} elseif ($fltValue === -INF) {
-			return self::getNegativeInfinite();
+			return Infinite::getNegativeInfinite();
 		} elseif (is_nan($fltValue)) {
-			return self::getNaN();
+			return NaN::getNaN();
 		}
 
 		$decimal = new Decimal();
@@ -211,68 +199,32 @@ final class Decimal
 	}
 
 	/**
-	 * Returns a "Negative Infinite" object
-	 * @return Decimal
-	 */
-	public static function getPositiveInfinite ()
-	{
-		if (self::$pInf === null) {
-			self::$pInf = new Decimal();
-
-			self::$pInf->value = "+INF";
-			self::$pInf->scale = 0;
-		}
-
-		return self::$pInf;
-	}
-
-	/**
-	 * Returns a "Positive Infinite" object
-	 * @return Decimal
-	 */
-	public static function getNegativeInfinite ()
-	{
-		if (self::$nInf === null) {
-			self::$nInf = new Decimal();
-
-			self::$nInf->value = "-INF";
-			self::$nInf->scale = 0;
-		}
-
-		return self::$nInf;
-	}
-
-	/**
-	 * Returns a "Not a Number" object
-	 * @return Decimal
-	 */
-	public static function getNaN ()
-	{
-		if (self::$NaN === null) {
-			self::$NaN = new Decimal();
-
-			self::$NaN->value = "NaN";
-			self::$NaN->scale = 0;
-		}
-
-		return self::$NaN;
-	}
-
-	/**
 	 * Adds two Decimal objects
 	 * @param  Decimal $b
 	 * @param  integer $scale
 	 * @return Decimal
 	 */
-	public function add (Decimal $b, $scale = null)
+	public function add (BigNumber $b, $scale = null)
 	{
 		$this->internalOperatorValidation($b, $scale);
 
-		if ($b->value === 'NaN' || $this->value === 'NaN') {
-			return self::$NaN;
-		}
+		if ($b->isNaN() || $b->isInfinite()) {
+			return $b;
+		} elseif ($b->isZero()) {
+			return $this;
+		} elseif ($b instanceof Decimal) {
+			if ($this->additiveInverse()->equals($b, $scale)) {
+				return Zero::getZero();
+			}
 
-		return self::create(bcadd($this->value, $b->value, max($this->scale, $b->scale)), $scale);
+			return self::create(bcadd($this->value, $b->value, max($this->scale, $b->scale)), $scale);
+		} else {
+			try { // Hack to support new unknown classes. We use the commutative property
+				return $b->add($this);
+			} catch (Exception $e) {
+				// @TODO : Throw a "not implemented exception"
+			}
+		}
 	}
 
 	/**
@@ -281,15 +233,32 @@ final class Decimal
 	 * @param  integer $scale
 	 * @return Decimal
 	 */
-	public function sub (Decimal $b, $scale = null)
+	public function sub (BigNumber $b, $scale = null)
 	{
 		$this->internalOperatorValidation($b, $scale);
 
-		if ($b->value === 'NaN' || $this->value === 'NaN') {
-			return self::$NaN;
-		}
+		if ($b->isNaN()) {
+			return $b;
+		} elseif ($b->isInfinite() && $b->isPositive()) {
+			return Infinite::getNegativeInfinite();
+		} elseif ($b->isInfinite() && $b->isNegative()) {
+			return Infinite::getPositiveInfinite();
+		} elseif ($b instanceof Decimal) {
+			if ($this->equals($b, $scale)) {
+				return Zero::getZero();
+			}
 
-		return self::create(bcsub($this->value, $b->value, max($this->scale, $b->scale)), $scale);
+			return self::create(bcsub($this->value, $b->value, max($this->scale, $b->scale)), $scale);
+		} else {
+			if ($b instanceof AbelianAdditiveGroup) {
+				try { // Hack to support new unknown classes.
+					return $b->additiveInverse()->add($this);
+				} catch (Exception $e) {
+					// @TODO : Throw a "not implemented exception"
+				}
+			}
+			// @TODO : Throw a "not implemented exception"
+		}
 	}
 
 	/**
@@ -298,15 +267,29 @@ final class Decimal
 	 * @param  integer $scale
 	 * @return Decimal
 	 */
-	public function mul (Decimal $b, $scale = null)
+	public function mul (BigNumber $b, $scale = null)
 	{
 		$this->internalOperatorValidation($b, $scale);
 
-		if ($b->value === 'NaN' || $this->value === 'NaN') {
-			return self::$NaN;
+		if ($b->isNaN()) {
+			return $b;
+		} elseif ($b->isZero()) {
+			return $b;
+		} elseif ($b->isInfinite()) {
+			if ($b->isPositive() && $this->isPositive() || $b->isNegative() && $this->isNegative()) {
+				return Infinite::getPositiveInfinite();
+			} elseif ($b->isPositive() && $this->isNegative() || $b->isNegative() && $this->isPositive()) {
+				return Infinite::getNegativeInfinite();
+			}
+		} elseif ($b instanceof Decimal) {
+			return self::create(bcmul($this->value, $b->value, $this->scale + $b->scale), $scale);
+		} else {
+			try { // Hack to support new unknown classes. We use the commutative property
+				return $b->mul($this);
+			} catch (Exception $e) {
+				// @TODO : Throw a "not implemented exception"
+			}
 		}
-
-		return self::create(bcmul($this->value, $b->value, $this->scale + $b->scale), $scale);
 	}
 
 	/**
@@ -315,27 +298,115 @@ final class Decimal
 	 * @param  integer $scale
 	 * @return Decimal
 	 */
-	public function div (Decimal $b, $scale = null)
+	public function div (BigNumber $b, $scale = null)
 	{
 		$this->internalOperatorValidation($b, $scale);
 
-		if ($b->value === 'NaN' || $this->value === 'NaN') {
-			return self::$NaN;
-		}
+		if ($b->isNaN()) {
+			return $b;
+		} elseif ($b->isZero()) {
+			return NaN::getNaN();
+		} elseif ($b->isInfinite()) {
+			return Zero::getZero();
+		} elseif ($b instanceof Decimal) {
+			$maxscale = max($this->scale, $b->scale);
 
-		$maxscale = max($this->scale, $b->scale);
-
-		if ($maxscale === 0) {
-			if ($this->value >= $b->value) {
-				$divscale = 2;
+			if ($maxscale === 0) {
+				if ($this->value >= $b->value) {
+					$divscale = 2;
+				} else {
+					$divscale = log10($b->value) + 2;
+				}
 			} else {
-				$divscale = log10($b->value) + 2;
+				$divscale = $this->scale + $b->scale;
 			}
-		} else {
-			$divscale = $this->scale + $b->scale;
-		}
 
-		return self::create(bcdiv($this->value, $b->value, $divscale), $scale);
+			return self::create(bcdiv($this->value, $b->value, $divscale), $scale);
+		} else {
+			// @TODO : Throw a "not implemented exception" 
+		}
+	}
+
+	/**
+	 * [pow description]
+	 * @param  BigNumber $b [description]
+	 * @return [type]       [description]
+	 */
+	public function pow (BigNumber $b) {
+		if ($b->isNaN()) {
+			return NaN::getNaN();
+		} elseif ($b->isZero()) {
+			return Decimal::fromInteger(1);
+		} elseif ($b instanceof Decimal) {
+			// @TODO : Throw a "not implemented exception"
+		} else {
+			// @TODO : @WARNING : what happens if $this ~= -1 and $b ~= 0.5 ? exception? NaN? Complex?
+		}
+	}
+
+	/**
+	 * [isZero description]
+	 * @return boolean [description]
+	 */
+	public function isZero ($scale = null) {
+		$cmp_scale = $scale !== null ? $scale : $this->scale;
+
+		return (bccomp($this->value, '0', $cmp_scale) == 0);
+	}
+
+	/**
+	 * [isPositive description]
+	 * @return boolean [description]
+	 */
+	public function isPositive ()
+	{
+		return ($this->value[0] !== '-');
+	}
+
+	/**
+	 * [isPositive description]
+	 * @return boolean [description]
+	 */
+	public function isNegative ()
+	{
+		return ($this->value[0] === '-');
+	}
+
+	/**
+	 * [isInfinite description]
+	 * @return boolean [description]
+	 */
+	public function isInfinite ()
+	{
+		return false;
+	}
+
+	/**
+	 * [isNaN description]
+	 * @return boolean [description]
+	 */
+	public function isNaN ();
+	{
+		return false;
+	}
+
+	/**
+	 * [equals description]
+	 * @param  BigNumber $b [description]
+	 * @return [type]       [description]
+	 */
+	public function equals (BigNumber $b, $scale = null);
+	{
+		if ($this === $b) {
+			return true;
+		} elseif ($b instanceof Decimal) {
+			$cmp_scale = $scale !== null ? $scale : max($this->scale)
+
+			return (bccomp($this->value, $b->value, $cmp_scale) == 0);
+		} else {
+			// @TODO: Consider other number types...
+			return false;
+		}
 	}
 
 	/**
