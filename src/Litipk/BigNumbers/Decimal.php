@@ -135,7 +135,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 			$sign     = ($captures[1]==='') ? '+' : $captures[1];
 			$mantissa = $captures[2];
 
-			$mantissa_scale = strlen($captures[3])-1;
+			$mantissa_scale = strlen($captures[3]) > 0 ? strlen($captures[3])-1 : 0;
 
 			$exp_sign = ($captures[4]==='') ? '+' : $captures[4];
 			$exp_val  = (int)$captures[5];
@@ -195,7 +195,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 
 		$decimal = new Decimal();
 
-		$decimal->value = bcadd($decValue->value, '0', $scale);
+		$decimal->value = self::innerRound($decValue->value, $scale);
 		$decimal->scale = $scale;
 
 		return $decimal;
