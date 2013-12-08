@@ -6,7 +6,6 @@ use Litipk\BigNumbers\BigNumber as BigNumber;
 use Litipk\BigNumbers\IComparableNumber as IComparableNumber;
 
 use Litipk\BigNumbers\NaN as NaN;
-use Litipk\BigNumbers\Zero as Zero;
 
 /**
  * 
