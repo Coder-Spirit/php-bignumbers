@@ -84,7 +84,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	 */
 	public static function fromFloat ($fltValue, $scale = null)
 	{
-		self::internalConstructorValidation($decValue, $scale);
+		self::internalConstructorValidation($fltValue, $scale);
 
 		if (!is_float($fltValue)) {
 			throw new InvalidArgumentException('$fltValue must be a float');
@@ -100,7 +100,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 
 		$decimal = new Decimal();
 
-		$decimal->value = number_format($value, $scale === null ? 8 : $scale, '.', '');
+		$decimal->value = number_format($fltValue, $scale === null ? 8 : $scale, '.', '');
 		$decimal->scale = $scale === null ? 8 : $scale;
 
 		return $decimal;
@@ -160,7 +160,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 		}
 
 		if ($scale !== null) {
-			$value = bcadd($value, '0', $scale);
+			$value = self::innerRound($value, $scale);
 		}
 
 		$decimal = new Decimal();
@@ -393,7 +393,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	public function isZero ($scale = null) {
 		$cmp_scale = $scale !== null ? $scale : $this->scale;
 
-		return (bccomp($this->innerRound($cmp_scale), '0', $cmp_scale) == 0);
+		return (bccomp(self::innerRound($this->value, $cmp_scale), '0', $cmp_scale) === 0);
 	}
 
 	/**
@@ -448,7 +448,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 
 			return (
 				bccomp(
-					$this->innerRound($cmp_scale), $b->innerRound($cmp_scale),
+					self::innerRound($this->value, $cmp_scale), self::innerRound($b->value, $cmp_scale),
 					$cmp_scale
 				) == 0
 			);
@@ -474,7 +474,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 		} elseif ($b->isInfinite() && $b->isNegative()) {
 			return 1;
 		} elseif ($b instanceof Decimal) {
-			return bccomp($this->innerRound($scale), $b->innerRound($scale), $scale);
+			return bccomp(self::innerRound($this->value, $scale), self::innerRound($b->value, $scale), $scale);
 		} else {
 			return -$b->comp($this);
 		}
@@ -495,7 +495,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 			return $this;
 		}
 
-		return self::fromString($this->innerRound(), $scale);
+		return self::fromString(self::innerRound($this->value), $scale);
 	}
 
 	/**
@@ -556,18 +556,10 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	 * @param  [type]  $value [description]
 	 * @return [type]         [description]
 	 */
-	private static function innerRound ($scale = 0, $value = null)
+	private static function innerRound ($value, $scale = 0)
 	{
-		if ($value === null) {
-			if (isset($this)) {
-				$value = $this->value;
-			} else {
-				// Throw exception!
-			}
-		}
-
 		$rounded = bcadd($value, '0', $scale);
-		
+
 		$diffDigit = bcsub($value, $rounded, $scale+1);
 		$diffDigit = (int)$diffDigit[strlen($diffDigit)-1];
 
