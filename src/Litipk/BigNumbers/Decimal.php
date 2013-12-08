@@ -482,7 +482,21 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 
 	public function additiveInverse ()
 	{
+		if ($this->isZero()) {
+			return $this;
+		}
 
+		$decimal = new Decimal();
+
+		if ($this->isNegative()) {
+			$decimal->value = substr($this->value, 1);
+		} elseif ($this->isPositive()) {
+			$decimal->value = '-' . $this->value;
+		}
+
+		$decimal->scale = $this->scale;
+
+		return $decimal;
 	}
 
 	/**
@@ -495,7 +509,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 			return $this;
 		}
 
-		return self::fromString(self::innerRound($this->value), $scale);
+		return self::fromString(self::innerRound($this->value, $scale));
 	}
 
 	/**
