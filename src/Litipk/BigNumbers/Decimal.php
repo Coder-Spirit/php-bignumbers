@@ -113,7 +113,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	 */
 	public static function fromString ($strValue, $scale = null)
 	{
-		self::internalConstructorValidation($decValue, $scale);
+		self::internalConstructorValidation($strValue, $scale);
 
 		if (!is_string($strValue)) {
 			throw new InvalidArgumentException('$strValue must be a string');
@@ -124,7 +124,10 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 			// Now it's time to strip leading zeros in order to normalize inner values
 			$sign      = ($captures[1]==='') ? '+' : $captures[1];
 			$value     =  $captures[2];
-			$dec_scale = $scale !== null ? $scale : max(0, strlen($captures[4])-1);
+
+			$dec_scale = $scale !== null ?
+				$scale :
+				(isset($captures[4]) ? max(0, strlen($captures[4])-1) : 0);
 
 		} elseif (preg_match('/([+\-]?)([0-9](\.[0-9]+)?)[eE]([+\-]?)([1-9][0-9]*)/', $strValue, $captures) === 1) {
 
@@ -152,7 +155,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 			throw new InvalidArgumentException('$strValue must be a string that represents uniquely a float point number');
 		}
 
-		if ($exp_sign === '-') {
+		if ($sign === '-') {
 			$value = '-'.$value;
 		}
 
