@@ -281,19 +281,11 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	{
 		self::internalOperatorValidation($b, $scale);
 
-		if ($b->isNaN()) {
-			return $b;
-		} elseif ($b->isZero()) {
+		if ($b->isZero()) {
 			if ($b instanceof Decimal) {
 				return self::fromDecimal($b, $scale);
 			} else {
 				return self::fromInteger(0, $scale);
-			}
-		} elseif ($b->isInfinite()) {
-			if ($b->isPositive() && $this->isPositive() || $b->isNegative() && $this->isNegative()) {
-				return Infinite::getPositiveInfinite();
-			} elseif ($b->isPositive() && $this->isNegative() || $b->isNegative() && $this->isPositive()) {
-				return Infinite::getNegativeInfinite();
 			}
 		} elseif ($b instanceof Decimal) {
 			return self::fromString(bcmul($this->value, $b->value, $this->scale + $b->scale), $scale);
@@ -313,9 +305,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	{
 		self::internalOperatorValidation($b, $scale);
 
-		if ($b->isNaN()) {
-			return $b;
-		} elseif ($b->isZero()) {
+		if ($b->isZero()) {
 			return NaN::getNaN();
 		} elseif ($this->isZero()) {
 			return self::fromDecimal($this, $scale);
@@ -353,9 +343,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	public function pow (BigNumber $b, $scale = null) {
 		self::internalOperatorValidation($b, $scale);
 
-		if ($b->isNaN()) {
-			return NaN::getNaN();
-		} elseif ($b->isZero()) {
+		if ($b->isZero()) {
 			return Decimal::fromInteger(1);
 		} elseif ($b instanceof Decimal) {
 			if ($this->isZero()) {
