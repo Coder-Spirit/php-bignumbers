@@ -211,7 +211,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	{
 		self::internalOperatorValidation($b, $scale);
 
-		if ($b->isNaN() || $b->isInfinite() || $this->isZero()) {
+		if ($this->isZero()) {
 			if ($b instanceof Decimal) {
 				return self::fromDecimal($b, $scale);
 			} else {
