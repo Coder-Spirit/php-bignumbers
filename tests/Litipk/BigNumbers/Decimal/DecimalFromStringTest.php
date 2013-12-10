@@ -62,4 +62,30 @@ class DecimalFromStringTest extends PHPUnit_Framework_TestCase
 			Decimal::fromString('-1.5e-3')->equals(Decimal::fromString('-0.0015'))
 		);
 	}
+
+	function testNoString ()
+	{
+		$catched = false;
+
+		try {
+			$n = Decimal::fromString(5.1);
+		} catch (Exception $e) {
+			$catched = true;
+		}
+
+		$this->assertTrue($catched);
+	}
+
+	function testBadString ()
+	{
+		$catched = false;
+
+		try {
+			$n = Decimal::fromString('hello world');
+		} catch (Exception $e) {
+			$catched = true;
+		}
+
+		$this->assertTrue($catched);
+	}
 }

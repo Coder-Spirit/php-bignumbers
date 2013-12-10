@@ -51,7 +51,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 		} elseif ($value instanceof Decimal) {
 			return self::fromDecimal($value, $scale);
 		} else {
-			throw new InvalidArgumentException('Invalid type');
+			throw new \InvalidArgumentException('Invalid type');
 		}
 	}
 
@@ -65,7 +65,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 		self::internalConstructorValidation($intValue, $scale);
 
 		if (!is_int($intValue)) {
-			throw new InvalidArgumentException('$intValue must be an int');
+			throw new \InvalidArgumentException('$intValue must be an int');
 		}
 
 		$decimal = new Decimal();
@@ -87,7 +87,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 		self::internalConstructorValidation($fltValue, $scale);
 
 		if (!is_float($fltValue)) {
-			throw new InvalidArgumentException('$fltValue must be a float');
+			throw new \InvalidArgumentException('$fltValue must be a float');
 		}
 
 		if ($fltValue === INF) {
@@ -116,7 +116,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 		self::internalConstructorValidation($strValue, $scale);
 
 		if (!is_string($strValue)) {
-			throw new InvalidArgumentException('$strValue must be a string');
+			throw new \InvalidArgumentException('$strValue must be a string');
 		}
 
 		if (preg_match('/^([+\-]?)0*(([1-9][0-9]*|[0-9])(\.[0-9]+)?)$/', $strValue, $captures) === 1) {
@@ -152,7 +152,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 			$dec_scale = $scale !== null ? $scale : $min_scale;
 
 		} else {
-			throw new InvalidArgumentException('$strValue must be a string that represents uniquely a float point number');
+			throw new \InvalidArgumentException('$strValue must be a string that represents uniquely a float point number');
 		}
 
 		if ($sign === '-') {
@@ -517,11 +517,11 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	private static function internalConstructorValidation ($value, $scale)
 	{
 		if ($value === null) {
-			throw new InvalidArgumentException('$value must be a non null number');
+			throw new \InvalidArgumentException('$value must be a non null number');
 		}
 
 		if ($scale !== null && (!is_int($scale) || $scale < 0)) {
-			throw new InvalidArgumentException('$scale must be a positive integer');
+			throw new \InvalidArgumentException('$scale must be a positive integer');
 		}
 	}
 
@@ -533,11 +533,11 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	private static function internalOperatorValidation (BigNumber $b, $scale)
 	{
 		if ($b === null) {
-			throw new InvalidArgumentException('$b must be not null');
+			throw new \InvalidArgumentException('$b must be not null');
 		}
 
 		if ($scale !== null && (!is_int($scale) || $scale < 0)) {
-			throw new InvalidArgumentException('$scale must be a positive integer');
+			throw new \InvalidArgumentException('$scale must be a positive integer');
 		}
 	}
 
