@@ -88,4 +88,9 @@ class DecimalFromStringTest extends PHPUnit_Framework_TestCase
 
 		$this->assertTrue($catched);
 	}
+
+	function testWithScale ()
+	{
+		$this->assertTrue(Decimal::fromString('7.426', 2)->equals(Decimal::fromString('7.43')));
+	}
 }
