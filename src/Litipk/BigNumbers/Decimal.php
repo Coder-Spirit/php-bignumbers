@@ -184,7 +184,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 		self::internalConstructorValidation($decValue, $scale);
 
 		// This block protect us from unnecessary additional instances
-		if ($scale === null || $scale === $decValue->$scale) {
+		if ($scale === null || $scale === $decValue->scale) {
 			return $decValue;
 		}
 
