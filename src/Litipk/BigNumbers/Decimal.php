@@ -184,12 +184,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 		self::internalConstructorValidation($decValue, $scale);
 
 		// This block protect us from unnecessary additional instances
-		if (
-			$scale === null || $scale === $decValue->$scale ||
-			$decValue === self::$NaN  ||
-			$decValue === self::$pInf ||
-			$decValue === self::$nInf
-		) {
+		if ($scale === null || $scale === $decValue->$scale) {
 			return $decValue;
 		}
 
@@ -220,12 +215,6 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 		} elseif ($b->isZero()) {
 			return self::fromDecimal($this, $scale);
 		} elseif ($b instanceof Decimal) {
-			if ($this->additiveInverse()->equals($b, $scale)) {
-				return self::fromInteger(0, $scale !== null ?
-					$scale : max($this->scale, $b->scale)
-				);
-			}
-
 			return self::fromString(bcadd($this->value, $b->value, max($this->scale, $b->scale)), $scale);
 		} else {
 			// Hack to support new unknown classes. We use the commutative property

@@ -23,4 +23,26 @@ class DecimalAddTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($one->add($nan)->isNaN());
 		$this->assertTrue($nan->add($one)->isNaN());
 	}
+
+	public function testInfiniteAdd ()
+	{
+		$one = Decimal::fromInteger(1);
+		$pInf = Infinite::getPositiveInfinite();
+		$nInf = Infinite::getNegativeInfinite();
+
+		$this->assertTrue($one->add($pInf)->equals($pInf));
+		$this->assertTrue($pInf->add($one)->equals($pInf));
+
+		$this->assertTrue($one->add($nInf)->equals($nInf));
+		$this->assertTrue($nInf->add($one)->equals($nInf));
+	}
+
+	public function testPositivePositiveDecimalAdd ()
+	{
+		$n1 = Decimal::fromString('3.45');
+		$n2 = Decimal::fromString('7.67');
+
+		$this->assertTrue($n1->add($n2)->equals(Decimal::fromString('11.12')));
+		$this->assertTrue($n2->add($n1)->equals(Decimal::fromString('11.12')));
+	}
 }
