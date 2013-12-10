@@ -71,16 +71,6 @@ final class NaN implements BigNumber
 	}
 
 	/**
-	 * [pow description]
-	 * @param  BigNumber $b [description]
-	 * @return [type]       [description]
-	 */
-	public function pow (BigNumber $b)
-	{
-		return $this;
-	}
-
-	/**
 	 * [isZero description]
 	 * @return boolean [description]
 	 */

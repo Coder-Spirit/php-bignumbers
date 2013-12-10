@@ -294,7 +294,9 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	{
 		self::internalOperatorValidation($b, $scale);
 
-		if ($b->isZero()) {
+		if ($b->isNaN()) {
+			return $b;
+		} elseif ($b->isZero()) {
 			return NaN::getNaN();
 		} elseif ($this->isZero()) {
 			return self::fromDecimal($this, $scale);
@@ -321,45 +323,6 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 			);
 		} else {
 			// @TODO : Throw a "not implemented exception" 
-		}
-	}
-
-	/**
-	 * [pow description]
-	 * @param  BigNumber $b [description]
-	 * @return [type]       [description]
-	 */
-	public function pow (BigNumber $b, $scale = null) {
-		self::internalOperatorValidation($b, $scale);
-
-		if ($b->isZero()) {
-			return Decimal::fromInteger(1);
-		} elseif ($b instanceof Decimal) {
-			if ($this->isZero()) {
-				if ($b->isNegative()) {
-					return NaN::getNaN();
-				} else {
-					return self::fromDecimal($this, $scale);
-				}
-			} elseif ($this->isPositive()) {
-				if ($this->comp(self::fromInteger(1)) === 0) {
-					return self::fromInteger(1, $scale);
-				} elseif ($b->isNegative() && $this->comp(self::fromInteger(1)) === 1) {
-					$powscale = log10($this->value)*$b->additiveInverse()->value;
-				} elseif ($b->isPositive() && $this->comp(self::fromInteger(1)) === -1) {
-					$powscale = -log10($this->value)*$b->value;
-				}
-
-				$powscale = $scale !== null ? max($powscale, $scale) : $powscale;
-
-				return self::fromString(
-					bcpow($this->value, $b->value, $powscale), $scale
-				);
-			} elseif ($this->isNegative()) {
-
-			}
-		} else {
-			// @TODO : @WARNING : what happens if $this ~= -1 and $b ~= 0.5 ? exception? NaN? Complex?
 		}
 	}
 

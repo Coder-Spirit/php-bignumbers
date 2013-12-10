@@ -35,13 +35,6 @@ interface BigNumber
 	public function div (BigNumber $b);
 
 	/**
-	 * [pow description]
-	 * @param  BigNumber $b [description]
-	 * @return [type]       [description]
-	 */
-	public function pow (BigNumber $b);
-
-	/**
 	 * [isZero description]
 	 * @return boolean [description]
 	 */

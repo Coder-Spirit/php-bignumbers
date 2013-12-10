@@ -124,25 +124,6 @@ final class Infinite implements BigNumber, IComparableNumber
 	}
 
 	/**
-	 * [pow description]
-	 * @param  BigNumber $b [description]
-	 * @return [type]       [description]
-	 */
-	public function pow (BigNumber $b) {
-		if ($b->isNaN()) {
-			return $b;
-		} elseif ($b->isZero()) {
-			return NaN::getNaN();
-		} elseif ($b->isNegative()) {
-			return Zero::getZero();
-		} elseif ($this->isPositive()) {
-			return $this;
-		} elseif ($this->isNegative()) {
-			// @TODO: That's a "hard" case.
-		}
-	}
-
-	/**
 	 * [isZero description]
 	 * @return boolean [description]
 	 */
