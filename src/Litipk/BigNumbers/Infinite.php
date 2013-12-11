@@ -101,7 +101,7 @@ final class Infinite implements BigNumber, IComparableNumber
 			return NaN::getNaN();
 		} elseif ($this->isPositive() && $b->isPositive() || $this->isNegative() && $b->isNegative()) {
 			return self::getPositiveInfinite();
-		} elseif ($this->isNegative() && $b->isPositive() || $this->isPositive() && $b->isNegative()) {
+		} else { // elseif ($this->isNegative() && $b->isPositive() || $this->isPositive() && $b->isNegative()) {
 			return self::getNegativeInfinite();
 		}
 	}
@@ -118,7 +118,7 @@ final class Infinite implements BigNumber, IComparableNumber
 			return NaN::getNaN();
 		} elseif ($this->isPositive() && $b->isPositive() || $this->isNegative() && $b->isNegative()) {
 			return self::getPositiveInfinite();
-		} elseif ($this->isNegative() && $b->isPositive() || $this->isPositive() && $b->isNegative()) {
+		} else { // elseif ($this->isNegative() && $b->isPositive() || $this->isPositive() && $b->isNegative()) {
 			return self::getNegativeInfinite();
 		}
 	}
@@ -189,7 +189,7 @@ final class Infinite implements BigNumber, IComparableNumber
 			return 0;
 		} elseif ($this === self::getPositiveInfinite()) {
 			return 1;
-		} elseif ($this === self::getNegativeInfinite()) {
+		} else { // elseif ($this === self::getNegativeInfinite())
 			return -1;
 		}
 	}
