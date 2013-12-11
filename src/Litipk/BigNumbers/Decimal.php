@@ -408,10 +408,6 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 
 		if ($b === $this) {
 			return 0;
-		} elseif ($b->isInfinite() && $b->isPositive()) {
-			return -1;
-		} elseif ($b->isInfinite() && $b->isNegative()) {
-			return 1;
 		} elseif ($b instanceof Decimal) {
 			return bccomp(self::innerRound($this->value, $scale), self::innerRound($b->value, $scale), $scale);
 		} else {
