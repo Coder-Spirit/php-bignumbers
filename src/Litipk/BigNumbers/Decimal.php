@@ -393,8 +393,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 				) == 0
 			);
 		} else {
-			// @TODO: Consider other number types...
-			return false;
+			return $b->equals($this);
 		}
 	}
 
@@ -459,9 +458,9 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	public function abs () {
 		if ($this->isZero() || $this->isPositive()) {
 			return $this;
-		} elseif ($this->isNegative())  {
-			return $this->additiveInverse();
 		}
+		
+		return $this->additiveInverse();
 	}
 
 	/**
