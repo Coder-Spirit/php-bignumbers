@@ -41,4 +41,12 @@ class DecimalDivTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($one->div($nan)->isNaN());
 		$this->assertTrue($nan->div($one)->isNaN());
 	}
+
+	public function testBasicDiv ()
+	{
+		$one   = Decimal::fromInteger(1);
+		$eight = Decimal::fromInteger(8);
+
+		$this->assertTrue($one->div($eight)->equals(Decimal::fromFloat(0.125)));
+	}
 }

@@ -296,7 +296,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 				if ($this->value >= $b->value) {
 					$divscale = 2;
 				} else {
-					$divscale = log10($b->value) - log10($this->value) + 2;
+					$divscale = (int)ceil(log10($b->value) - log10($this->value)) + 2;
 				}
 			} else {
 				$divscale = $this->scale + $b->scale;
