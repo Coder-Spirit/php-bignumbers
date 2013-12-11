@@ -270,13 +270,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	{
 		self::internalOperatorValidation($b, $scale);
 
-		if ($b->isZero()) {
-			if ($b instanceof Decimal) {
-				return self::fromDecimal($b, $scale);
-			} else {
-				return self::fromInteger(0, $scale);
-			}
-		} elseif ($b instanceof Decimal) {
+		if ($b instanceof Decimal) {
 			return self::fromString(bcmul($this->value, $b->value, $this->scale + $b->scale), $scale);
 		} else {
 			// Hack to support new unknown classes. We use the commutative property
