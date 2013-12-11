@@ -296,10 +296,10 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 				if ($this->value >= $b->value) {
 					$divscale = 2;
 				} else {
-					$divscale = (int)ceil(log10($b->value) - log10($this->value)) + 2;
+					$divscale = (int)ceil(log10(abs($b->value)) - log10(abs($this->value))) + 2;
 				}
 			} else {
-				$divscale = $this->scale + $b->scale;
+				$divscale = max(2, (int)ceil(log10(abs($b->value)) - log10(abs($this->value))) + 2, $this->scale + $b->scale);
 			}
 
 			$divscale = $scale !== null ? max($scale, $divscale) : $divscale;
