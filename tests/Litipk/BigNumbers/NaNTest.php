@@ -1,6 +1,6 @@
 <?php
 
-use Litipk\BigNumbers\NaN      as NaN;
+use Litipk\BigNumbers\NaN as NaN;
 
 class NaNTest extends PHPUnit_Framework_TestCase
 {

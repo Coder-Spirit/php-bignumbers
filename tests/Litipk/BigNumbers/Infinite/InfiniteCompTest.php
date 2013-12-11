@@ -1,6 +1,5 @@
 <?php
 
-use Litipk\BigNumbers\Decimal  as Decimal;
 use Litipk\BigNumbers\Infinite as Infinite;
 
 class InfiniteCompTest extends PHPUnit_Framework_TestCase
