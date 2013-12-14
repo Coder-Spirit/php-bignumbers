@@ -22,7 +22,7 @@
 		"phpunit/phpunit": "3.7.*",
 		"ext-xdebug": "*"
 	},
-	"minimum-stability": "dev",
+	"minimum-stability": "stable",
 	"autoload": {
 		"psr-0": {
 			"Litipk\\BigNumbers": "src/"
