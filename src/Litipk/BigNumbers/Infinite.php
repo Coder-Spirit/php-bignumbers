@@ -8,7 +8,9 @@ use Litipk\BigNumbers\IComparableNumber as IComparableNumber;
 use Litipk\BigNumbers\NaN as NaN;
 
 /**
+ * Immutable object that represents an "infinite number"
  * 
+ * @author Andreu Correa Casablanca <castarco@litipk.com>
  */
 final class Infinite implements BigNumber, IComparableNumber
 {
@@ -55,8 +57,8 @@ final class Infinite implements BigNumber, IComparableNumber
 	}
 
 	/**
-	 * [add description]
-	 * @param BigNumber $b [description]
+	 * @param  BigNumber $b
+	 * @return BigNumber
 	 */
 	public function add (BigNumber $b)
 	{
@@ -72,9 +74,8 @@ final class Infinite implements BigNumber, IComparableNumber
 	}
 
 	/**
-	 * [sub description]
-	 * @param  BigNumber $b [description]
-	 * @return [type]       [description]
+	 * @param  BigNumber $b
+	 * @return BigNumber
 	 */
 	public function sub (BigNumber $b)
 	{
@@ -90,9 +91,8 @@ final class Infinite implements BigNumber, IComparableNumber
 	}
 
 	/**
-	 * [mul description]
-	 * @param  BigNumber $b [description]
-	 * @return [type]       [description]
+	 * @param  BigNumber $b
+	 * @return BigNumber
 	 */
 	public function mul (BigNumber $b) {
 		if ($b->isNaN()) {
@@ -107,9 +107,8 @@ final class Infinite implements BigNumber, IComparableNumber
 	}
 
 	/**
-	 * [div description]
-	 * @param  BigNumber $b [description]
-	 * @return [type]       [description]
+	 * @param  BigNumber $b
+	 * @return BigNumber
 	 */
 	public function div (BigNumber $b) {
 		if ($b->isNaN()) {
@@ -124,8 +123,7 @@ final class Infinite implements BigNumber, IComparableNumber
 	}
 
 	/**
-	 * [isZero description]
-	 * @return boolean [description]
+	 * @return boolean
 	 */
 	public function isZero ()
 	{
@@ -133,8 +131,7 @@ final class Infinite implements BigNumber, IComparableNumber
 	}
 
 	/**
-	 * [isPositive description]
-	 * @return boolean [description]
+	 * @return boolean
 	 */
 	public function isPositive ()
 	{
@@ -142,8 +139,7 @@ final class Infinite implements BigNumber, IComparableNumber
 	}
 
 	/**
-	 * [isPositive description]
-	 * @return boolean [description]
+	 * @return boolean
 	 */
 	public function isNegative ()
 	{
@@ -151,8 +147,7 @@ final class Infinite implements BigNumber, IComparableNumber
 	}
 
 	/**
-	 * [isInfinite description]
-	 * @return boolean [description]
+	 * @return boolean
 	 */
 	public function isInfinite ()
 	{
@@ -160,8 +155,7 @@ final class Infinite implements BigNumber, IComparableNumber
 	}
 
 	/**
-	 * [isNaN description]
-	 * @return boolean [description]
+	 * @return boolean
 	 */
 	public function isNaN ()
 	{
@@ -169,9 +163,8 @@ final class Infinite implements BigNumber, IComparableNumber
 	}
 
 	/**
-	 * [equals description]
-	 * @param  BigNumber $b [description]
-	 * @return [type]       [description]
+	 * @param  BigNumber $b
+	 * @return boolean
 	 */
 	public function equals (BigNumber $b)
 	{
@@ -179,9 +172,8 @@ final class Infinite implements BigNumber, IComparableNumber
 	}
 
 	/**
-	 * [comp description]
-	 * @param  IComparableNumber $b [description]
-	 * @return [type]               [description]
+	 * @param  IComparableNumber $b
+	 * @return integer
 	 */
 	public function comp (IComparableNumber $b)
 	{

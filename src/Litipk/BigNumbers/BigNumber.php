@@ -3,71 +3,75 @@
 namespace Litipk\BigNumbers;
 
 /**
+ * BigNumber Interface
  * 
+ * @author Andreu Correa Casablanca <castarco@litipk.com>
  */
 interface BigNumber
 {
 	/**
-	 * [add description]
-	 * @param BigNumber $b [description]
+	 * Adds two big numbers
+	 * 
+	 * @param BigNumber $b
 	 */
 	public function add (BigNumber $b);
 
 	/**
-	 * [sub description]
-	 * @param  BigNumber $b [description]
-	 * @return [type]       [description]
+	 * Substracts $b from $this
+	 * 
+	 * @param  BigNumber $b
+	 * @return BigNumber
 	 */
 	public function sub (BigNumber $b);
 
 	/**
-	 * [mul description]
-	 * @param  BigNumber $b [description]
-	 * @return [type]       [description]
+	 * Multiplies two big numbers
+	 * 
+	 * @param  BigNumber $b
+	 * @return BigNumber
 	 */
 	public function mul (BigNumber $b);
 
 	/**
-	 * [div description]
-	 * @param  BigNumber $b [description]
-	 * @return [type]       [description]
+	 * Divides $this by $b
+	 * 
+	 * @param  BigNumber $b
+	 * @return BigNumber
 	 */
 	public function div (BigNumber $b);
 
 	/**
-	 * [isZero description]
-	 * @return boolean [description]
+	 * @return boolean
 	 */
 	public function isZero ();
 
 	/**
-	 * [isPositive description]
-	 * @return boolean [description]
+	 * @return boolean
 	 */
 	public function isPositive ();
 
 	/**
-	 * [isPositive description]
-	 * @return boolean [description]
+	 * @return boolean
 	 */
 	public function isNegative ();
 
 	/**
-	 * [isInfinite description]
-	 * @return boolean [description]
+	 * @return boolean
 	 */
 	public function isInfinite ();
 
 	/**
-	 * [isNaN description]
-	 * @return boolean [description]
+	 * Says if this object is a "Not a Number"
+	 * 
+	 * @return boolean
 	 */
 	public function isNaN ();
 
 	/**
-	 * [equals description]
-	 * @param  BigNumber $b [description]
-	 * @return [type]       [description]
+	 * Equality comparison between this object and $b
+	 * 
+	 * @param  BigNumber $b
+	 * @return boolean
 	 */
 	public function equals (BigNumber $b);
 }

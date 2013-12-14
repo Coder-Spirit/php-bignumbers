@@ -23,7 +23,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	private $value;
 
 	/**
-	 * Number of decimals
+	 * Number of digits behind the point
 	 * @var integer
 	 */
 	private $scale;
@@ -198,9 +198,9 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 
 	/**
 	 * Adds two Decimal objects
-	 * @param  Decimal $b
+	 * @param  BigNumber $b
 	 * @param  integer $scale
-	 * @return Decimal
+	 * @return BigNumber
 	 */
 	public function add (BigNumber $b, $scale = null)
 	{
@@ -215,10 +215,10 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	}
 
 	/**
-	 * Subtracts two Decimal objects
-	 * @param  Decimal $b
+	 * Subtracts two BigNumber objects
+	 * @param  BigNumber $b
 	 * @param  integer $scale
-	 * @return Decimal
+	 * @return BigNumber
 	 */
 	public function sub (BigNumber $b, $scale = null)
 	{
@@ -253,10 +253,10 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	}
 
 	/**
-	 * Multiplies two Decimal objects
-	 * @param  Decimal $b
+	 * Multiplies two BigNumber objects
+	 * @param  BigNumber $b
 	 * @param  integer $scale
-	 * @return Decimal
+	 * @return BigNumber
 	 */
 	public function mul (BigNumber $b, $scale = null)
 	{
@@ -272,9 +272,9 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 
 	/**
 	 * Divides the object by $b
-	 * @param  Decimal $b
+	 * @param  BigNumber $b
 	 * @param  integer $scale
-	 * @return Decimal
+	 * @return BigNumber
 	 */
 	public function div (BigNumber $b, $scale = null)
 	{
@@ -313,8 +313,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	}
 
 	/**
-	 * [isZero description]
-	 * @return boolean [description]
+	 * @return boolean
 	 */
 	public function isZero ($scale = null) {
 		$cmp_scale = $scale !== null ? $scale : $this->scale;
@@ -323,8 +322,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	}
 
 	/**
-	 * [isPositive description]
-	 * @return boolean [description]
+	 * @return boolean
 	 */
 	public function isPositive ()
 	{
@@ -332,8 +330,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	}
 
 	/**
-	 * [isPositive description]
-	 * @return boolean [description]
+	 * @return boolean
 	 */
 	public function isNegative ()
 	{
@@ -341,8 +338,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	}
 
 	/**
-	 * [isInfinite description]
-	 * @return boolean [description]
+	 * @return boolean
 	 */
 	public function isInfinite ()
 	{
@@ -350,8 +346,8 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	}
 
 	/**
-	 * [isNaN description]
-	 * @return boolean [description]
+	 * Says if this object is a "Not a Number"
+	 * @return boolean
 	 */
 	public function isNaN ()
 	{
@@ -359,9 +355,9 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	}
 
 	/**
-	 * [equals description]
-	 * @param  BigNumber $b [description]
-	 * @return [type]       [description]
+	 * Equality comparison between this object and $b
+	 * @param  BigNumber $b
+	 * @return boolean
 	 */
 	public function equals (BigNumber $b, $scale = null)
 	{
@@ -384,9 +380,10 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	}
 
 	/**
-	 * [comp description]
-	 * @param  IComparableNumber $b [description]
-	 * @return [type]               [description]
+	 * $this > $b : returns 1 , $this < $b : returns -1 , $this == $b : returns 0
+	 * 
+	 * @param  IComparableNumber $b
+	 * @return integer
 	 */
 	public function comp (IComparableNumber $b, $scale = null)
 	{
@@ -401,6 +398,10 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 		}
 	}
 
+	/**
+	 * Returns the element's additive inverse.
+	 * @return Decimal
+	 */
 	public function additiveInverse ()
 	{
 		if ($this->isZero()) {
@@ -421,9 +422,9 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	}
 
 	/**
-	 * [round description]
-	 * @param  integer $scale [description]
-	 * @return [type]         [description]
+	 * "Rounds" the Decimal to have at most $scale digits after the point
+	 * @param  integer $scale
+	 * @return Decimal
 	 */
 	public function round ($scale = 0) {
 		if ($scale >= $this->scale) {
@@ -434,8 +435,8 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	}
 
 	/**
-	 * [abs description]
-	 * @return [type] [description]
+	 * Returns the absolute value (always a positive number)
+	 * @return Decimal
 	 */
 	public function abs () {
 		if ($this->isZero() || $this->isPositive()) {
@@ -486,10 +487,11 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	}
 
 	/**
-	 * [innerRound description]
-	 * @param  integer $scale [description]
-	 * @param  [type]  $value [description]
-	 * @return [type]         [description]
+	 * "Rounds" the decimal string to have at most $scale digits after the point
+	 * 
+	 * @param  string  $value
+	 * @param  integer $scale
+	 * @return string
 	 */
 	private static function innerRound ($value, $scale = 0)
 	{
