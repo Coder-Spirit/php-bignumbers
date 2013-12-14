@@ -1,6 +1,5 @@
 {
 	"name": "litipk/php-bignumbers",
-	"version": "0.1.0-dev",
 	"description": "An opensource library to handle immutable big numbers inside PHP applications",
 	"keywords": ["bignum", "number", "decimal", "gmp", "bcmath"],
 	"license": "MIT",
