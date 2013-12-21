@@ -4,7 +4,7 @@ php-bignumbers
 A library to handle immutable big numbers inside PHP applications
 (requires PHP >= 5.4.0 or HHVM >= 2.2.0)
 
-The current stable version is 0.2 .
+The current stable version is 0.3 .
 
 ## Install Instructions
 
@@ -14,7 +14,7 @@ composer.json file the following text:
 ```json
 {
     "require": {
-        "litipk/php-bignumbers": "0.2"
+        "litipk/php-bignumbers": "0.3"
     }
 }
 ```
@@ -36,14 +36,11 @@ composer.json file the following text:
    *   Decimal::fromString
    *   Decimal::fromDecimal
    *
-   *   Decimal::create // this is for dodgers... ¬¬
+   *   Decimal::create // this method works as methods fromType, but is more flexible
    */
   
   $ten = Decimal::fromInteger(10);
   $two = Decimal::fromString('2.0');
-  
-  $twenty = $ten->mul($two);
-  $forty  = $two->mul(Decimal::fromFloat(20.));
   
   /**
    * At this moment there are few binary operators
@@ -54,7 +51,46 @@ composer.json file the following text:
    *  $d1->mul($d2);
    *  $d1->div($d2);
    */
+
+  $twenty = $ten->mul($two);
+  $forty  = $two->mul(Decimal::fromFloat(20.));
+
+  /**
+   * There are many unary operators too:
+   *
+   * $d1->abs();
+   * $d1->sqrt();
+   * $d1->round($scale);
+   * $d1->additiveInverse();
+   */
   
+  $five  = Decimal::fromInteger(-5)->abs();
+  $six   = Decimal::fromInteger(6)->abs();
+
+  $three = Decimal::fromInteger(9)->sqrt();
+
+  Decimal::fromString('0.06')->round(0)->equals(Decimal::fromString('0'));   // returns true
+  Decimal::fromString('0.06')->round(1)->equals(Decimal::fromString('0.1')); // returns true
+
+  $five->additiveInverse()->equals(Decimal::fromInteger(-5)); // returns true
+
+  /**
+   * You can check many properties of your numbers:
+   *
+   * $d1->isNegative();
+   * $d1->isZero();
+   * $d1->isPositive();
+   * $d1->isInfinite();
+   * $d1->isNaN();
+   */
+  
+  $zero = Decimal::fromInteger(0);
+  $zero->isZero(); // Returns true
+
+  $five->div($zero)->isNaN(); // Returns true
+  $zero->div($five)->isNaN(); // Returns false
+
+  $five->additiveInverse()->sqrt()->isNaN(); // Returns true
 ?>
 ```
 
@@ -70,4 +106,4 @@ public methods are declared in the Decimal class.
 - [ ] Create the **Complex** class.
 - [ ] Add the *pow* method.
 - [ ] Add the *log* method.
-- [ ] Create an extended set of basic exceptions package.
+- [X] Create an extended set of basic exceptions package.
