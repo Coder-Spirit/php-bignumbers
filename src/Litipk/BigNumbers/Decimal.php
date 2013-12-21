@@ -353,6 +353,26 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	}
 
 	/**
+	 * Returns the square root of this object
+	 * 
+	 * @return Decimal
+	 */
+	public function sqrt ($scale = null)
+	{
+		if ($this->isNegative()) {
+			return NaN::getNaN();
+		} elseif ($this->isZero()) {
+			return Decimal::fromDecimal($this, $scale);
+		}
+
+		$sqrt_scale = ($scale !== null ? $scale : $this->scale);
+
+		return self::fromString(
+			bcsqrt($this->value, $sqrt_scale+1), $scale
+		);
+	}
+
+	/**
 	 * @return boolean
 	 */
 	public function isZero ($scale = null) {
