@@ -319,6 +319,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 			if ($scale !== null) {
 				$divscale = $scale + 1;
 			} else {
+				// $divscale is calculated in order to maintain a reasonable precision
 				$one      = Decimal::fromInteger(1);
 				$this_abs = $this->abs();
 				$b_abs    = $b->abs();
@@ -344,7 +345,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 			}
 
 			return self::fromString(
-				bcdiv($this->value, $b->value, $divscale), $scale
+				bcdiv($this->value, $b->value, $divscale), $divscale-1
 			);
 		} else {
 			throw new NotImplementedException("Decimal has no way to divide by an object of type ".get_class($b));
@@ -516,10 +517,6 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	 */
 	private static function internalOperatorValidation (BigNumber $b, $scale)
 	{
-		if ($b === null) {
-			throw new \InvalidArgumentException('$b must be not null');
-		}
-
 		if ($scale !== null && (!is_int($scale) || $scale < 0)) {
 			throw new \InvalidArgumentException('$scale must be a positive integer');
 		}

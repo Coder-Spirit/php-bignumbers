@@ -1,7 +1,8 @@
 php-bignumbers
 ==============
 
-A library to handle immutable big numbers inside PHP applications.
+A library to handle immutable big numbers inside PHP applications
+(requires PHP >= 5.4.0 or HHVM >= 2.2.0)
 
 The current stable version is 0.2 .
 
