@@ -291,7 +291,11 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 	}
 
 	/**
-	 * Divides the object by $b
+	 * Divides the object by $b .
+	 * Warning: div with $scale == 0 is not the same as
+	 *          integer division because it rounds the
+	 *          last digit in order to minimize the error.
+	 * 
 	 * @param  BigNumber $b
 	 * @param  integer $scale
 	 * @return BigNumber
@@ -312,17 +316,32 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 			);
 		} elseif ($b instanceof Decimal) {
 			
-			if (max($this->scale, $b->scale) === 0) {
-				if ($this->value >= $b->value) {
-					$divscale = 2;
-				} else {
-					$divscale = (int)ceil(log10(abs($b->value)) - log10(abs($this->value))) + 2;
-				}
+			if ($scale !== null) {
+				$divscale = $scale + 1;
 			} else {
-				$divscale = max(2, (int)ceil(log10(abs($b->value)) - log10(abs($this->value))) + 2, $this->scale + $b->scale);
-			}
+				$one      = Decimal::fromInteger(1);
+				$this_abs = $this->abs();
+				$b_abs    = $b->abs();
 
-			$divscale = $scale !== null ? max($scale, $divscale) : $divscale;
+				$this_significative_digits = strlen($this->value) - (
+						($this_abs->comp($one) === -1) ? 2 : ($this->scale > 0 ? 1 : 0)
+					) - ($this->isNegative() ? 1 : 0);
+
+				$b_significative_digits = strlen($b->value) - (
+						($b_abs->comp($one) === -1) ? 2 : ($b->scale > 0 ? 1 : 0)
+					) - ($b->isNegative() ? 1 : 0);
+
+				$log10_result = log10($this_abs->value) - log10($b_abs->value);
+
+				$divscale = max(
+					$this->scale + $b->scale,
+					max(
+						$this_significative_digits,
+						$b_significative_digits
+					) - ($log10_result >= 0 ? intval(ceil($log10_result)) : 0),
+					($log10_result < 0 ? intval(ceil(-$log10_result)) : 0)
+				) + 1;
+			}
 
 			return self::fromString(
 				bcdiv($this->value, $b->value, $divscale), $scale

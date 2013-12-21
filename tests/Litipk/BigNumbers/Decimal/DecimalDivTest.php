@@ -45,8 +45,18 @@ class DecimalDivTest extends PHPUnit_Framework_TestCase
 	public function testBasicDiv ()
 	{
 		$one   = Decimal::fromInteger(1);
+		$two   = Decimal::fromInteger(2);
+		$four  = Decimal::fromInteger(4);
 		$eight = Decimal::fromInteger(8);
 
-		$this->assertTrue($one->div($eight)->equals(Decimal::fromFloat(0.125)));
+		// Integer exact division
+		$this->assertTrue($eight->div($two)->equals($four));
+		$this->assertTrue($eight->div($four)->equals($two));
+
+		// Arbitrary precision division
+		$this->assertTrue($one->div($eight, 0)->equals(Decimal::fromString('0')));
+		$this->assertTrue($one->div($eight, 1)->equals(Decimal::fromString('0.1')));
+		$this->assertTrue($one->div($eight, 2)->equals(Decimal::fromString('0.13')));
+		$this->assertTrue($one->div($eight, 3)->equals(Decimal::fromString('0.125')));
 	}
 }
