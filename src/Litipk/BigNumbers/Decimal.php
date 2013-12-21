@@ -9,6 +9,9 @@ use Litipk\BigNumbers\AbelianAdditiveGroup as AbelianAdditiveGroup;
 use Litipk\BigNumbers\NaN as NaN;
 use Litipk\BigNumbers\Infinite as Infinite;
 
+use Litipk\Exceptions\NotImplementedException as NotImplementedException;
+use Litipk\Exceptions\InvalidArgumentTypeException as InvalidArgumentTypeException;
+
 /**
  * Immutable object that represents a rational number
  * 
@@ -51,7 +54,11 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 		} elseif ($value instanceof Decimal) {
 			return self::fromDecimal($value, $scale);
 		} else {
-			throw new \InvalidArgumentException('Invalid type');
+			throw new InvalidArgumentTypeException(
+				['int', 'float', 'string', 'Decimal'],
+				is_object($value) ? get_class($value) : gettype($value),
+				'Invalid argument type.'
+			);
 		}
 	}
 
@@ -65,7 +72,11 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 		self::internalConstructorValidation($intValue, $scale);
 
 		if (!is_int($intValue)) {
-			throw new \InvalidArgumentException('$intValue must be an int');
+			throw new InvalidArgumentTypeException(
+				['int'],
+				is_object($intValue) ? get_class($intValue) : gettype($intValue),
+				'$intValue must be of type int'
+			);
 		}
 
 		$decimal = new Decimal();
@@ -87,7 +98,11 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 		self::internalConstructorValidation($fltValue, $scale);
 
 		if (!is_float($fltValue)) {
-			throw new \InvalidArgumentException('$fltValue must be a float');
+			throw new InvalidArgumentTypeException(
+				['float'],
+				is_object($fltValue) ? get_class($fltValue) : gettype($fltValue),
+				'$fltValue must be of type float'
+			);
 		}
 
 		if ($fltValue === INF) {
@@ -116,7 +131,11 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 		self::internalConstructorValidation($strValue, $scale);
 
 		if (!is_string($strValue)) {
-			throw new \InvalidArgumentException('$strValue must be a string');
+			throw new InvalidArgumentTypeException(
+				['string'],
+				is_object($strValue) ? get_class($strValue) : gettype($strValue),
+				'$strVlue must be of type string'
+			);
 		}
 
 		if (preg_match('/^([+\-]?)0*(([1-9][0-9]*|[0-9])(\.[0-9]+)?)$/', $strValue, $captures) === 1) {
@@ -248,7 +267,8 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 					return $b->additiveInverse()->add($this);
 				}
 			}
-			// @TODO : Throw a "not implemented exception"
+
+			throw new NotImplementedException("Decimal has no way to substract an object of type ".get_class($b));
 		}
 	}
 
@@ -308,7 +328,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 				bcdiv($this->value, $b->value, $divscale), $scale
 			);
 		} else {
-			// @TODO : Throw a "not implemented exception" 
+			throw new NotImplementedException("Decimal has no way to divide by an object of type ".get_class($b));
 		}
 	}
 

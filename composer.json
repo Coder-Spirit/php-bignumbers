@@ -16,7 +16,8 @@
 	},
 	"require": {
 		"php": ">=5.4.0",
-		"ext-bcmath": "*"
+		"ext-bcmath": "*",
+		"litipk/php-exceptions": ">=0.1.2"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "3.7.*",
