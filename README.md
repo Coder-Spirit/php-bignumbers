@@ -4,7 +4,7 @@ php-bignumbers
 A library to handle immutable big numbers inside PHP applications
 (requires PHP >= 5.4.0 or HHVM >= 2.2.0)
 
-The current stable version is 0.3 .
+The current stable version is 0.4 .
 
 ## Install Instructions
 
@@ -14,7 +14,7 @@ composer.json file the following text:
 ```json
 {
     "require": {
-        "litipk/php-bignumbers": "0.3"
+        "litipk/php-bignumbers": "0.4"
     }
 }
 ```
@@ -60,6 +60,7 @@ composer.json file the following text:
    *
    * $d1->abs();
    * $d1->sqrt();
+   * $d1->log10();
    * $d1->round($scale);
    * $d1->additiveInverse();
    */
