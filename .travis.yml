@@ -1,0 +1,10 @@
+language: php
+
+php:
+  - 5.5
+  - 5.4
+
+install:
+   - composer install
+
+script: phpunit tests/
