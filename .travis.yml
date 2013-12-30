@@ -7,4 +7,4 @@ php:
 install:
    - composer install
 
-script: phpunit tests/
+script: ./vendor/bin/phpunit tests/
