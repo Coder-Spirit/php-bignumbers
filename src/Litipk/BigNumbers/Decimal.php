@@ -332,7 +332,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 						($b_abs->comp($one) === -1) ? 2 : ($b->scale > 0 ? 1 : 0)
 					) - ($b->isNegative() ? 1 : 0);
 
-				$log10_result = log10($this_abs->value) - log10($b_abs->value);
+				$log10_result = self::innerLog10($this_abs->value, $this_abs->scale, 1) - self::innerLog10($b_abs->value, $b_abs->scale, 1);
 
 				$divscale = max(
 					$this->scale + $b->scale,
@@ -369,6 +369,25 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 
 		return self::fromString(
 			bcsqrt($this->value, $sqrt_scale+1), $scale
+		);
+	}
+
+	/**
+	 * Returns the object's logarithm in base 10
+	 * @param  integer $scale
+	 * @return Decimal
+	 */
+	public function log10 ($scale = null)
+	{
+		if ($this->isNegative()) {
+			return NaN::getNaN();
+		} elseif ($this->isZero()) {
+			return Infinite::getNegativeInfinite();
+		}
+
+		return self::fromString(
+			self::innerLog10($this->value, $this->scale, $scale !== null ? $scale+1 : $this->scale+1),
+			$scale
 		);
 	}
 
@@ -561,5 +580,50 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 		}
 
 		return $rounded;
+	}
+
+	/**
+	 * Calculates the logarithm (in base 10) of $value
+	 * 
+	 * @param  string  $value     The number we want to calculate its logarithm (only positive numbers)
+	 * @param  integer $in_scale  Expected scale used by $value (only positive numbers)
+	 * @param  integer $out_scale Scale used by the return value (only positive numbers)
+	 * @return string
+	 */
+	private static function innerLog10 ($value, $in_scale, $out_scale)
+	{
+		$value_len = strlen($value);
+
+		$cmp = bccomp($value, '1', $in_scale);
+
+		switch ($cmp) {
+			case 1:
+				$value_log10_approx = $value_len - ($in_scale > 0 ? ($in_scale+2) : 1);
+				
+				return bcadd(
+					$value_log10_approx,
+					log10(bcdiv(
+						$value,
+						bcpow('10', $value_log10_approx),
+						min($value_len, $out_scale)
+					)),
+					$out_scale
+				);
+			case -1:
+				preg_match('/^0*\.(0*)[1-9][0-9]*$/', $value, $captures);
+				$value_log10_approx = -strlen($captures[1])-1;
+
+				return bcadd(
+					$value_log10_approx,
+					log10(bcmul(
+						$value,
+						bcpow('10', -$value_log10_approx),
+						$in_scale + $value_log10_approx
+					)),
+					$out_scale
+				);
+			default: // case 0:
+				return '0';
+		}
 	}
 }
