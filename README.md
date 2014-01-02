@@ -2,11 +2,20 @@ php-bignumbers
 ==============
 
 A library to handle immutable big numbers inside PHP applications
-(requires PHP >= 5.4.0 or HHVM >= 2.2.0)
+The current stable version is 0.4.1 .
 
-The current stable version is 0.4 .
+## Requirements
+
+Litipk PHP BigNumbers supports PHP 5.3.x, 5.4.x and 5.5.x,
+but also Facebook's [HHVM](http://www.hhvm.com).
+
+We use Travis CI as a continous testing environment, you can check the
+compatibility tests results using different settings here:
+[https://travis-ci.org/Litipk/php-bignumbers](https://travis-ci.org/Litipk/php-bignumbers)
 
 ## Install Instructions
+
+You can install this library using [Composer](http://getcomposer.org/).
 
 To install it via Composer, just write in the require block of your
 composer.json file the following text:
@@ -14,7 +23,7 @@ composer.json file the following text:
 ```json
 {
     "require": {
-        "litipk/php-bignumbers": "0.4"
+        "litipk/php-bignumbers": "0.4.1"
     }
 }
 ```

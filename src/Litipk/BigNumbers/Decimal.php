@@ -55,7 +55,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 			return self::fromDecimal($value, $scale);
 		} else {
 			throw new InvalidArgumentTypeException(
-				['int', 'float', 'string', 'Decimal'],
+				array('int', 'float', 'string', 'Decimal'),
 				is_object($value) ? get_class($value) : gettype($value),
 				'Invalid argument type.'
 			);
@@ -73,7 +73,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 
 		if (!is_int($intValue)) {
 			throw new InvalidArgumentTypeException(
-				['int'],
+				array('int'),
 				is_object($intValue) ? get_class($intValue) : gettype($intValue),
 				'$intValue must be of type int'
 			);
@@ -99,7 +99,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 
 		if (!is_float($fltValue)) {
 			throw new InvalidArgumentTypeException(
-				['float'],
+				array('float'),
 				is_object($fltValue) ? get_class($fltValue) : gettype($fltValue),
 				'$fltValue must be of type float'
 			);
@@ -132,7 +132,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 
 		if (!is_string($strValue)) {
 			throw new InvalidArgumentTypeException(
-				['string'],
+				array('string'),
 				is_object($strValue) ? get_class($strValue) : gettype($strValue),
 				'$strVlue must be of type string'
 			);
