@@ -2,7 +2,7 @@ php-bignumbers
 ==============
 
 A library to handle immutable big numbers inside PHP applications
-The current stable version is 0.4.1 .
+The current stable version is 0.4.1 . [![Donate](https://dl.dropboxusercontent.com/u/487440/reformal/donate.png "Donate")](https://www.gittip.com/castarco/)
 
 ## Requirements
 
@@ -115,5 +115,5 @@ public methods are declared in the Decimal class.
 - [ ] Create the **Rational** class.
 - [ ] Create the **Complex** class.
 - [ ] Add the *pow* method.
-- [ ] Add the *log* method.
+- [X] Add the *log* method.
 - [X] Create an extended set of basic exceptions package.
