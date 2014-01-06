@@ -9,4 +9,9 @@ php:
 install:
    - composer install
 
-script: ./vendor/bin/phpunit tests/
+script:
+   - mkdir -p build/logs
+   - ./vendor/bin/phpunit --coverage-clover ./build/logs/clover.xml tests/
+
+after_script:
+   - ./vendor/bin/coveralls -v
