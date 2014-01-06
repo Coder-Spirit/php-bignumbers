@@ -1,8 +1,10 @@
 php-bignumbers
 ==============
 
-A library to handle immutable big numbers inside PHP applications
-The current stable version is 0.4.1 . [![Donate](https://dl.dropboxusercontent.com/u/487440/reformal/donate.png "Donate")](https://www.gittip.com/castarco/)
+A robust library to handle immutable big numbers inside PHP applications
+The current stable version is 0.4.1. [![Donate](https://dl.dropboxusercontent.com/u/487440/reformal/donate.png "Donate")](https://www.gittip.com/castarco/)
+
+* Coverage Status: [![Coverage Status](https://coveralls.io/repos/Litipk/php-bignumbers/badge.png?branch=master)](https://coveralls.io/r/Litipk/php-bignumbers?branch=master)
 
 ## Requirements
 
