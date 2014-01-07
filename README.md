@@ -6,6 +6,7 @@ The current stable version is 0.4.1. [![Donate](https://dl.dropboxusercontent.co
 
 * Build Status: [![Build Status](https://api.travis-ci.org/Litipk/php-bignumbers.png?tag=0.4.1)](https://travis-ci.org/Litipk/php-bignumbers)
 * Coverage Status: [![Coverage Status](https://coveralls.io/repos/Litipk/php-bignumbers/badge.png?tag=0.4.1)](https://coveralls.io/r/Litipk/php-bignumbers?branch=master)
+* Dependency Status: [![Dependency Status](https://www.versioneye.com/user/projects/52cc9058ec1375e42b000085/badge.png)](https://www.versioneye.com/user/projects/52cc9058ec1375e42b000085)
 
 ## Requirements
 
