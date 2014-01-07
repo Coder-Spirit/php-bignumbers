@@ -4,16 +4,13 @@ php-bignumbers
 A robust library to handle immutable big numbers inside PHP applications
 The current stable version is 0.4.1. [![Donate](https://dl.dropboxusercontent.com/u/487440/reformal/donate.png "Donate")](https://www.gittip.com/castarco/)
 
-* Coverage Status: [![Coverage Status](https://coveralls.io/repos/Litipk/php-bignumbers/badge.png?branch=master)](https://coveralls.io/r/Litipk/php-bignumbers?branch=master)
+* Build Status: [![Build Status](https://api.travis-ci.org/Litipk/php-bignumbers.png?tag=0.4.1)](https://travis-ci.org/Litipk/php-bignumbers)
+* Coverage Status: [![Coverage Status](https://coveralls.io/repos/Litipk/php-bignumbers/badge.png?tag=0.4.1)](https://coveralls.io/r/Litipk/php-bignumbers?branch=master)
 
 ## Requirements
 
 Litipk PHP BigNumbers supports PHP 5.3.x, 5.4.x and 5.5.x,
 but also Facebook's [HHVM](http://www.hhvm.com).
-
-We use Travis CI as a continous testing environment, you can check the
-compatibility tests results using different settings here:
-[https://travis-ci.org/Litipk/php-bignumbers](https://travis-ci.org/Litipk/php-bignumbers)
 
 ## Install Instructions
 
