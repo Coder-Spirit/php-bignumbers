@@ -9,10 +9,10 @@ namespace Litipk\BigNumbers;
  */
 interface AbelianAdditiveGroup
 {
-	/**
-	 * Returns the element's additive inverse.
-	 * 
-	 * @return AbelianAdditiveGroup
-	 */
-	public function additiveInverse ();
+    /**
+     * Returns the element's additive inverse.
+     * 
+     * @return AbelianAdditiveGroup
+     */
+    public function additiveInverse();
 }

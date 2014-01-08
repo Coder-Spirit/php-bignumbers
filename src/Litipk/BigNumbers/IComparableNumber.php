@@ -9,11 +9,11 @@ namespace Litipk\BigNumbers;
  */
 interface IComparableNumber
 {
-	/**
-	 * Compares two objects that allows an "absolute order"
-	 * 
-	 * @param  IComparableNumber $b
-	 * @return integer              (-1 -> lesser, 0 -> equals, 1 -> greater)
-	 */
-	public function comp (IComparableNumber $b);
+    /**
+     * Compares two objects that allows an "absolute order"
+     * 
+     * @param  IComparableNumber $b
+     * @return integer              (-1 -> lesser, 0 -> equals, 1 -> greater)
+     */
+    public function comp(IComparableNumber $b);
 }
