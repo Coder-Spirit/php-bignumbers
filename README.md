@@ -2,10 +2,10 @@ php-bignumbers
 ==============
 
 A robust library to handle immutable big numbers inside PHP applications
-The current stable version is 0.4.1. [![Donate](https://dl.dropboxusercontent.com/u/487440/reformal/donate.png "Donate")](https://www.gittip.com/castarco/)
+The current stable version is 0.4.2. [![Donate](https://dl.dropboxusercontent.com/u/487440/reformal/donate.png "Donate")](https://www.gittip.com/castarco/)
 
-* Build Status: [![Build Status](https://api.travis-ci.org/Litipk/php-bignumbers.png?tag=0.4.1)](https://travis-ci.org/Litipk/php-bignumbers)
-* Coverage Status: [![Coverage Status](https://coveralls.io/repos/Litipk/php-bignumbers/badge.png?tag=0.4.1)](https://coveralls.io/r/Litipk/php-bignumbers?branch=master)
+* Build Status: [![Build Status](https://api.travis-ci.org/Litipk/php-bignumbers.png?tag=0.4.2)](https://travis-ci.org/Litipk/php-bignumbers)
+* Coverage Status: [![Coverage Status](https://coveralls.io/repos/Litipk/php-bignumbers/badge.png?tag=0.4.2)](https://coveralls.io/r/Litipk/php-bignumbers?branch=master)
 * Dependency Status: [![Dependency Status](https://www.versioneye.com/user/projects/52cc91c6ec13754970000275/badge.png)](https://www.versioneye.com/user/projects/52cc91c6ec13754970000275)
 
 ## Requirements
@@ -23,7 +23,7 @@ composer.json file the following text:
 ```json
 {
     "require": {
-        "litipk/php-bignumbers": "0.4.1"
+        "litipk/php-bignumbers": "0.4.2"
     }
 }
 ```
@@ -115,5 +115,3 @@ public methods are declared in the Decimal class.
 - [ ] Create the **Rational** class.
 - [ ] Create the **Complex** class.
 - [ ] Add the *pow* method.
-- [X] Add the *log* method.
-- [X] Create an extended set of basic exceptions package.
