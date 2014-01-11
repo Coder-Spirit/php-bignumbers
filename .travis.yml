@@ -15,3 +15,5 @@ script:
 
 after_script:
    - ./vendor/bin/coveralls -v
+   - wget --output-document=build/ocular.phar https://scrutinizer-ci.com/ocular.phar
+   - php build/ocular.phar code-coverage:upload --format=php-clover ./build/logs/clover.xml
