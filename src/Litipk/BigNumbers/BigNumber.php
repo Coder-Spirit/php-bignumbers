@@ -13,6 +13,7 @@ interface BigNumber
      * Adds two big numbers
      * 
      * @param BigNumber $b
+     * @return BigNumber
      */
     public function add(BigNumber $b);
 

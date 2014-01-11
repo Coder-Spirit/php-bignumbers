@@ -5,10 +5,8 @@ namespace Litipk\BigNumbers;
 use Litipk\BigNumbers\BigNumber as BigNumber;
 use Litipk\BigNumbers\IComparableNumber as IComparableNumber;
 use Litipk\BigNumbers\AbelianAdditiveGroup as AbelianAdditiveGroup;
-
 use Litipk\BigNumbers\NaN as NaN;
 use Litipk\BigNumbers\Infinite as Infinite;
-
 use Litipk\Exceptions\NotImplementedException as NotImplementedException;
 use Litipk\Exceptions\InvalidArgumentTypeException as InvalidArgumentTypeException;
 
@@ -455,6 +453,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
     /**
      * Equality comparison between this object and $b
      * @param  BigNumber $b
+     * @param integer $scale
      * @return boolean
      */
     public function equals (BigNumber $b, $scale = null)
