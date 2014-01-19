@@ -369,7 +369,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 
     /**
      * Returns the square root of this object
-     * 
+     * @param  integer $scale
      * @return Decimal
      */
     public function sqrt ($scale = null)
@@ -384,8 +384,54 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 
         return self::fromString(
             bcsqrt($this->value, $sqrt_scale+1),
-            $scale
+            $sqrt_scale
         );
+    }
+
+    /**
+     * Powers this value to $b
+     * 
+     * @param  Decimal  $b      exponent
+     * @param  integer  $scale
+     * @return Decimal
+     */
+    public function pow(Decimal $b, $scale = null)
+    {
+        if ($this->isZero()) {
+            if ($b->isPositive()) {
+                return Decimal::fromDecimal($this, $scale);
+            } else {
+                return NaN::getNaN();
+            }
+        } elseif($b->isZero()) {
+            return Decimal::fromInteger(1, $scale);
+        } elseif ($b->scale == 0) {
+            $pow_scale = $scale === null ?
+                max($this->scale, $b->scale) : max($this->scale, $b->scale, $scale);
+
+            return self::fromString(
+                bcpow($this->value, $b->value, $pow_scale+1),
+                $pow_scale
+            );
+        } else {
+            if ($this->isPositive()) {
+                $pow_scale = $scale === null ?
+                    max($this->scale, $b->scale) : max($this->scale, $b->scale, $scale);
+
+                $truncated_b = bcadd($b->value, '0', 0);
+                $remaining_b = bcsub($b->value, $truncated_b, $b->scale);
+
+                $first_pow_approx = bcpow($this->value, $truncated_b, $pow_scale+1);
+                $intermediate_root = self::innerPowWithLittleExponent($this->value, $remaining_b, $b->scale, $pow_scale+1);
+
+                return Decimal::fromString(
+                    bcmul($first_pow_approx, $intermediate_root, $pow_scale+1),
+                    $pow_scale
+                );
+            } else { // elseif ($this->isNegative())
+                return NaN::getNaN();
+            }
+        }
     }
 
     /**
@@ -422,7 +468,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
      */
     public function isPositive ()
     {
-        return ($this->value[0] !== '-');
+        return ($this->value[0] !== '-' && !$this->isZero());
     }
 
     /**
@@ -646,5 +692,53 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
             default: // case 0:
                 return '0';
         }
+    }
+    
+
+    private static function innerPowWithLittleExponent ($base, $exponent, $exp_scale, $out_scale)
+    {
+        $inner_scale = ceil($exp_scale*log(10)/log(2))+1;
+
+        $result_a = '1';
+        $result_b = '0';
+
+        $actual_index = 0;
+        $exponent_remaining = $exponent;
+
+        while (bccomp($result_a, $result_b, $out_scale) !== 0 && bccomp($exponent_remaining, '0', $inner_scale) !== 0) {
+            $result_b = $result_a;
+            $index_info = self::computeSquareIndex($exponent_remaining, $actual_index, $exp_scale, $inner_scale);
+            $exponent_remaining = $index_info[1];
+            $result_a = bcmul($result_a, self::compute2NRoot($base, $index_info[0], 2*($out_scale+1)), 2*($out_scale+1));
+        }
+
+        return self::innerRound($result_a, $out_scale);
+    }
+
+    
+    private static function computeSquareIndex ($exponent_remaining, $actual_index, $exp_scale, $inner_scale)
+    {
+        $actual_rt = bcpow('0.5', $actual_index, $exp_scale);
+        $r = bcsub($exponent_remaining, $actual_rt, $inner_scale);
+        
+        while (bccomp($r, 0, $exp_scale) === -1) {
+            ++$actual_index;
+            $actual_rt = bcmul('0.5', $actual_rt, $inner_scale);
+            $r = bcsub($exponent_remaining, $actual_rt, $inner_scale);
+        }
+        
+        return [$actual_index, $r];
+    }
+
+
+    private static function compute2NRoot ($base, $index, $out_scale)
+    {
+        $result = $base;
+
+        for ($i=0; $i<$index; $i++) {
+            $result = bcsqrt($result, ($out_scale+1)*($index-$i)+1);
+        }
+
+        return self::innerRound($result, $out_scale);
     }
 }
