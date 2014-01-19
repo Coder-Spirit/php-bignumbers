@@ -403,7 +403,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
             } else {
                 return NaN::getNaN();
             }
-        } elseif($b->isZero()) {
+        } elseif ($b->isZero()) {
             return Decimal::fromInteger(1, $scale);
         } elseif ($b->scale == 0) {
             $pow_scale = $scale === null ?
@@ -422,7 +422,12 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
                 $remaining_b = bcsub($b->value, $truncated_b, $b->scale);
 
                 $first_pow_approx = bcpow($this->value, $truncated_b, $pow_scale+1);
-                $intermediate_root = self::innerPowWithLittleExponent($this->value, $remaining_b, $b->scale, $pow_scale+1);
+                $intermediate_root = self::innerPowWithLittleExponent(
+                    $this->value,
+                    $remaining_b,
+                    $b->scale,
+                    $pow_scale+1
+                );
 
                 return Decimal::fromString(
                     bcmul($first_pow_approx, $intermediate_root, $pow_scale+1),
@@ -717,7 +722,11 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
             $result_b = $result_a;
             $index_info = self::computeSquareIndex($exponent_remaining, $actual_index, $exp_scale, $inner_scale);
             $exponent_remaining = $index_info[1];
-            $result_a = bcmul($result_a, self::compute2NRoot($base, $index_info[0], 2*($out_scale+1)), 2*($out_scale+1));
+            $result_a = bcmul(
+                $result_a,
+                self::compute2NRoot($base, $index_info[0], 2*($out_scale+1)),
+                2*($out_scale+1)
+            );
         }
 
         return self::innerRound($result_a, $out_scale);
