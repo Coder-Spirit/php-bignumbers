@@ -26,8 +26,8 @@
 	},
 	"minimum-stability": "stable",
 	"autoload": {
-		"psr-0": {
-			"Litipk\\BigNumbers": "src/"
+		"psr-4": {
+			"Litipk\\BigNumbers\\": "src/"
 		}
 	}
 }
