@@ -8,6 +8,7 @@ php:
 
 install:
    - composer install
+   - composer update
 
 script:
    - mkdir -p build/logs
