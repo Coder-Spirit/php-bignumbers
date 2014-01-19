@@ -694,7 +694,15 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
         }
     }
     
-
+    /**
+     * Returns $base^$exponent
+     * 
+     * @param  string $base
+     * @param  string $exponent   0 < $exponent < 1
+     * @param  integer $exp_scale Number of $exponent's significative digits
+     * @param  integer $out_scale Number of significative digits that we want to compute
+     * @return string
+     */
     private static function innerPowWithLittleExponent ($base, $exponent, $exp_scale, $out_scale)
     {
         $inner_scale = ceil($exp_scale*log(10)/log(2))+1;
@@ -715,7 +723,15 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
         return self::innerRound($result_a, $out_scale);
     }
 
-    
+    /**
+     * Auxiliar method. It helps us to decompose the exponent into many summands.
+     * 
+     * @param  string  $exponent_remaining
+     * @param  integer $actual_index        
+     * @param  integer $exp_scale           Number of $exponent's significative digits
+     * @param  integer $inner_scale         ceil($exp_scale*log(10)/log(2))+1;
+     * @return array
+     */
     private static function computeSquareIndex ($exponent_remaining, $actual_index, $exp_scale, $inner_scale)
     {
         $actual_rt = bcpow('0.5', $actual_index, $exp_scale);
@@ -726,11 +742,18 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
             $actual_rt = bcmul('0.5', $actual_rt, $inner_scale);
             $r = bcsub($exponent_remaining, $actual_rt, $inner_scale);
         }
-        
+
         return [$actual_index, $r];
     }
 
-
+    /**
+     * Auxiliar method. Computes $base^((1/2)^$index)
+     * 
+     * @param  string  $base
+     * @param  integer $index
+     * @param  integer $out_scale
+     * @return string
+     */
     private static function compute2NRoot ($base, $index, $out_scale)
     {
         $result = $base;
