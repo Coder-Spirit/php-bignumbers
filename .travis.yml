@@ -7,14 +7,15 @@ php:
   - hhvm
 
 install:
-   - composer install
-   - composer update
+   - mkdir -p build/bin
+   - mkdir -p build/logs
+   - curl -sS https://getcomposer.org/installer | php -- --install-dir=./build/bin
+   - php ./build/bin/composer.phar install
 
 script:
-   - mkdir -p build/logs
    - ./vendor/bin/phpunit --coverage-clover ./build/logs/clover.xml tests/
 
 after_script:
    - ./vendor/bin/coveralls -v
-   - wget --output-document=build/ocular.phar https://scrutinizer-ci.com/ocular.phar
-   - php build/ocular.phar code-coverage:upload --format=php-clover ./build/logs/clover.xml
+   - wget --output-document=build/bin/ocular.phar https://scrutinizer-ci.com/ocular.phar
+   - php ./build/bin/ocular.phar code-coverage:upload --format=php-clover ./build/logs/clover.xml
