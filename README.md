@@ -2,13 +2,13 @@ php-bignumbers
 ==============
 
 A robust library to handle immutable big numbers inside PHP applications
-The current stable version is 0.4.2. [![Donate](https://dl.dropboxusercontent.com/u/487440/reformal/donate.png "Donate")](https://www.gittip.com/castarco/)
+The current stable version is 0.5.0. [![Donate](https://dl.dropboxusercontent.com/u/487440/reformal/donate.png "Donate")](https://www.gittip.com/castarco/)
 
 
 Status Label  | Status Value
 --------------|-------------
-Build | [![Build Status](https://api.travis-ci.org/Litipk/php-bignumbers.png?tag=0.4.2)](https://travis-ci.org/Litipk/php-bignumbers)
-Coverage (from Coveralls): | [![Coverage Status](https://coveralls.io/repos/Litipk/php-bignumbers/badge.png?tag=0.4.2)](https://coveralls.io/r/Litipk/php-bignumbers?branch=master)
+Build | [![Build Status](https://api.travis-ci.org/Litipk/php-bignumbers.png?tag=0.5.0)](https://travis-ci.org/Litipk/php-bignumbers)
+Coverage (from Coveralls): | [![Coverage Status](https://coveralls.io/repos/Litipk/php-bignumbers/badge.png?tag=0.5.0)](https://coveralls.io/r/Litipk/php-bignumbers?branch=master)
 Coverage (from Scrutinizer): | [![Code Coverage](https://scrutinizer-ci.com/g/Litipk/php-bignumbers/badges/coverage.png?s=58936d9334e7fc2413a43ad6cf1c7c1577f1f39c)](https://scrutinizer-ci.com/g/Litipk/php-bignumbers/)
 Code Quality: | [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/Litipk/php-bignumbers/badges/quality-score.png?s=be17bc4bbe3233a45a7d4db39ed8c10e77bcd3fb)](https://scrutinizer-ci.com/g/Litipk/php-bignumbers/)
 Dependencies: | [![Dependency Status](https://www.versioneye.com/user/projects/52cc91c6ec13754970000275/badge.png)](https://www.versioneye.com/user/projects/52cc91c6ec13754970000275)
@@ -28,7 +28,7 @@ composer.json file the following text:
 ```json
 {
     "require": {
-        "litipk/php-bignumbers": "0.4.2"
+        "litipk/php-bignumbers": "0.5.0"
     }
 }
 ```
@@ -119,4 +119,4 @@ public methods are declared in the Decimal class.
 - [ ] Create the **Integer** class.
 - [ ] Create the **Rational** class.
 - [ ] Create the **Complex** class.
-- [ ] Add the *pow* method.
+- [X] Add the *pow* method.
