@@ -5,7 +5,7 @@ namespace Litipk\BigNumbers;
 use Litipk\BigNumbers\BigNumber as BigNumber;
 
 /**
- * 
+ *
  */
 final class NaN implements BigNumber
 {
@@ -18,7 +18,7 @@ final class NaN implements BigNumber
     /**
      * Private constructor
      */
-    private function __construct ()
+    private function __construct()
     {
 
     }
@@ -26,7 +26,7 @@ final class NaN implements BigNumber
     /**
      * Private clone method
      */
-    private function __clone ()
+    private function __clone()
     {
 
     }
@@ -35,7 +35,7 @@ final class NaN implements BigNumber
      * Returns a "Not a Number" object
      * @return Decimal
      */
-    public static function getNaN ()
+    public static function getNaN()
     {
         if (self::$NaN === null) {
             self::$NaN = new NaN();
@@ -48,7 +48,7 @@ final class NaN implements BigNumber
      * [add description]
      * @param BigNumber $b [description]
      */
-    public function add (BigNumber $b)
+    public function add(BigNumber $b)
     {
         return $this;
     }
@@ -58,7 +58,7 @@ final class NaN implements BigNumber
      * @param  BigNumber $b [description]
      * @return [type]       [description]
      */
-    public function sub (BigNumber $b)
+    public function sub(BigNumber $b)
     {
         return $this;
     }
@@ -68,7 +68,7 @@ final class NaN implements BigNumber
      * @param  BigNumber $b [description]
      * @return [type]       [description]
      */
-    public function mul (BigNumber $b)
+    public function mul(BigNumber $b)
     {
         return $this;
     }
@@ -78,7 +78,7 @@ final class NaN implements BigNumber
      * @param  BigNumber $b [description]
      * @return [type]       [description]
      */
-    public function div (BigNumber $b)
+    public function div(BigNumber $b)
     {
         return $this;
     }
@@ -87,7 +87,7 @@ final class NaN implements BigNumber
      * [isZero description]
      * @return boolean [description]
      */
-    public function isZero ()
+    public function isZero()
     {
         return false;
     }
@@ -96,7 +96,7 @@ final class NaN implements BigNumber
      * [isPositive description]
      * @return boolean [description]
      */
-    public function isPositive ()
+    public function isPositive()
     {
         return false;
     }
@@ -105,7 +105,7 @@ final class NaN implements BigNumber
      * [isPositive description]
      * @return boolean [description]
      */
-    public function isNegative ()
+    public function isNegative()
     {
         return false;
     }
@@ -114,7 +114,7 @@ final class NaN implements BigNumber
      * [isInfinite description]
      * @return boolean [description]
      */
-    public function isInfinite ()
+    public function isInfinite()
     {
         return false;
     }
@@ -123,7 +123,7 @@ final class NaN implements BigNumber
      * [isNaN description]
      * @return boolean [description]
      */
-    public function isNaN ()
+    public function isNaN()
     {
         return true;
     }
@@ -133,7 +133,7 @@ final class NaN implements BigNumber
      * @param  BigNumber $b [description]
      * @return [type]       [description]
      */
-    public function equals (BigNumber $b)
+    public function equals(BigNumber $b)
     {
         return false;
     }

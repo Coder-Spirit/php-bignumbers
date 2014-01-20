@@ -12,7 +12,7 @@ use Litipk\Exceptions\InvalidArgumentTypeException as InvalidArgumentTypeExcepti
 
 /**
  * Immutable object that represents a rational number
- * 
+ *
  * @author Andreu Correa Casablanca <castarco@litipk.com>
  */
 final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGroup
@@ -32,7 +32,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
     /**
      * Private constructor
      */
-    private function __construct ()
+    private function __construct()
     {
 
     }
@@ -40,18 +40,18 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
     /**
      * Private clone method
      */
-    private function __clone ()
+    private function __clone()
     {
 
     }
 
     /**
      * Decimal "constructor".
-     * 
+     *
      * @param mixed   $value
      * @param integer $scale
      */
-    public static function create ($value, $scale = null)
+    public static function create($value, $scale = null)
     {
         if (is_int(($value))) {
             return self::fromInteger($value, $scale);
@@ -75,7 +75,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
      * @param  integer $scale
      * @return Decimal
      */
-    public static function fromInteger ($intValue, $scale = null)
+    public static function fromInteger($intValue, $scale = null)
     {
         self::internalConstructorValidation($intValue, $scale);
 
@@ -101,7 +101,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
      * @param  integer $scale
      * @return Decimal
      */
-    public static function fromFloat ($fltValue, $scale = null)
+    public static function fromFloat($fltValue, $scale = null)
     {
         self::internalConstructorValidation($fltValue, $scale);
 
@@ -134,7 +134,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
      * @param  integer $scale
      * @return Decimal
      */
-    public static function fromString ($strValue, $scale = null)
+    public static function fromString($strValue, $scale = null)
     {
         self::internalConstructorValidation($strValue, $scale);
 
@@ -203,12 +203,12 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
     /**
      * Constructs a new Decimal object based on a previous one,
      * but changing it's $scale property.
-     * 
+     *
      * @param  Decimal  $decValue
      * @param  integer  $scale
      * @return Decimal
      */
-    public static function fromDecimal (Decimal $decValue, $scale = null)
+    public static function fromDecimal(Decimal $decValue, $scale = null)
     {
         self::internalConstructorValidation($decValue, $scale);
 
@@ -231,7 +231,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
      * @param  integer $scale
      * @return BigNumber
      */
-    public function add (BigNumber $b, $scale = null)
+    public function add(BigNumber $b, $scale = null)
     {
         self::internalOperatorValidation($b, $scale);
 
@@ -249,7 +249,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
      * @param  integer $scale
      * @return BigNumber
      */
-    public function sub (BigNumber $b, $scale = null)
+    public function sub(BigNumber $b, $scale = null)
     {
         self::internalOperatorValidation($b, $scale);
 
@@ -270,7 +270,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
             return self::fromString(bcsub($this->value, $b->value, max($this->scale, $b->scale)), $scale);
         } else {
             if ($b instanceof AbelianAdditiveGroup) {
-                
+
                 if ($this->isZero()) {
                     return $b->additiveInverse();
                 } else {
@@ -289,7 +289,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
      * @param  integer $scale
      * @return BigNumber
      */
-    public function mul (BigNumber $b, $scale = null)
+    public function mul(BigNumber $b, $scale = null)
     {
         self::internalOperatorValidation($b, $scale);
 
@@ -306,12 +306,12 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
      * Warning: div with $scale == 0 is not the same as
      *          integer division because it rounds the
      *          last digit in order to minimize the error.
-     * 
+     *
      * @param  BigNumber $b
      * @param  integer $scale
      * @return BigNumber
      */
-    public function div (BigNumber $b, $scale = null)
+    public function div(BigNumber $b, $scale = null)
     {
         self::internalOperatorValidation($b, $scale);
 
@@ -327,7 +327,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
                 $scale !== null ? $scale : $this->scale
             );
         } elseif ($b instanceof Decimal) {
-            
+
             if ($scale !== null) {
                 $divscale = $scale + 1;
             } else {
@@ -372,7 +372,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
      * @param  integer $scale
      * @return Decimal
      */
-    public function sqrt ($scale = null)
+    public function sqrt($scale = null)
     {
         if ($this->isNegative()) {
             return NaN::getNaN();
@@ -390,7 +390,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 
     /**
      * Powers this value to $b
-     * 
+     *
      * @param  Decimal  $b      exponent
      * @param  integer  $scale
      * @return Decimal
@@ -444,7 +444,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
      * @param  integer $scale
      * @return Decimal
      */
-    public function log10 ($scale = null)
+    public function log10($scale = null)
     {
         if ($this->isNegative()) {
             return NaN::getNaN();
@@ -461,7 +461,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
     /**
      * @return boolean
      */
-    public function isZero ($scale = null)
+    public function isZero($scale = null)
     {
         $cmp_scale = $scale !== null ? $scale : $this->scale;
 
@@ -471,7 +471,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
     /**
      * @return boolean
      */
-    public function isPositive ()
+    public function isPositive()
     {
         return ($this->value[0] !== '-' && !$this->isZero());
     }
@@ -479,7 +479,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
     /**
      * @return boolean
      */
-    public function isNegative ()
+    public function isNegative()
     {
         return ($this->value[0] === '-');
     }
@@ -487,7 +487,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
     /**
      * @return boolean
      */
-    public function isInfinite ()
+    public function isInfinite()
     {
         return false;
     }
@@ -496,7 +496,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
      * Says if this object is a "Not a Number"
      * @return boolean
      */
-    public function isNaN ()
+    public function isNaN()
     {
         return false;
     }
@@ -507,7 +507,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
      * @param integer $scale
      * @return boolean
      */
-    public function equals (BigNumber $b, $scale = null)
+    public function equals(BigNumber $b, $scale = null)
     {
         self::internalOperatorValidation($b, $scale);
 
@@ -530,11 +530,11 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 
     /**
      * $this > $b : returns 1 , $this < $b : returns -1 , $this == $b : returns 0
-     * 
+     *
      * @param  IComparableNumber $b
      * @return integer
      */
-    public function comp (IComparableNumber $b, $scale = null)
+    public function comp(IComparableNumber $b, $scale = null)
     {
         self::internalOperatorValidation($b, $scale);
 
@@ -551,7 +551,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
      * Returns the element's additive inverse.
      * @return Decimal
      */
-    public function additiveInverse ()
+    public function additiveInverse()
     {
         if ($this->isZero()) {
             return $this;
@@ -575,7 +575,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
      * @param  integer $scale
      * @return Decimal
      */
-    public function round ($scale = 0)
+    public function round($scale = 0)
     {
         if ($scale >= $this->scale) {
             return $this;
@@ -588,19 +588,19 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
      * Returns the absolute value (always a positive number)
      * @return Decimal
      */
-    public function abs ()
+    public function abs()
     {
         if ($this->isZero() || $this->isPositive()) {
             return $this;
         }
-        
+
         return $this->additiveInverse();
     }
 
     /**
      * @return string
      */
-    public function __toString ()
+    public function __toString()
     {
         return $this->value;
     }
@@ -610,7 +610,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
      * @param  mixed    $value
      * @param  integer  $scale
      */
-    private static function internalConstructorValidation ($value, $scale)
+    private static function internalConstructorValidation($value, $scale)
     {
         if ($value === null) {
             throw new \InvalidArgumentException('$value must be a non null number');
@@ -626,7 +626,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
      * @param  Decimal  $b      operand
      * @param  integer  $scale  bcmath scale param
      */
-    private static function internalOperatorValidation (BigNumber $b, $scale)
+    private static function internalOperatorValidation(BigNumber $b, $scale)
     {
         if ($scale !== null && (!is_int($scale) || $scale < 0)) {
             throw new \InvalidArgumentException('$scale must be a positive integer');
@@ -635,12 +635,12 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 
     /**
      * "Rounds" the decimal string to have at most $scale digits after the point
-     * 
+     *
      * @param  string  $value
      * @param  integer $scale
      * @return string
      */
-    private static function innerRound ($value, $scale = 0)
+    private static function innerRound($value, $scale = 0)
     {
         $rounded = bcadd($value, '0', $scale);
 
@@ -656,13 +656,13 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 
     /**
      * Calculates the logarithm (in base 10) of $value
-     * 
+     *
      * @param  string  $value     The number we want to calculate its logarithm (only positive numbers)
      * @param  integer $in_scale  Expected scale used by $value (only positive numbers)
      * @param  integer $out_scale Scale used by the return value (only positive numbers)
      * @return string
      */
-    private static function innerLog10 ($value, $in_scale, $out_scale)
+    private static function innerLog10($value, $in_scale, $out_scale)
     {
         $value_len = strlen($value);
 
@@ -671,7 +671,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
         switch ($cmp) {
             case 1:
                 $value_log10_approx = $value_len - ($in_scale > 0 ? ($in_scale+2) : 1);
-                
+
                 return bcadd(
                     $value_log10_approx,
                     log10(bcdiv(
@@ -698,17 +698,17 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
                 return '0';
         }
     }
-    
+
     /**
      * Returns $base^$exponent
-     * 
+     *
      * @param  string $base
      * @param  string $exponent   0 < $exponent < 1
      * @param  integer $exp_scale Number of $exponent's significative digits
      * @param  integer $out_scale Number of significative digits that we want to compute
      * @return string
      */
-    private static function innerPowWithLittleExponent ($base, $exponent, $exp_scale, $out_scale)
+    private static function innerPowWithLittleExponent($base, $exponent, $exp_scale, $out_scale)
     {
         $inner_scale = ceil($exp_scale*log(10)/log(2))+1;
 
@@ -734,18 +734,18 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 
     /**
      * Auxiliar method. It helps us to decompose the exponent into many summands.
-     * 
+     *
      * @param  string  $exponent_remaining
-     * @param  integer $actual_index        
+     * @param  integer $actual_index
      * @param  integer $exp_scale           Number of $exponent's significative digits
      * @param  integer $inner_scale         ceil($exp_scale*log(10)/log(2))+1;
      * @return array
      */
-    private static function computeSquareIndex ($exponent_remaining, $actual_index, $exp_scale, $inner_scale)
+    private static function computeSquareIndex($exponent_remaining, $actual_index, $exp_scale, $inner_scale)
     {
         $actual_rt = bcpow('0.5', $actual_index, $exp_scale);
         $r = bcsub($exponent_remaining, $actual_rt, $inner_scale);
-        
+
         while (bccomp($r, 0, $exp_scale) === -1) {
             ++$actual_index;
             $actual_rt = bcmul('0.5', $actual_rt, $inner_scale);
@@ -757,13 +757,13 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
 
     /**
      * Auxiliar method. Computes $base^((1/2)^$index)
-     * 
+     *
      * @param  string  $base
      * @param  integer $index
      * @param  integer $out_scale
      * @return string
      */
-    private static function compute2NRoot ($base, $index, $out_scale)
+    private static function compute2NRoot($base, $index, $out_scale)
     {
         $result = $base;
 

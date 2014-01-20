@@ -6,35 +6,35 @@ use Litipk\BigNumbers\NaN      as NaN;
 
 class DecimalFromFloatTest extends PHPUnit_Framework_TestCase
 {
-	public function testInfinites ()
-	{
-		$pInf = Decimal::fromFloat(INF);
-		$nInf = Decimal::fromFloat(-INF);
+    public function testInfinites()
+    {
+        $pInf = Decimal::fromFloat(INF);
+        $nInf = Decimal::fromFloat(-INF);
 
-		$this->assertTrue($pInf->isInfinite());
-		$this->assertTrue($nInf->isInfinite());
+        $this->assertTrue($pInf->isInfinite());
+        $this->assertTrue($nInf->isInfinite());
 
-		$this->assertTrue($pInf->isPositive());
-		$this->assertTrue($nInf->isNegative());
-	}
+        $this->assertTrue($pInf->isPositive());
+        $this->assertTrue($nInf->isNegative());
+    }
 
-	public function testNaN ()
-	{
-		$NaN = Decimal::fromFloat(INF - INF);
+    public function testNaN()
+    {
+        $NaN = Decimal::fromFloat(INF - INF);
 
-		$this->assertTrue($NaN->isNaN());
-	}
+        $this->assertTrue($NaN->isNaN());
+    }
 
-	public function testNoFloat ()
-	{
-		$catched = false;
+    public function testNoFloat()
+    {
+        $catched = false;
 
-		try {
-			$n = Decimal::fromFloat(5);
-		} catch (Exception $e) {
-			$catched = true;
-		}
+        try {
+            $n = Decimal::fromFloat(5);
+        } catch (Exception $e) {
+            $catched = true;
+        }
 
-		$this->assertTrue($catched);
-	}
+        $this->assertTrue($catched);
+    }
 }

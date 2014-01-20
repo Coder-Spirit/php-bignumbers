@@ -8,7 +8,7 @@ use Litipk\BigNumbers\NaN as NaN;
 
 /**
  * Immutable object that represents an "infinite number"
- * 
+ *
  * @author Andreu Correa Casablanca <castarco@litipk.com>
  */
 final class Infinite implements BigNumber, IComparableNumber
@@ -28,7 +28,7 @@ final class Infinite implements BigNumber, IComparableNumber
     /**
      * Private constructor
      */
-    private function __construct ()
+    private function __construct()
     {
 
     }
@@ -36,7 +36,7 @@ final class Infinite implements BigNumber, IComparableNumber
     /**
      * Private clone method
      */
-    private function __clone ()
+    private function __clone()
     {
 
     }
@@ -45,7 +45,7 @@ final class Infinite implements BigNumber, IComparableNumber
      * Returns a "Positive Infinite" object
      * @return Decimal
      */
-    public static function getPositiveInfinite ()
+    public static function getPositiveInfinite()
     {
         if (self::$pInf === null) {
             self::$pInf = new Infinite();
@@ -58,7 +58,7 @@ final class Infinite implements BigNumber, IComparableNumber
      * Returns a "Negative Infinite" object
      * @return Decimal
      */
-    public static function getNegativeInfinite ()
+    public static function getNegativeInfinite()
     {
         if (self::$nInf === null) {
             self::$nInf = new Infinite();
@@ -71,7 +71,7 @@ final class Infinite implements BigNumber, IComparableNumber
      * @param  BigNumber $b
      * @return BigNumber
      */
-    public function add (BigNumber $b)
+    public function add(BigNumber $b)
     {
         if ($b->isNaN()) {
             return $b;
@@ -88,7 +88,7 @@ final class Infinite implements BigNumber, IComparableNumber
      * @param  BigNumber $b
      * @return BigNumber
      */
-    public function sub (BigNumber $b)
+    public function sub(BigNumber $b)
     {
         if ($b->isNaN()) {
             return $b;
@@ -105,7 +105,7 @@ final class Infinite implements BigNumber, IComparableNumber
      * @param  BigNumber $b
      * @return BigNumber
      */
-    public function mul (BigNumber $b)
+    public function mul(BigNumber $b)
     {
         if ($b->isNaN()) {
             return $b;
@@ -122,7 +122,7 @@ final class Infinite implements BigNumber, IComparableNumber
      * @param  BigNumber $b
      * @return BigNumber
      */
-    public function div (BigNumber $b)
+    public function div(BigNumber $b)
     {
         if ($b->isNaN()) {
             return $b;
@@ -138,7 +138,7 @@ final class Infinite implements BigNumber, IComparableNumber
     /**
      * @return boolean
      */
-    public function isZero ()
+    public function isZero()
     {
         return false;
     }
@@ -146,7 +146,7 @@ final class Infinite implements BigNumber, IComparableNumber
     /**
      * @return boolean
      */
-    public function isPositive ()
+    public function isPositive()
     {
         return ($this === self::getPositiveInfinite());
     }
@@ -154,7 +154,7 @@ final class Infinite implements BigNumber, IComparableNumber
     /**
      * @return boolean
      */
-    public function isNegative ()
+    public function isNegative()
     {
         return ($this === self::getNegativeInfinite());
     }
@@ -162,7 +162,7 @@ final class Infinite implements BigNumber, IComparableNumber
     /**
      * @return boolean
      */
-    public function isInfinite ()
+    public function isInfinite()
     {
         return true;
     }
@@ -170,7 +170,7 @@ final class Infinite implements BigNumber, IComparableNumber
     /**
      * @return boolean
      */
-    public function isNaN ()
+    public function isNaN()
     {
         return false;
     }
@@ -179,7 +179,7 @@ final class Infinite implements BigNumber, IComparableNumber
      * @param  BigNumber $b
      * @return boolean
      */
-    public function equals (BigNumber $b)
+    public function equals(BigNumber $b)
     {
         return $this === $b;
     }
@@ -188,7 +188,7 @@ final class Infinite implements BigNumber, IComparableNumber
      * @param  IComparableNumber $b
      * @return integer
      */
-    public function comp (IComparableNumber $b)
+    public function comp(IComparableNumber $b)
     {
         if ($this === $b) {
             return 0;

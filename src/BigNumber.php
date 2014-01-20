@@ -4,14 +4,14 @@ namespace Litipk\BigNumbers;
 
 /**
  * BigNumber Interface
- * 
+ *
  * @author Andreu Correa Casablanca <castarco@litipk.com>
  */
 interface BigNumber
 {
     /**
      * Adds two big numbers
-     * 
+     *
      * @param BigNumber $b
      * @return BigNumber
      */
@@ -19,7 +19,7 @@ interface BigNumber
 
     /**
      * Substracts $b from $this
-     * 
+     *
      * @param  BigNumber $b
      * @return BigNumber
      */
@@ -27,7 +27,7 @@ interface BigNumber
 
     /**
      * Multiplies two big numbers
-     * 
+     *
      * @param  BigNumber $b
      * @return BigNumber
      */
@@ -35,7 +35,7 @@ interface BigNumber
 
     /**
      * Divides $this by $b
-     * 
+     *
      * @param  BigNumber $b
      * @return BigNumber
      */
@@ -63,14 +63,14 @@ interface BigNumber
 
     /**
      * Says if this object is a "Not a Number"
-     * 
+     *
      * @return boolean
      */
     public function isNaN();
 
     /**
      * Equality comparison between this object and $b
-     * 
+     *
      * @param  BigNumber $b
      * @return boolean
      */
