@@ -752,7 +752,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
             $r = bcsub($exponent_remaining, $actual_rt, $inner_scale);
         }
 
-        return [$actual_index, $r];
+        return array($actual_index, $r);
     }
 
     /**
