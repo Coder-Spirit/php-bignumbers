@@ -739,7 +739,7 @@ final class Decimal implements BigNumber, IComparableNumber, AbelianAdditiveGrou
      * @param  integer $actual_index
      * @param  integer $exp_scale           Number of $exponent's significative digits
      * @param  integer $inner_scale         ceil($exp_scale*log(10)/log(2))+1;
-     * @return array
+     * @return string
      */
     private static function computeSquareIndex($exponent_remaining, $actual_index, $exp_scale, $inner_scale)
     {

@@ -1,6 +1,6 @@
 <?php
 
-use Litipk\BigNumbers\Decimal  as Decimal;
+use Litipk\BigNumbers\Decimal as Decimal;
 use Litipk\BigNumbers\Infinite as Infinite;
 
 class DecimalEqualsTest extends PHPUnit_Framework_TestCase

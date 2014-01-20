@@ -1,8 +1,8 @@
 <?php
 
-use Litipk\BigNumbers\Decimal  as Decimal;
+use Litipk\BigNumbers\Decimal as Decimal;
 use Litipk\BigNumbers\Infinite as Infinite;
-use Litipk\BigNumbers\NaN      as NaN;
+use Litipk\BigNumbers\NaN as NaN;
 
 class InfiniteDivTest extends PHPUnit_Framework_TestCase
 {

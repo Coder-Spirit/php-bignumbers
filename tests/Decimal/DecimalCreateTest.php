@@ -1,6 +1,6 @@
 <?php
 
-use Litipk\BigNumbers\Decimal  as Decimal;
+use Litipk\BigNumbers\Decimal as Decimal;
 use Litipk\Exceptions\InvalidArgumentTypeException;
 
 // Empty class used for testing

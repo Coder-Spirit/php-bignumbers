@@ -1,6 +1,6 @@
 <?php
 
-use Litipk\BigNumbers\Decimal  as Decimal;
+use Litipk\BigNumbers\Decimal as Decimal;
 
 class DecimalAdditiveInverseTest extends PHPUnit_Framework_TestCase
 {
