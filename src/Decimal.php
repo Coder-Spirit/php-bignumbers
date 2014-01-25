@@ -38,6 +38,7 @@ final class Decimal
 
     /**
      * Private constructor
+     * @param integer $scale
      */
     private function __construct($value, $scale)
     {
@@ -57,7 +58,7 @@ final class Decimal
      * Returns a "Positive Infinite" object
      * @return Decimal
      */
-    public static function getPositiveInfinite ()
+    public static function getPositiveInfinite()
     {
         if (self::$pInf === null) {
             self::$pInf = new Decimal('INF', 0);
@@ -70,7 +71,7 @@ final class Decimal
      * Returns a "Negative Infinite" object
      * @return Decimal
      */
-    public static function getNegativeInfinite ()
+    public static function getNegativeInfinite()
     {
         if (self::$nInf === null) {
             self::$nInf = new Decimal('-INF', 0);
@@ -251,9 +252,9 @@ final class Decimal
 
     /**
      * Adds two Decimal objects
-     * @param  BigNumber $b
+     * @param  Decimal $b
      * @param  integer $scale
-     * @return BigNumber
+     * @return Decimal
      */
     public function add(Decimal $b, $scale = null)
     {
@@ -279,9 +280,9 @@ final class Decimal
 
     /**
      * Subtracts two BigNumber objects
-     * @param  BigNumber $b
+     * @param  Decimal $b
      * @param  integer $scale
-     * @return BigNumber
+     * @return Decimal
      */
     public function sub(Decimal $b, $scale = null)
     {
@@ -307,9 +308,9 @@ final class Decimal
 
     /**
      * Multiplies two BigNumber objects
-     * @param  BigNumber $b
+     * @param  Decimal $b
      * @param  integer $scale
-     * @return BigNumber
+     * @return Decimal
      */
     public function mul(Decimal $b, $scale = null)
     {
@@ -339,9 +340,9 @@ final class Decimal
      *          integer division because it rounds the
      *          last digit in order to minimize the error.
      *
-     * @param  BigNumber $b
+     * @param  Decimal $b
      * @param  integer $scale
-     * @return BigNumber
+     * @return Decimal
      */
     public function div(Decimal $b, $scale = null)
     {
@@ -352,7 +353,7 @@ final class Decimal
         } elseif ($this->isZero()) {
             return self::fromDecimal($this, $scale);
         } elseif ($this->isInfinite()) {
-            
+
             if ($b->isInfinite()) {
                 throw new \DomainException("Infinite divided by Infinite is not allowed.");
             } elseif ($b->isPositive()) {
@@ -545,7 +546,7 @@ final class Decimal
 
     /**
      * Equality comparison between this object and $b
-     * @param  BigNumber $b
+     * @param  Decimal $b
      * @param integer $scale
      * @return boolean
      */
@@ -573,7 +574,7 @@ final class Decimal
     /**
      * $this > $b : returns 1 , $this < $b : returns -1 , $this == $b : returns 0
      *
-     * @param  IComparableNumber $b
+     * @param  Decimal $b
      * @return integer
      */
     public function comp(Decimal $b, $scale = null)
@@ -791,7 +792,7 @@ final class Decimal
      * @param  mixed    $value
      * @param  integer  $scale
      */
-    private static function paramsValidation ($value, $scale)
+    private static function paramsValidation($value, $scale)
     {
         if ($value === null) {
             throw new \InvalidArgumentException('$value must be a non null number');

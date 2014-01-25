@@ -16,7 +16,7 @@ class InfiniteSubTest extends PHPUnit_Framework_TestCase
             $catched = true;
         }
         $this->assertTrue($catched);
-        
+
         $catched = false;
         try {
             $nInf->sub($nInf);
