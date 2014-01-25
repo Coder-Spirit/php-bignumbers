@@ -1,8 +1,6 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
-use Litipk\BigNumbers\Infinite as Infinite;
-use Litipk\BigNumbers\NaN as NaN;
 
 class DecimalAddTest extends PHPUnit_Framework_TestCase
 {
@@ -15,20 +13,11 @@ class DecimalAddTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($n->add($z)->equals($n));
     }
 
-    public function testNaNAdd()
-    {
-        $nan = NaN::getNaN();
-        $one = Decimal::fromInteger(1);
-
-        $this->assertTrue($one->add($nan)->isNaN());
-        $this->assertTrue($nan->add($one)->isNaN());
-    }
-
     public function testInfiniteAdd()
     {
         $one = Decimal::fromInteger(1);
-        $pInf = Infinite::getPositiveInfinite();
-        $nInf = Infinite::getNegativeInfinite();
+        $pInf = Decimal::getPositiveInfinite();
+        $nInf = Decimal::getNegativeInfinite();
 
         $this->assertTrue($one->add($pInf)->equals($pInf));
         $this->assertTrue($pInf->add($one)->equals($pInf));

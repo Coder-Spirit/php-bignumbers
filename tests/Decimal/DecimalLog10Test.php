@@ -16,9 +16,15 @@ class DecimalLog10Test extends PHPUnit_Framework_TestCase
 
     public function testNegative()
     {
-        $none = Decimal::fromInteger(-1);
+        $nOne = Decimal::fromInteger(-1);
 
-        $this->assertTrue($none->log10()->isNaN());
+        $catched = false;
+        try {
+            $nOne->log10();
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
     }
 
     public function testBigNumbers()

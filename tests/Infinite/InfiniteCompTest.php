@@ -1,13 +1,13 @@
 <?php
 
-use Litipk\BigNumbers\Infinite as Infinite;
+use Litipk\BigNumbers\Decimal as Decimal;
 
 class InfiniteCompTest extends PHPUnit_Framework_TestCase
 {
     public function testSelfComp()
     {
-        $pInf = Infinite::getPositiveInfinite();
-        $nInf = Infinite::getNegativeInfinite();
+        $pInf = Decimal::getPositiveInfinite();
+        $nInf = Decimal::getNegativeInfinite();
 
         $this->assertTrue($pInf->comp($pInf) === 0);
         $this->assertTrue($nInf->comp($nInf) === 0);

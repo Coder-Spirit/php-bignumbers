@@ -1,6 +1,7 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
+use Litipk\Exceptions\NotImplementedException as NotImplementedException;
 
 class DecimalPowTest extends PHPUnit_Framework_TestCase
 {
@@ -17,8 +18,21 @@ class DecimalPowTest extends PHPUnit_Framework_TestCase
         $zero = Decimal::fromInteger(0);
         $nTwo = Decimal::fromInteger(-2);
 
-        $this->assertTrue($zero->pow($nTwo)->isNaN());
-        $this->assertTrue($zero->pow($zero)->isNaN());
+        $catched = false;
+        try {
+            $zero->pow($nTwo);
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
+
+        $catched = false;
+        try {
+            $zero->pow($zero);
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
     }
 
     public function testNoZeroZero()
@@ -74,6 +88,12 @@ class DecimalPowTest extends PHPUnit_Framework_TestCase
         $half = Decimal::fromString('0.5');
         $nThree = Decimal::fromInteger(-3);
 
-        $this->assertTrue($nThree->pow($half)->isNaN());
+        $catched = false;
+        try {
+            $nThree->pow($half);
+        } catch (NotImplementedException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
     }
 }

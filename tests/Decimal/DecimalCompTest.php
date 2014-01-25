@@ -1,7 +1,6 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
-use Litipk\BigNumbers\Infinite as Infinite;
 
 class DecimalCompTest extends PHPUnit_Framework_TestCase
 {
@@ -23,8 +22,8 @@ class DecimalCompTest extends PHPUnit_Framework_TestCase
     public function testInfiniteComp()
     {
         $ten  = Decimal::fromInteger(10);
-        $pInf = Infinite::getPositiveInfinite();
-        $nInf = Infinite::getNegativeInfinite();
+        $pInf = Decimal::getPositiveInfinite();
+        $nInf = Decimal::getNegativeInfinite();
 
         $this->assertTrue($ten->comp($pInf) === -1);
         $this->assertTrue($ten->comp($nInf) === 1);

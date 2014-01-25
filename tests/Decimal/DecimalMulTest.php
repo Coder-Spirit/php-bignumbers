@@ -1,8 +1,6 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
-use Litipk\BigNumbers\Infinite as Infinite;
-use Litipk\BigNumbers\NaN as NaN;
 
 class DecimalMulTest extends PHPUnit_Framework_TestCase
 {
@@ -46,19 +44,10 @@ class DecimalMulTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($n21->isPositive());
     }
 
-    public function testNaNMul()
-    {
-        $nan = NaN::getNaN();
-        $one = Decimal::fromInteger(1);
-
-        $this->assertTrue($one->mul($nan)->isNaN());
-        $this->assertTrue($nan->mul($one)->isNaN());
-    }
-
     public function testInfiniteMul()
     {
-        $pInf = Infinite::getPositiveInfinite();
-        $nInf = Infinite::getNegativeInfinite();
+        $pInf = Decimal::getPositiveInfinite();
+        $nInf = Decimal::getNegativeInfinite();
 
         $pOne = Decimal::fromInteger(1);
         $nOne = Decimal::fromInteger(-1);

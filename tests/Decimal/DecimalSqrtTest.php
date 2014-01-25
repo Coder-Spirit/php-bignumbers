@@ -22,6 +22,12 @@ class DecimalSqrtTest extends PHPUnit_Framework_TestCase
 
     public function testNegativeSqrt()
     {
-        $this->assertTrue(Decimal::fromInteger(-1)->sqrt()->isNaN());
+        $catched = false;
+        try {
+            Decimal::fromInteger(-1)->sqrt();
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
     }
 }

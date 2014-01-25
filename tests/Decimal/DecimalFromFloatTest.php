@@ -19,9 +19,13 @@ class DecimalFromFloatTest extends PHPUnit_Framework_TestCase
 
     public function testNaN()
     {
-        $NaN = Decimal::fromFloat(INF - INF);
-
-        $this->assertTrue($NaN->isNaN());
+        $catched = false;
+        try {
+            $NaN = Decimal::fromFloat(INF - INF);
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
     }
 
     public function testNoFloat()

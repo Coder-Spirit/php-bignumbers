@@ -1,34 +1,46 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
-use Litipk\BigNumbers\Infinite as Infinite;
-use Litipk\BigNumbers\NaN as NaN;
 
 class InfiniteMulTest extends PHPUnit_Framework_TestCase
 {
     public function testZeroMul()
     {
-        $pInf = Infinite::getPositiveInfinite();
-        $nInf = Infinite::getNegativeInfinite();
+        $pInf = Decimal::getPositiveInfinite();
+        $nInf = Decimal::getNegativeInfinite();
         $zero = Decimal::fromInteger(0);
 
-        $this->assertTrue($pInf->mul($zero)->isNaN());
-        $this->assertTrue($nInf->mul($zero)->isNaN());
+        $catched = false;
+        try {
+            $pInf->mul($zero);
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
 
-        $this->assertTrue($zero->mul($pInf)->isNaN());
-        $this->assertTrue($zero->mul($nInf)->isNaN());
-    }
+        $catched = false;
+        try {
+            $nInf->mul($zero);
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
 
-    public function testNaNMul()
-    {
-        $pInf = Infinite::getPositiveInfinite();
-        $nInf = Infinite::getNegativeInfinite();
-        $nan  = NaN::getNaN();
+        $catched = false;
+        try {
+            $zero->mul($pInf);
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
 
-        $this->assertTrue($pInf->mul($nan)->isNaN());
-        $this->assertTrue($nInf->mul($nan)->isNaN());
+        $catched = false;
+        try {
+            $zero->mul($nInf);
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
 
-        $this->assertTrue($nan->mul($pInf)->isNaN());
-        $this->assertTrue($nan->mul($nInf)->isNaN());
     }
 }
