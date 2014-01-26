@@ -300,7 +300,7 @@ final class Decimal
         if ($this->isInfinite()) {
             if (!$b->isInfinite()) {
                 return $this;
-            } elseif ($this->isPositive() && $b->isNegative() || $this->isNegative() && $b->isPositive()) {
+            } elseif (!$this->hasSameSign($b)) {
                 return $this;
             } else { // elseif () {
                 throw new \DomainException("Infinite numbers with the same sign can't be subtracted");
