@@ -4,7 +4,7 @@ use Litipk\BigNumbers\Decimal as Decimal;
 
 class DecimalMulTest extends PHPUnit_Framework_TestCase
 {
-    public function testZeroMul()
+    public function testZeroFiniteMul()
     {
         $z = Decimal::fromInteger(0);
         $n = Decimal::fromInteger(5);
@@ -17,6 +17,45 @@ class DecimalMulTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($r1->isZero());
         $this->assertTrue($r2->isZero());
+    }
+
+    public function testZeroInfiniteMul()
+    {
+        $pInf = Decimal::getPositiveInfinite();
+        $nInf = Decimal::getNegativeInfinite();
+        $zero = Decimal::fromInteger(0);
+
+        $catched = false;
+        try {
+            $pInf->mul($zero);
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
+
+        $catched = false;
+        try {
+            $nInf->mul($zero);
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
+
+        $catched = false;
+        try {
+            $zero->mul($pInf);
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
+
+        $catched = false;
+        try {
+            $zero->mul($nInf);
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
     }
 
     public function testSignsMul()

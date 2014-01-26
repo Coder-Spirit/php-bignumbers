@@ -4,7 +4,7 @@ use Litipk\BigNumbers\Decimal as Decimal;
 
 class DecimalDivTest extends PHPUnit_Framework_TestCase
 {
-    public function testZeroDiv()
+    public function testZeroFiniteDiv()
     {
         $one  = Decimal::fromInteger(1);
         $zero = Decimal::fromInteger(0);
@@ -20,6 +20,29 @@ class DecimalDivTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($zero->div($one)->equals($zero));
     }
 
+    public function testZeroInfiniteDiv()
+    {
+        $pInf = Decimal::getPositiveInfinite();
+        $nInf = Decimal::getNegativeInfinite();
+        $zero = Decimal::fromInteger(0);
+
+        $catched = false;
+        try {
+            $pInf->div($zero);
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
+
+        $catched = false;
+        try {
+            $nInf->div($zero);
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
+    }
+
     public function testOneDiv()
     {
         $one = Decimal::fromInteger(1);
@@ -28,14 +51,63 @@ class DecimalDivTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($two->div($one)->equals($two));
     }
 
-    public function testInfiniteDiv()
+    public function testFiniteInfiniteDiv()
     {
-        $one  = Decimal::fromInteger(1);
+        $pTen = Decimal::fromInteger(10);
+        $nTen = Decimal::fromInteger(-10);
+
         $pInf = Decimal::getPositiveInfinite();
         $nInf = Decimal::getNegativeInfinite();
 
-        $this->assertTrue($one->div($pInf)->isZero());
-        $this->assertTrue($one->div($nInf)->isZero());
+        $this->assertTrue($pInf->div($pTen)->equals($pInf));
+        $this->assertTrue($pInf->div($nTen)->equals($nInf));
+
+        $this->assertTrue($nInf->div($pTen)->equals($nInf));
+        $this->assertTrue($nInf->div($nTen)->equals($pInf));
+
+        $this->assertTrue($pTen->div($pInf)->isZero());
+        $this->assertTrue($nTen->div($pInf)->isZero());
+
+        $this->assertTrue($pTen->div($nInf)->isZero());
+        $this->assertTrue($nTen->div($nInf)->isZero());
+    }
+
+    public function testInfiniteInfiniteDiv()
+    {
+        $pInf = Decimal::getPositiveInfinite();
+        $nInf = Decimal::getNegativeInfinite();
+
+        $catched = false;
+        try {
+            $pInf->div($pInf);
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
+
+        $catched = false;
+        try {
+            $pInf->div($nInf);
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
+
+        $catched = false;
+        try {
+            $nInf->div($pInf);
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
+
+        $catched = false;
+        try {
+            $nInf->div($nInf);
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
     }
 
     public function testBasicDiv()
