@@ -8,3 +8,4 @@ tools:
     php_hhvm: true
     php_cs_fixer:
         config: { level: psr2 }
+    sensiolabs_security_checker: true
