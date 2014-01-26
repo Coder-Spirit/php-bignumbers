@@ -39,6 +39,7 @@ final class Decimal
     /**
      * Private constructor
      * @param integer $scale
+     * @param string $value
      */
     private function __construct($value, $scale)
     {
@@ -803,6 +804,9 @@ final class Decimal
         }
     }
 
+    /**
+     * @return string
+     */
     private static function normalizeSign($sign) 
     {
         if ($sign==='+') {
