@@ -156,7 +156,12 @@ final class Decimal
         }
 
         return new Decimal(
-            number_format($fltValue, $scale === null ? 8 : $scale, '.', ''),
+            number_format(
+                $fltValue,
+                $scale === null ? 8 : $scale,
+                '.',
+                ''
+            ),
             $scale === null ? 8 : $scale
         );
     }

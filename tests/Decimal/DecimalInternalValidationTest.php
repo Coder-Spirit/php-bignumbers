@@ -8,43 +8,41 @@ date_default_timezone_set('UTC');
 
 class DecimalInternalValidationTest extends PHPUnit_Framework_TestCase
 {
-    public function testInternalConstructorValidation()
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage $value must be a non null number
+     */
+    public function testConstructorNullValueValidation()
     {
-        $thrown = false;
-        try {
-            $d = Decimal::fromInteger(null);
-        } catch (InvalidArgumentException $e) {
-            $thrown = true;
-        }
-        $this->assertTrue($thrown);
-
-        $thrown = false;
-        try {
-            $d = Decimal::fromInteger(25, -15);
-        } catch (InvalidArgumentException $e) {
-            $thrown = true;
-        }
-        $this->assertTrue($thrown);
-
-        $thrown = false;
-        try {
-            $d = Decimal::fromInteger(25, "hola mundo");
-        } catch (InvalidArgumentException $e) {
-            $thrown = true;
-        }
-        $this->assertTrue($thrown);
+        Decimal::fromInteger(null);
     }
 
-    public function testInternalOperatorValidation()
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage $scale must be a positive integer
+     */
+    public function testConstructorNegativeScaleValidation()
+    {
+        Decimal::fromInteger(25, -15);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage $scale must be a positive integer
+     */
+    public function testConstructorNotIntegerScaleValidation()
+    {
+        Decimal::fromInteger(25, "hola mundo");
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage $scale must be a positive integer
+     */
+    public function testOperatorNegativeScaleValidation()
     {
         $one = Decimal::fromInteger(1);
 
-        $thrown = false;
-        try {
-            $d = $one->mul($one, -1);
-        } catch (InvalidArgumentException $e) {
-            $thrown = true;
-        }
-        $this->assertTrue($thrown);
+        $one->mul($one, -1);
     }
 }
