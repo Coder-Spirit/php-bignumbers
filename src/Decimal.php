@@ -187,18 +187,13 @@ final class Decimal
         if (preg_match('/^([+\-]?)0*(([1-9][0-9]*|[0-9])(\.[0-9]+)?)$/', $strValue, $captures) === 1) {
 
             // Now it's time to strip leading zeros in order to normalize inner values
-            $sign      = self::normalizeSign($captures[1]);
-            $value     = $sign . $captures[2];
+            $value     = self::normalizeSign($captures[1]) . $captures[2];
 
-            $dec_scale = $scale !== null ?
-                $scale :
-                (isset($captures[4]) ? max(0, strlen($captures[4])-1) : 0);
+            $min_scale = isset($captures[4]) ?
+                max(0, strlen($captures[4])-1) :
+                0;
 
         } elseif (preg_match('/([+\-]?)0*([0-9](\.[0-9]+)?)[eE]([+\-]?)([1-9][0-9]*)/', $strValue, $captures) === 1) {
-
-            // Now it's time to "unroll" the exponential notation to basic positional notation
-            $sign     = self::normalizeSign($captures[1]);
-            $mantissa = $captures[2];
 
             $mantissa_scale = max(strlen($captures[3])-1, 0);
 
@@ -212,8 +207,14 @@ final class Decimal
                 $tmp_multiplier = bcpow(10, -$exp_val, $exp_val);
             }
 
-            $value     = $sign . bcmul($mantissa, $tmp_multiplier, max($min_scale, $scale !== null ? $scale : 0));
-            $dec_scale = $scale !== null ? $scale : $min_scale;
+            $value = self::normalizeSign($captures[1]) . bcmul(
+                $captures[2],
+                $tmp_multiplier,
+                max(
+                    $min_scale,
+                    $scale !== null ? $scale : 0
+                )
+            );
 
         } else {
             throw new \InvalidArgumentException(
@@ -221,11 +222,16 @@ final class Decimal
             );
         }
 
-        if ($scale !== null) {
-            $value = self::innerRound($value, $scale);
+        if ($scale!==null) {
+            $dec_scale = $scale;
+        } else {
+            $dec_scale = $min_scale;
         }
 
-        return new Decimal($value, $dec_scale);
+        return new Decimal(
+            self::innerRound($value, $dec_scale),
+            $dec_scale
+        );
     }
 
     /**
