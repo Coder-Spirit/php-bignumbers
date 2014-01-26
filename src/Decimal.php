@@ -186,8 +186,8 @@ final class Decimal
         if (preg_match('/^([+\-]?)0*(([1-9][0-9]*|[0-9])(\.[0-9]+)?)$/', $strValue, $captures) === 1) {
 
             // Now it's time to strip leading zeros in order to normalize inner values
-            $sign      = ($captures[1]==='') ? '+' : $captures[1];
-            $value     =  $captures[2];
+            $sign      = $captures[1];
+            $value     = $sign . $captures[2];
 
             $dec_scale = $scale !== null ?
                 $scale :
@@ -196,7 +196,7 @@ final class Decimal
         } elseif (preg_match('/([+\-]?)([0-9](\.[0-9]+)?)[eE]([+\-]?)([1-9][0-9]*)/', $strValue, $captures) === 1) {
 
             // Now it's time to "unroll" the exponential notation to basic positional notation
-            $sign     = ($captures[1]==='') ? '+' : $captures[1];
+            $sign     = $captures[1];
             $mantissa = $captures[2];
 
             $mantissa_scale = strlen($captures[3]) > 0 ? strlen($captures[3])-1 : 0;
@@ -212,17 +212,13 @@ final class Decimal
                 $tmp_multiplier = bcpow(10, -$exp_val, $exp_val);
             }
 
-            $value     = bcmul($mantissa, $tmp_multiplier, max($min_scale, $scale !== null ? $scale : 0));
+            $value     = $sign . bcmul($mantissa, $tmp_multiplier, max($min_scale, $scale !== null ? $scale : 0));
             $dec_scale = $scale !== null ? $scale : $min_scale;
 
         } else {
             throw new \InvalidArgumentException(
                 '$strValue must be a string that represents uniquely a float point number.'
             );
-        }
-
-        if ($sign === '-') {
-            $value = '-'.$value;
         }
 
         if ($scale !== null) {
