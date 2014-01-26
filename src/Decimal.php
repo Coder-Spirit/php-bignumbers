@@ -380,17 +380,11 @@ final class Decimal
                 $divscale = $scale + 1;
             } else {
                 // $divscale is calculated in order to maintain a reasonable precision
-                $one      = Decimal::fromInteger(1);
                 $this_abs = $this->abs();
                 $b_abs    = $b->abs();
 
-                $this_significative_digits = strlen($this->value) - (
-                        ($this_abs->comp($one) === -1) ? 2 : ($this->scale > 0 ? 1 : 0)
-                    ) - ($this->isNegative() ? 1 : 0);
-
-                $b_significative_digits = strlen($b->value) - (
-                        ($b_abs->comp($one) === -1) ? 2 : ($b->scale > 0 ? 1 : 0)
-                    ) - ($b->isNegative() ? 1 : 0);
+                $this_significative_digits = self::countSignificativeDigits($this, $this_abs);
+                $b_significative_digits = self::countSignificativeDigits($b, $b_abs);
 
                 $log10_result =
                     self::innerLog10($this_abs->value, $this_abs->scale, 1) -
@@ -828,6 +822,22 @@ final class Decimal
         }
 
         return $sign;
+    }
+
+    /**
+     * Counts the number of significative digits of $val
+     *
+     * @param  Decimal $val
+     * @param  Decimal $abs $val->abs()
+     * @return integer
+     */
+    private static function countSignificativeDigits(Decimal $val, Decimal $abs)
+    {
+        $one = Decimal::fromInteger(1);
+
+        return strlen($val->value) - (
+            ($abs->comp($one) === -1) ? 2 : max($val->scale, 1)
+        ) - ($val->isNegative() ? 1 : 0);
     }
 
     /**
