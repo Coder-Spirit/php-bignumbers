@@ -67,6 +67,17 @@ class DecimalFromStringTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testSimpleNotation_With_Positive_Sign()
+    {
+        $this->assertTrue(
+            Decimal::fromString('+34')->equals(Decimal::fromString('34'))
+        );
+
+        $this->assertTrue(
+            Decimal::fromString('+00034')->equals(Decimal::fromString('34'))
+        );
+    }
+
     /**
      * @expectedException Litipk\Exceptions\InvalidArgumentTypeException
      * @expectedExceptionMessage $strVlue must be of type string.

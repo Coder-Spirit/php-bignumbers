@@ -186,7 +186,7 @@ final class Decimal
         if (preg_match('/^([+\-]?)0*(([1-9][0-9]*|[0-9])(\.[0-9]+)?)$/', $strValue, $captures) === 1) {
 
             // Now it's time to strip leading zeros in order to normalize inner values
-            $sign      = $captures[1];
+            $sign      = self::normalizeSign($captures[1]);
             $value     = $sign . $captures[2];
 
             $dec_scale = $scale !== null ?
@@ -196,15 +196,14 @@ final class Decimal
         } elseif (preg_match('/([+\-]?)([0-9](\.[0-9]+)?)[eE]([+\-]?)([1-9][0-9]*)/', $strValue, $captures) === 1) {
 
             // Now it's time to "unroll" the exponential notation to basic positional notation
-            $sign     = $captures[1];
+            $sign     = self::normalizeSign($captures[1]);
             $mantissa = $captures[2];
 
             $mantissa_scale = strlen($captures[3]) > 0 ? strlen($captures[3])-1 : 0;
 
-            $exp_sign = ($captures[4]==='') ? '+' : $captures[4];
             $exp_val  = (int)$captures[5];
 
-            if ($exp_sign === '+') {
+            if (self::normalizeSign($captures[4]) === '') {
                 $min_scale      = ($mantissa_scale-$exp_val > 0) ? $mantissa_scale-$exp_val : 0;
                 $tmp_multiplier = bcpow(10, $exp_val);
             } else {
@@ -802,6 +801,15 @@ final class Decimal
         if ($scale !== null && (!is_int($scale) || $scale < 0)) {
             throw new \InvalidArgumentException('$scale must be a positive integer');
         }
+    }
+
+    private static function normalizeSign($sign) 
+    {
+        if ($sign==='+') {
+            return '';
+        }
+
+        return $sign;
     }
 
     /**
