@@ -2,9 +2,13 @@
 
 use Litipk\BigNumbers\Decimal as Decimal;
 
+
+date_default_timezone_set('UTC');
+
+
 class DecimalLog10Test extends PHPUnit_Framework_TestCase
 {
-    public function testZero()
+    public function testZeroLog10()
     {
         $zero = Decimal::fromInteger(0);
 
@@ -14,7 +18,7 @@ class DecimalLog10Test extends PHPUnit_Framework_TestCase
         $this->assertTrue($zero_log->isInfinite());
     }
 
-    public function testNegative()
+    public function testNegativeLog10()
     {
         $nOne = Decimal::fromInteger(-1);
 
@@ -27,7 +31,7 @@ class DecimalLog10Test extends PHPUnit_Framework_TestCase
         $this->assertTrue($catched);
     }
 
-    public function testBigNumbers()
+    public function testBigNumbersLog10()
     {
         $bignumber = Decimal::fromString(bcpow('10', '2417'));
         $pow = Decimal::fromInteger(2417);
@@ -35,7 +39,7 @@ class DecimalLog10Test extends PHPUnit_Framework_TestCase
         $this->assertTrue($bignumber->log10()->equals($pow));
     }
 
-    public function testLittleNumbers()
+    public function testLittleNumbersLog10()
     {
         $littlenumber = Decimal::fromString(bcpow('10', '-2417', 2417));
         $pow = Decimal::fromInteger(-2417);
@@ -43,12 +47,19 @@ class DecimalLog10Test extends PHPUnit_Framework_TestCase
         $this->assertTrue($littlenumber->log10()->equals($pow));
     }
 
-    public function testMediumNumbers()
+    public function testMediumNumbersLog10()
     {
         $seventyfive = Decimal::fromInteger(75);
         $fortynine = Decimal::fromInteger(49);
 
         $this->assertTrue($seventyfive->log10(5)->equals(Decimal::fromString('1.87506')));
         $this->assertTrue($fortynine->log10(7)->equals(Decimal::fromString('1.6901961')));
+    }
+
+    public function testPInfiniteLog10()
+    {
+        $pInf = Decimal::getPositiveInfinite();
+
+        $this->assertTrue($pInf->log10()->equals($pInf));
     }
 }

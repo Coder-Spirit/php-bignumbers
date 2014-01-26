@@ -3,6 +3,10 @@
 use Litipk\BigNumbers\Decimal as Decimal;
 use Litipk\Exceptions\NotImplementedException as NotImplementedException;
 
+
+date_default_timezone_set('UTC');
+
+
 class DecimalPowTest extends PHPUnit_Framework_TestCase
 {
     public function testZeroPositive()

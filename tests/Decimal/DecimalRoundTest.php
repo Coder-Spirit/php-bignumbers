@@ -2,6 +2,10 @@
 
 use Litipk\BigNumbers\Decimal as Decimal;
 
+
+date_default_timezone_set('UTC');
+
+
 class DecimalRoundTest extends PHPUnit_Framework_TestCase
 {
     public function testIntegerRound()

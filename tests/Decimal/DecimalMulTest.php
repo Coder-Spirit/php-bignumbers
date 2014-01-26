@@ -2,6 +2,10 @@
 
 use Litipk\BigNumbers\Decimal as Decimal;
 
+
+date_default_timezone_set('UTC');
+
+
 class DecimalMulTest extends PHPUnit_Framework_TestCase
 {
     public function testZeroFiniteMul()
@@ -19,43 +23,52 @@ class DecimalMulTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($r2->isZero());
     }
 
-    public function testZeroInfiniteMul()
+    /**
+     * @expectedException \DomainException
+     * @expectedExceptionMessage Zero multiplied by infinite is not allowed.
+     */
+    public function testZeroPInfiniteMul()
     {
         $pInf = Decimal::getPositiveInfinite();
+        $zero = Decimal::fromInteger(0);
+
+        $zero->mul($pInf);
+    }
+
+    /**
+     * @expectedException \DomainException
+     * @expectedExceptionMessage Zero multiplied by infinite is not allowed.
+     */
+    public function testZeroNInfiniteMul()
+    {
         $nInf = Decimal::getNegativeInfinite();
         $zero = Decimal::fromInteger(0);
 
-        $catched = false;
-        try {
-            $pInf->mul($zero);
-        } catch (\DomainException $e) {
-            $catched = true;
-        }
-        $this->assertTrue($catched);
+        $zero->mul($nInf);
+    }
 
-        $catched = false;
-        try {
-            $nInf->mul($zero);
-        } catch (\DomainException $e) {
-            $catched = true;
-        }
-        $this->assertTrue($catched);
+    /**
+     * @expectedException \DomainException
+     * @expectedExceptionMessage Zero multiplied by infinite is not allowed.
+     */
+    public function testPInfiniteZeroMul()
+    {
+        $pInf = Decimal::getPositiveInfinite();
+        $zero = Decimal::fromInteger(0);
 
-        $catched = false;
-        try {
-            $zero->mul($pInf);
-        } catch (\DomainException $e) {
-            $catched = true;
-        }
-        $this->assertTrue($catched);
+        $pInf->mul($zero);
+    }
 
-        $catched = false;
-        try {
-            $zero->mul($nInf);
-        } catch (\DomainException $e) {
-            $catched = true;
-        }
-        $this->assertTrue($catched);
+    /**
+     * @expectedException \DomainException
+     * @expectedExceptionMessage Zero multiplied by infinite is not allowed.
+     */
+    public function testNInfiniteZeroMul()
+    {
+        $nInf = Decimal::getNegativeInfinite();
+        $zero = Decimal::fromInteger(0);
+
+        $nInf->mul($zero);
     }
 
     public function testSignsMul()

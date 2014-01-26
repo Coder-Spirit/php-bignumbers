@@ -3,8 +3,12 @@
 use Litipk\BigNumbers\Decimal as Decimal;
 use Litipk\Exceptions\InvalidArgumentTypeException;
 
-// Empty class used for testing
-class A {}
+
+date_default_timezone_set('UTC');
+
+
+class A {}  // Empty class used for testing
+
 
 class DecimalCreateTest extends PHPUnit_Framework_TestCase
 {

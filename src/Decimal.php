@@ -411,7 +411,7 @@ final class Decimal
     {
         if ($this->isNegative()) {
             throw new \DomainException(
-                "Decimal can't handle square roots of negative numbers (it's only for real numbers)"
+                "Decimal can't handle square roots of negative numbers (it's only for real numbers)."
             );
         } elseif ($this->isZero()) {
             return Decimal::fromDecimal($this, $scale);

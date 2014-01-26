@@ -1,7 +1,10 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
-use Litipk\BigNumbers\NaN as NaN;
+
+
+date_default_timezone_set('UTC');
+
 
 class DecimalFromFloatTest extends PHPUnit_Framework_TestCase
 {

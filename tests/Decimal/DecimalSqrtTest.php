@@ -2,6 +2,10 @@
 
 use Litipk\BigNumbers\Decimal as Decimal;
 
+
+date_default_timezone_set('UTC');
+
+
 class DecimalSqrtTest extends PHPUnit_Framework_TestCase
 {
     public function testIntegerSqrt()
@@ -20,14 +24,28 @@ class DecimalSqrtTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(Decimal::fromString('0.0001')->sqrt()->equals(Decimal::fromString('0.01')));
     }
 
-    public function testNegativeSqrt()
+    /**
+     * @expectedException \DomainException
+     * @expectedExceptionMessage Decimal can't handle square roots of negative numbers (it's only for real numbers).
+     */
+    public function testFiniteNegativeSqrt()
     {
-        $catched = false;
-        try {
-            Decimal::fromInteger(-1)->sqrt();
-        } catch (\DomainException $e) {
-            $catched = true;
-        }
-        $this->assertTrue($catched);
+        Decimal::fromInteger(-1)->sqrt();
+    }
+
+    public function testPositiveInfiniteSqrt()
+    {
+        $pInf = Decimal::getPositiveInfinite();
+        $this->assertTrue($pInf->sqrt()->equals($pInf));
+    }
+
+    /**
+     * @expectedException \DomainException
+     * @expectedExceptionMessage Decimal can't handle square roots of negative numbers (it's only for real numbers).
+     */
+    public function testNegativeInfiniteSqrt()
+    {
+        $nInf = Decimal::getNegativeInfinite();
+        $nInf->sqrt();
     }
 }
