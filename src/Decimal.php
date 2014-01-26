@@ -377,14 +377,11 @@ final class Decimal
             return Decimal::fromInteger(0, $scale);
         } else {
             if ($scale !== null) {
-                $divscale = $scale + 1;
+                $divscale = $scale;
             } else {
                 // $divscale is calculated in order to maintain a reasonable precision
                 $this_abs = $this->abs();
                 $b_abs    = $b->abs();
-
-                $this_significative_digits = self::countSignificativeDigits($this, $this_abs);
-                $b_significative_digits = self::countSignificativeDigits($b, $b_abs);
 
                 $log10_result =
                     self::innerLog10($this_abs->value, $this_abs->scale, 1) -
@@ -393,16 +390,16 @@ final class Decimal
                 $divscale = max(
                     $this->scale + $b->scale,
                     max(
-                        $this_significative_digits,
-                        $b_significative_digits
-                    ) - ($log10_result >= 0 ? intval(ceil($log10_result)) : 0),
-                    ($log10_result < 0 ? intval(ceil(-$log10_result)) : 0)
-                ) + 1;
+                        self::countSignificativeDigits($this, $this_abs),
+                        self::countSignificativeDigits($b, $b_abs)
+                    ) - max(ceil($log10_result), 0),
+                    ceil(-$log10_result)
+                );
             }
 
             return self::fromString(
-                bcdiv($this->value, $b->value, $divscale),
-                $divscale-1
+                bcdiv($this->value, $b->value, $divscale+1),
+                $divscale
             );
         }
     }
