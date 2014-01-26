@@ -8,16 +8,12 @@ date_default_timezone_set('UTC');
 
 class DecimalFromIntegerTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @expectedException Litipk\Exceptions\InvalidArgumentTypeException
+     * @expectedExceptionMessage $intValue must be of type int
+     */
     public function testNoInteger()
     {
-        $catched = false;
-
-        try {
-            $n = Decimal::fromInteger(5.1);
-        } catch (Exception $e) {
-            $catched = true;
-        }
-
-        $this->assertTrue($catched);
+        Decimal::fromInteger(5.1);
     }
 }
