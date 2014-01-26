@@ -141,12 +141,12 @@ final class Decimal
         if (!is_float($fltValue)) {
             throw new InvalidArgumentTypeException(
                 array('float'),
-                is_object($fltValue) ? get_class($fltValue) : gettype($fltValue),
+                is_object($fltValue) ?
+                    get_class($fltValue) :
+                    gettype($fltValue),
                 '$fltValue must be of type float'
             );
-        }
-
-        if ($fltValue === INF) {
+        } elseif ($fltValue === INF) {
             return Decimal::getPositiveInfinite();
         } elseif ($fltValue === -INF) {
             return Decimal::getNegativeInfinite();
@@ -156,14 +156,18 @@ final class Decimal
             );
         }
 
+        $dec_scale = $scale === null ?
+            8 :
+            $scale;
+
         return new Decimal(
             number_format(
                 $fltValue,
-                $scale === null ? 8 : $scale,
+                $dec_scale,
                 '.',
                 ''
             ),
-            $scale === null ? 8 : $scale
+            $dec_scale
         );
     }
 
@@ -182,9 +186,7 @@ final class Decimal
                 is_object($strValue) ? get_class($strValue) : gettype($strValue),
                 '$strVlue must be of type string.'
             );
-        }
-
-        if (preg_match('/^([+\-]?)0*(([1-9][0-9]*|[0-9])(\.[0-9]+)?)$/', $strValue, $captures) === 1) {
+        } elseif (preg_match('/^([+\-]?)0*(([1-9][0-9]*|[0-9])(\.[0-9]+)?)$/', $strValue, $captures) === 1) {
 
             // Now it's time to strip leading zeros in order to normalize inner values
             $value     = self::normalizeSign($captures[1]) . $captures[2];
