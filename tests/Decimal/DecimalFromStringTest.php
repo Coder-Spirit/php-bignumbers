@@ -67,22 +67,18 @@ class DecimalFromStringTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @expectedException Litipk\Exceptions\InvalidArgumentTypeException
+     * @expectedExceptionMessage $strVlue must be of type string.
+     */
     public function testNoString()
     {
-        $catched = false;
-
-        try {
-            $n = Decimal::fromString(5.1);
-        } catch (Exception $e) {
-            $catched = true;
-        }
-
-        $this->assertTrue($catched);
+        Decimal::fromString(5.1);
     }
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage $strValue must be a string that represents uniquely a float point number
+     * @expectedExceptionMessage $strValue must be a string that represents uniquely a float point number.
      */
     public function testBadString()
     {

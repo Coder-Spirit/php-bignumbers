@@ -174,7 +174,7 @@ final class Decimal
             throw new InvalidArgumentTypeException(
                 array('string'),
                 is_object($strValue) ? get_class($strValue) : gettype($strValue),
-                '$strVlue must be of type string'
+                '$strVlue must be of type string.'
             );
         }
 
@@ -212,7 +212,7 @@ final class Decimal
 
         } else {
             throw new \InvalidArgumentException(
-                '$strValue must be a string that represents uniquely a float point number'
+                '$strValue must be a string that represents uniquely a float point number.'
             );
         }
 
