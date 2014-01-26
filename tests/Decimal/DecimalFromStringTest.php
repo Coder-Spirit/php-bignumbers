@@ -23,7 +23,7 @@ class DecimalFromStringTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($n2->__toString(), '-1.0');
     }
 
-    public function testExponentialNotationString_With_PositiveExponent_And_PositiveSign()
+    public function testExponentialNotationString_With_PositiveExponent_And_Positive()
     {
         $this->assertTrue(
             Decimal::fromString('1e3')->equals(Decimal::fromInteger(1000))
@@ -45,7 +45,7 @@ class DecimalFromStringTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testExponentialNotationString_With_NegativeExponent_And_PositiveSign()
+    public function testExponentialNotationString_With_NegativeExponent_And_Positive()
     {
         $this->assertTrue(
             Decimal::fromString('1e-3')->equals(Decimal::fromString('0.001'))
@@ -67,7 +67,7 @@ class DecimalFromStringTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testSimpleNotation_With_Positive_Sign()
+    public function testSimpleNotation_With_PositiveSign()
     {
         $this->assertTrue(
             Decimal::fromString('+34')->equals(Decimal::fromString('34'))
@@ -75,6 +75,17 @@ class DecimalFromStringTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue(
             Decimal::fromString('+00034')->equals(Decimal::fromString('34'))
+        );
+    }
+
+    public function testExponentialNotation_With_PositiveSign()
+    {
+        $this->assertTrue(
+            Decimal::fromString('+1e3')->equals(Decimal::fromString('1e3'))
+        );
+
+        $this->assertTrue(
+            Decimal::fromString('+0001e3')->equals(Decimal::fromString('1e3'))
         );
     }
 

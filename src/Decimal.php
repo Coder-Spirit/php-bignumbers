@@ -193,7 +193,7 @@ final class Decimal
                 $scale :
                 (isset($captures[4]) ? max(0, strlen($captures[4])-1) : 0);
 
-        } elseif (preg_match('/([+\-]?)([0-9](\.[0-9]+)?)[eE]([+\-]?)([1-9][0-9]*)/', $strValue, $captures) === 1) {
+        } elseif (preg_match('/([+\-]?)0*([0-9](\.[0-9]+)?)[eE]([+\-]?)([1-9][0-9]*)/', $strValue, $captures) === 1) {
 
             // Now it's time to "unroll" the exponential notation to basic positional notation
             $sign     = self::normalizeSign($captures[1]);
