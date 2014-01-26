@@ -199,12 +199,12 @@ final class Decimal
             $sign     = self::normalizeSign($captures[1]);
             $mantissa = $captures[2];
 
-            $mantissa_scale = strlen($captures[3]) > 0 ? strlen($captures[3])-1 : 0;
+            $mantissa_scale = max(strlen($captures[3])-1, 0);
 
             $exp_val  = (int)$captures[5];
 
             if (self::normalizeSign($captures[4]) === '') {
-                $min_scale      = ($mantissa_scale-$exp_val > 0) ? $mantissa_scale-$exp_val : 0;
+                $min_scale      = max($mantissa_scale-$exp_val, 0);
                 $tmp_multiplier = bcpow(10, $exp_val);
             } else {
                 $min_scale      = $mantissa_scale + $exp_val;
