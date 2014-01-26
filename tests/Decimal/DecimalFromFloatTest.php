@@ -24,7 +24,7 @@ class DecimalFromFloatTest extends PHPUnit_Framework_TestCase
     {
         $catched = false;
         try {
-            $NaN = Decimal::fromFloat(INF - INF);
+            Decimal::fromFloat(INF - INF);
         } catch (\DomainException $e) {
             $catched = true;
         }

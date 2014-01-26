@@ -16,7 +16,7 @@ class DecimalCreateTest extends PHPUnit_Framework_TestCase
     {
         $thrown = false;
         try {
-            $d = Decimal::create(array(25, 67));
+            Decimal::create(array(25, 67));
         } catch (InvalidArgumentTypeException $e) {
             $thrown = true;
         }
@@ -24,7 +24,7 @@ class DecimalCreateTest extends PHPUnit_Framework_TestCase
 
         $thrown = false;
         try {
-            $d = Decimal::create(new A());
+            Decimal::create(new A());
         } catch (InvalidArgumentTypeException $e) {
             $thrown = true;
         }
