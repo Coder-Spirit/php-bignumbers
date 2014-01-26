@@ -272,7 +272,7 @@ final class Decimal
         if ($this->isInfinite()) {
             if (!$b->isInfinite()) {
                 return $this;
-            } elseif ($this->isPositive() && $b->isPositive() || $this->isNegative() && $b->isNegative()) {
+            } elseif ($this->hasSameSign($b)) {
                 return $this;
             } else { // elseif ($this->isPositive() && $b->isNegative || $this->isNegative() && $b->isPositive()) {
                 throw new \DomainException("Infinite numbers with opposite signs can't be added");
@@ -325,12 +325,14 @@ final class Decimal
     {
         self::paramsValidation($b, $scale);
 
-        if ($this->isZero() && $b->isInfinite() || $this->isInfinite() && $b->isZero()) {
+        if ($this->isInfinite() || $b->isZero()) {
+            return $b->mul($this);
+        } elseif ($this->isZero() && $b->isInfinite()) {
             throw new \DomainException("Zero multiplied by infinite is not allowed.");
-        } elseif ($this->isZero() && !$b->isInfinite() || !$this->isInfinite() && $b->isZero()) {
+        } elseif ($this->isZero() && !$b->isInfinite()) {
             return Decimal::fromInteger(0, $scale);
-        } elseif ($this->isInfinite() || $b->isInfinite()) {
-            if ($this->isPositive() && $b->isPositive() || $this->isNegative() && $b->isNegative()) {
+        } elseif ($b->isInfinite()) {
+            if ($this->hasSameSign($b)) {
                 return self::getPositiveInfinite();
             } else { // elseif ($this->isPositive() && $b->isNegative() || $this->isNegative() && $b->isPositive()) {
                 return self::getNegativeInfinite();
@@ -653,6 +655,10 @@ final class Decimal
         }
 
         return $this->additiveInverse();
+    }
+
+    public function hasSameSign(Decimal $b) {
+        return $this->isPositive() && $b->isPositive() || $this->isNegative() && $b->isNegative();
     }
 
     /**
