@@ -80,17 +80,13 @@ class DecimalFromStringTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($catched);
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage $strValue must be a string that represents uniquely a float point number
+     */
     public function testBadString()
     {
-        $catched = false;
-
-        try {
-            $n = Decimal::fromString('hello world');
-        } catch (Exception $e) {
-            $catched = true;
-        }
-
-        $this->assertTrue($catched);
+        Decimal::fromString('hello world');
     }
 
     public function testWithScale()
