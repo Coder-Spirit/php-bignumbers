@@ -120,3 +120,7 @@ public methods are declared in the Decimal class.
 - [ ] Create the **Rational** class.
 - [ ] Create the **Complex** class.
 - [X] Add the *pow* method.
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Litipk/php-bignumbers/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
