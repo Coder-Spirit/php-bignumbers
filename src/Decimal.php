@@ -2,6 +2,8 @@
 
 namespace Litipk\BigNumbers;
 
+use Litipk\BigNumbers\InfiniteDecimal as InfiniteDecimal;
+
 use Litipk\Exceptions\NotImplementedException as NotImplementedException;
 use Litipk\Exceptions\InvalidArgumentTypeException as InvalidArgumentTypeException;
 
@@ -10,25 +12,13 @@ use Litipk\Exceptions\InvalidArgumentTypeException as InvalidArgumentTypeExcepti
  *
  * @author Andreu Correa Casablanca <castarco@litipk.com>
  */
-final class Decimal
+class Decimal
 {
-     /**
-     * Single instance of "Positive Infinite"
-     * @var Decimal
-     */
-    private static $pInf = null;
-
-    /**
-     * Single instance of "Negative Infinite"
-     * @var Decimal
-     */
-    private static $nInf = null;
-
     /**
      * Internal numeric value
      * @var string
      */
-    private $value;
+    protected $value;
 
     /**
      * Number of digits behind the point
@@ -61,11 +51,7 @@ final class Decimal
      */
     public static function getPositiveInfinite()
     {
-        if (self::$pInf === null) {
-            self::$pInf = new Decimal('INF', 0);
-        }
-
-        return self::$pInf;
+        return InfiniteDecimal::getPositiveInfinite();
     }
 
     /**
@@ -74,11 +60,7 @@ final class Decimal
      */
     public static function getNegativeInfinite()
     {
-        if (self::$nInf === null) {
-            self::$nInf = new Decimal('-INF', 0);
-        }
-
-        return self::$nInf;
+        return InfiniteDecimal::getNegativeInfinite();
     }
 
     /**
@@ -147,9 +129,9 @@ final class Decimal
                 '$fltValue must be of type float'
             );
         } elseif ($fltValue === INF) {
-            return Decimal::getPositiveInfinite();
+            return InfiniteDecimal::getPositiveInfinite();
         } elseif ($fltValue === -INF) {
-            return Decimal::getNegativeInfinite();
+            return InfiniteDecimal::getNegativeInfinite();
         } elseif (is_nan($fltValue)) {
             throw new \DomainException(
                 "To ensure consistency, this class doesn't handle NaN objects."
@@ -269,15 +251,7 @@ final class Decimal
     {
         self::paramsValidation($b, $scale);
 
-        if ($this->isInfinite()) {
-            if (!$b->isInfinite()) {
-                return $this;
-            } elseif ($this->hasSameSign($b)) {
-                return $this;
-            } else { // elseif ($this->isPositive() && $b->isNegative || $this->isNegative() && $b->isPositive()) {
-                throw new \DomainException("Infinite numbers with opposite signs can't be added");
-            }
-        } elseif ($b->isInfinite()) {
+        if ($b->isInfinite()) {
             return $b;
         }
 
@@ -297,15 +271,7 @@ final class Decimal
     {
         self::paramsValidation($b, $scale);
 
-        if ($this->isInfinite()) {
-            if (!$b->isInfinite()) {
-                return $this;
-            } elseif (!$this->hasSameSign($b)) {
-                return $this;
-            } else { // elseif () {
-                throw new \DomainException("Infinite numbers with the same sign can't be subtracted");
-            }
-        } elseif ($b->isInfinite()) {
+        if ($b->isInfinite()) {
             return $b->additiveInverse();
         }
 
@@ -325,18 +291,10 @@ final class Decimal
     {
         self::paramsValidation($b, $scale);
 
-        if ($this->isInfinite() || $b->isZero()) {
+        if ($b->isInfinite()) {
             return $b->mul($this);
-        } elseif ($this->isZero() && $b->isInfinite()) {
-            throw new \DomainException("Zero multiplied by infinite is not allowed.");
-        } elseif ($this->isZero() && !$b->isInfinite()) {
+        } elseif ($b->isZero()) {
             return Decimal::fromInteger(0, $scale);
-        } elseif ($b->isInfinite()) {
-            if ($this->hasSameSign($b)) {
-                return self::getPositiveInfinite();
-            } else { // elseif ($this->isPositive() && $b->isNegative() || $this->isNegative() && $b->isPositive()) {
-                return self::getNegativeInfinite();
-            }
         }
 
         return self::fromString(
@@ -363,16 +321,6 @@ final class Decimal
             throw new \DomainException("Division by zero is not allowed.");
         } elseif ($this->isZero()) {
             return self::fromDecimal($this, $scale);
-        } elseif ($this->isInfinite()) {
-
-            if ($b->isInfinite()) {
-                throw new \DomainException("Infinite divided by Infinite is not allowed.");
-            } elseif ($b->isPositive()) {
-                return $this;
-            } else { //if ($b->isNegative()) {
-                return $this->additiveInverse();
-            }
-
         } elseif ($b->isInfinite()) {
             return Decimal::fromInteger(0, $scale);
         } else {
@@ -417,8 +365,6 @@ final class Decimal
             );
         } elseif ($this->isZero()) {
             return Decimal::fromDecimal($this, $scale);
-        } elseif ($this->isInfinite()) {
-            return $this;
         }
 
         $sqrt_scale = ($scale !== null ? $scale : $this->scale);
@@ -494,12 +440,10 @@ final class Decimal
     {
         if ($this->isNegative()) {
             throw new \DomainException(
-                "Decimal can't handle logarithms of negative numbers (it's only for real numbers)"
+                "Decimal can't handle logarithms of negative numbers (it's only for real numbers)."
             );
         } elseif ($this->isZero()) {
-            return Decimal::getNegativeInfinite();
-        } elseif ($this->isInfinite()) {
-            return $this;
+            return InfiniteDecimal::getNegativeInfinite();
         }
 
         return self::fromString(
@@ -513,10 +457,6 @@ final class Decimal
      */
     public function isZero($scale = null)
     {
-        if ($this->isInfinite()) {
-            return false;
-        }
-
         $cmp_scale = $scale !== null ? $scale : $this->scale;
 
         return (bccomp(self::innerRound($this->value, $cmp_scale), '0', $cmp_scale) === 0);
@@ -543,7 +483,7 @@ final class Decimal
      */
     public function isInfinite()
     {
-        return ($this === self::$pInf || $this === self::$nInf);
+        return false;
     }
 
     /**
@@ -558,7 +498,7 @@ final class Decimal
 
         if ($this === $b) {
             return true;
-        } elseif ($this->isInfinite()) {
+        } elseif ($b->isInfinite()) {
             return false;
         } else {
             $cmp_scale = $scale !== null ? $scale : max($this->scale, $b->scale);
@@ -585,10 +525,8 @@ final class Decimal
 
         if ($this === $b) {
             return 0;
-        } elseif ($this === self::getPositiveInfinite() || $b === self::getNegativeInfinite()) {
-            return 1;
-        } elseif ($this === self::getNegativeInfinite() || $b === self::getPositiveInfinite()) {
-            return -1;
+        } elseif ($b->isInfinite()) {
+            return -$b->comp($this);
         }
 
         return bccomp(
@@ -606,13 +544,7 @@ final class Decimal
     {
         if ($this->isZero()) {
             return $this;
-        } elseif ($this === self::getPositiveInfinite()) {
-            return self::$nInf;
-        } elseif ($this === self::getNegativeInfinite()) {
-            return self::$pInf;
-        }
-
-        if ($this->isNegative()) {
+        } elseif ($this->isNegative()) {
             $value = substr($this->value, 1);
         } else { // if ($this->isPositive()) {
             $value = '-' . $this->value;
@@ -628,7 +560,7 @@ final class Decimal
      */
     public function round($scale = 0)
     {
-        if ($scale >= $this->scale || $this->isInfinite()) {
+        if ($scale >= $this->scale) {
             return $this;
         }
 
@@ -798,7 +730,7 @@ final class Decimal
      * @param  mixed    $value
      * @param  integer  $scale
      */
-    private static function paramsValidation($value, $scale)
+    protected static function paramsValidation($value, $scale)
     {
         if ($value === null) {
             throw new \InvalidArgumentException('$value must be a non null number');

@@ -18,17 +18,23 @@ class DecimalLog10Test extends PHPUnit_Framework_TestCase
         $this->assertTrue($zero_log->isInfinite());
     }
 
+    
+    /**
+     * @expectedException \DomainException
+     * @expectedExceptionMessage Decimal can't handle logarithms of negative numbers (it's only for real numbers).
+     */
     public function testNegativeLog10()
     {
-        $nOne = Decimal::fromInteger(-1);
+        Decimal::fromInteger(-1)->log10();
+    }
 
-        $catched = false;
-        try {
-            $nOne->log10();
-        } catch (\DomainException $e) {
-            $catched = true;
-        }
-        $this->assertTrue($catched);
+    /**
+     * @expectedException \DomainException
+     * @expectedExceptionMessage Decimal can't handle logarithms of negative numbers (it's only for real numbers).
+     */
+    public function testNegativeInfiniteLog10()
+    {
+        Decimal::getNegativeInfinite()->log10();
     }
 
     public function testBigNumbersLog10()
