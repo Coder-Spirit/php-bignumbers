@@ -231,7 +231,7 @@ class InfiniteDecimal extends Decimal
      * @param  integer $scale
      * @return Decimal
      */
-    public function round()
+    public function round($scale = 0)
     {
     	return $this;
     }
