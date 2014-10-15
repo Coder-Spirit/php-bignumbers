@@ -542,15 +542,7 @@ class Decimal
      */
     public function additiveInverse()
     {
-        if ($this->isZero()) {
-            return $this;
-        } elseif ($this->isNegative()) {
-            $value = substr($this->value, 1);
-        } else { // if ($this->isPositive()) {
-            $value = '-' . $this->value;
-        }
-
-        return new Decimal($value, $this->scale);
+        return $this->mul(Decimal::fromInteger(-1)):
     }
 
     /**
