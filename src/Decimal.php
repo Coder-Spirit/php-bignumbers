@@ -768,6 +768,16 @@ class Decimal
             ($abs->comp($one) === -1) ? 2 : max($val->scale, 1)
         ) - ($val->isNegative() ? 1 : 0);
     }
+    
+    /**
+     * Returns the underlying number
+     *
+     * @return number
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
 
     /**
      * @return string
