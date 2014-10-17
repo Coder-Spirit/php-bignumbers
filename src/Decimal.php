@@ -770,6 +770,37 @@ class Decimal
     }
 
     /**
+     * Return value as a float
+     *
+     * @return float
+     */
+    public function asFloat()
+    {
+        return floatval($this->value);
+    }
+
+    /**
+     * Return value as a integer
+     *
+     * @return float
+     */
+    public function asInteger()
+    {
+        return intval($this->value);
+    }
+
+    /**
+     * Return the inner representation of the class
+     * use with caution
+     *
+     * @return number
+     */
+    public function _innerValue()
+    {
+        return $this->value;
+    }
+
+    /**
      * @return string
      */
     public function __toString()
