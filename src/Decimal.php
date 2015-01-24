@@ -177,7 +177,7 @@ class Decimal
                 max(0, strlen($captures[4])-1) :
                 0;
 
-        } elseif (preg_match('/([+\-]?)0*([0-9](\.[0-9]+)?)[eE]([+\-]?)([1-9][0-9]*)/', $strValue, $captures) === 1) {
+        } elseif (preg_match('/([+\-]?)0*([0-9](\.[0-9]+)?)[eE]([+\-]?)(\d+)/', $strValue, $captures) === 1) {
 
             $mantissa_scale = max(strlen($captures[3])-1, 0);
 
