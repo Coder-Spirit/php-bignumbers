@@ -89,6 +89,20 @@ class DecimalFromStringTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testExponentialNotation_With_LeadingZero_in_ExponentPart()
+    {
+        $this->assertTrue(
+            Decimal::fromString('1.048576E+06')->equals(Decimal::fromString('1.048576e6'))
+        );
+    }
+
+    public function testExponentialNotation_With_ZeroExponent()
+    {
+        $this->assertTrue(
+            Decimal::fromString('3.14E+00')->equals(Decimal::fromString('3.14'))
+        );
+    }
+
     /**
      * @expectedException Litipk\Exceptions\InvalidArgumentTypeException
      * @expectedExceptionMessage $strVlue must be of type string.
