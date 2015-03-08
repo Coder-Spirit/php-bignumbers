@@ -237,6 +237,26 @@ class InfiniteDecimal extends Decimal
     }
 
     /**
+     * "Ceils" the Decimal to have at most $scale digits after the point
+     * @param  integer $scale
+     * @return Decimal
+     */
+    public function ceil($scale = 0)
+    {
+    	return $this;
+    }
+
+    /**
+     * "Floors" the Decimal to have at most $scale digits after the point
+     * @param  integer $scale
+     * @return Decimal
+     */
+    public function floor($scale = 0)
+    {
+    	return $this;
+    }
+
+    /**
      * @return boolean
      */
     public function isZero($scale = null)

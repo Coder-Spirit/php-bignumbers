@@ -28,7 +28,7 @@ composer.json file the following text:
 ```json
 {
     "require": {
-        "litipk/php-bignumbers": "0.5.1"
+        "litipk/php-bignumbers": "0.6.0"
     }
 }
 ```
@@ -37,9 +37,9 @@ composer.json file the following text:
 
 ```php
 <?php
-  
+
   use \Litipk\BigNumbers\Decimal as Decimal;
-  
+
   /**
    * There are many ways to create Decimal objects.
    *
@@ -52,10 +52,10 @@ composer.json file the following text:
    *
    *   Decimal::create // this method works as methods fromType, but is more flexible
    */
-  
+
   $ten = Decimal::fromInteger(10);
   $two = Decimal::fromString('2.0');
-  
+
   /**
    * At this moment there are few binary operators
    * that we can use with Decimal objects:
@@ -78,7 +78,7 @@ composer.json file the following text:
    * $d1->round($scale);
    * $d1->additiveInverse();
    */
-  
+
   $five  = Decimal::fromInteger(-5)->abs();
   $six   = Decimal::fromInteger(6)->abs();
 
@@ -98,7 +98,7 @@ composer.json file the following text:
    * $d1->isInfinite();
    * $d1->isNaN();
    */
-  
+
   $zero = Decimal::fromInteger(0);
   $zero->isZero(); // Returns true
 
@@ -112,15 +112,3 @@ composer.json file the following text:
 The documentation is incomplete, if you want to use
 all the features of this package, you can see which
 public methods are declared in the Decimal class.
-
-
-## TODO List
-
-- [ ] Create the **Integer** class.
-- [ ] Create the **Rational** class.
-- [ ] Create the **Complex** class.
-- [X] Add the *pow* method.
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Litipk/php-bignumbers/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-

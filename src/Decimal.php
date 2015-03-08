@@ -143,12 +143,7 @@ class Decimal
             $scale;
 
         return new Decimal(
-            number_format(
-                $fltValue,
-                $dec_scale,
-                '.',
-                ''
-            ),
+            number_format($fltValue, $dec_scale, '.', ''),
             $dec_scale
         );
     }
@@ -568,6 +563,51 @@ class Decimal
     }
 
     /**
+     * "Ceils" the Decimal to have at most $scale digits after the point
+     * @param  integer $scale
+     * @return Decimal
+     */
+    public function ceil($scale = 0)
+    {
+        if ($scale >= $this->scale) {
+            return $this;
+        }
+
+        $rounded = bcadd($this->value, '0', $scale);
+
+        $rlen = strlen($rounded);
+        $tlen = strlen($this->value);
+
+        $mustCeil = false;
+        for ($i=$tlen-1; $i >= $rlen; $i--) {
+            if ((int)$this->value[$i] > 0) {
+                $mustCeil = true;
+                break;
+            }
+        }
+
+        if ($mustCeil) {
+            $rounded = bcadd($rounded, bcpow('10', -$scale, $scale), $scale);
+        }
+
+        return self::fromString($rounded, $scale);
+    }
+
+    /**
+     * "Floors" the Decimal to have at most $scale digits after the point
+     * @param  integer $scale
+     * @return Decimal
+     */
+    public function floor($scale = 0)
+    {
+        if ($scale >= $this->scale) {
+            return $this;
+        }
+
+        return self::fromString(bcadd($this->value, '0', $scale));
+    }
+
+    /**
      * Returns the absolute value (always a positive number)
      * @return Decimal
      */
@@ -744,7 +784,7 @@ class Decimal
     /**
      * @return string
      */
-    private static function normalizeSign($sign) 
+    private static function normalizeSign($sign)
     {
         if ($sign==='+') {
             return '';
