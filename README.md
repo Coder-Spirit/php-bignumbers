@@ -1,8 +1,8 @@
-php-bignumbers [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Litipk/php-bignumbers?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
+php-bignumbers [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Litipk/php-bignumbers?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge) [![Donate](https://img.shields.io/gratipay/litipk.svg "Donate")](https://gratipay.com/litipk/) [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=castarco&url=https://github.com/Litipk/php-bignumbers/&title=php-bignumbers&language=&tags=github&category=software) 
 ==============
 
 A robust library to handle immutable big numbers inside PHP applications
-The current stable version is 0.6.0. [![Donate](https://img.shields.io/gratipay/castarco.svg "Donate")](https://gratipay.com/castarco/) [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=castarco&url=https://github.com/Litipk/php-bignumbers/&title=php-bignumbers&language=&tags=github&category=software) 
+The current stable version is 0.6.0.
 
 
 Status Label  | Status Value
