@@ -2,7 +2,7 @@ php-bignumbers [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://git
 ==============
 
 A robust library to handle immutable big numbers inside PHP applications
-The current stable version is 0.6.0. [![Donate](https://dl.dropboxusercontent.com/u/487440/reformal/donate.png "Donate")](https://www.gittip.com/castarco/)
+The current stable version is 0.6.0. [![Donate](https://img.shields.io/gratipay/castarco.svg "Donate")](https://gratipay.com/castarco/) [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=castarco&url=https://github.com/Litipk/php-bignumbers/&title=php-bignumbers&language=&tags=github&category=software) 
 
 
 Status Label  | Status Value
