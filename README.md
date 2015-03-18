@@ -2,7 +2,8 @@ php-bignumbers [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://git
 ==============
 
 A robust library to handle immutable big numbers inside PHP applications
-The current stable version is 0.7.0.
+The current stable version is 0.7.0. Litipk\BigNumbers supports PHP 5.3.x, 5.4.x, 5.5.x, and 5.6.,x
+but also Facebook's [HHVM](http://www.hhvm.com).
 
 
 Status Label  | Status Value
@@ -15,12 +16,7 @@ Code Quality (Scrutinizer): | [![Scrutinizer Quality Score](https://scrutinizer-
 Code Quality (SensioLabs): | [![SensioLabsInsight](https://insight.sensiolabs.com/projects/9a279fbe-2b37-4612-abc0-027a3ad5d69c/mini.png)](https://insight.sensiolabs.com/projects/9a279fbe-2b37-4612-abc0-027a3ad5d69c)
 Dependencies: | [![Dependency Status](https://www.versioneye.com/user/projects/52cc91c6ec13754970000275/badge.png)](https://www.versioneye.com/user/projects/52cc91c6ec13754970000275)
 
-## Requirements
-
-Litipk PHP BigNumbers supports PHP 5.3.x, 5.4.x, 5.5.x, and 5.6.,x
-but also Facebook's [HHVM](http://www.hhvm.com).
-
-## Install Instructions
+## Getting started
 
 You can install this library using [Composer](http://getcomposer.org/).
 
@@ -35,82 +31,18 @@ composer.json file the following text:
 }
 ```
 
-## Basic Usage
+## Learn more
 
-```php
-<?php
+ * [Project Documentation](https://github.com/Litipk/php-bignumbers/wiki) : Here you can find how to use Litipk\BigNumbers in your applications.
+ * [Chat Room](https://gitter.im/Litipk/php-bignumbers) : If you want to have a real-time chat with other Litipk\BigNumbers users or developers, you can do it here.
+ * [Group / Mail List](https://groups.io/org/groupsio/php-bignumbers) : If a chat room isn't enough to post your doubts or ideas, you can join to our mail list.
 
-  use \Litipk\BigNumbers\Decimal as Decimal;
+## How to contribute
 
-  /**
-   * There are many ways to create Decimal objects.
-   *
-   * We can use the following methods:
-   *
-   *   Decimal::fromInteger
-   *   Decimal::fromFloat
-   *   Decimal::fromString
-   *   Decimal::fromDecimal
-   *
-   *   Decimal::create // this method works as methods fromType, but is more flexible
-   */
+ * First of all, you can take a look on the [bugtracker](https://github.com/Litipk/php-bignumbers/issues) and decide if there is something that you want to do :wink: . If you think there are missing improvements in this file, then you are invited to modify the TODO list.
+ * You can also send us bug reports using the same bugtracker.
+ * If you are really interested on helping to improve Litipk\BigNumbers, we recommend to read the [contributing guidelines](https://github.com/Litipk/php-bignumbers/blob/master/CONTRIBUTING.md).
 
-  $ten = Decimal::fromInteger(10);
-  $two = Decimal::fromString('2.0');
+## License
 
-  /**
-   * At this moment there are few binary operators
-   * that we can use with Decimal objects:
-   *
-   *  $d1->add($d2);
-   *  $d1->sub($d2);
-   *  $d1->mul($d2);
-   *  $d1->div($d2);
-   */
-
-  $twenty = $ten->mul($two);
-  $forty  = $two->mul(Decimal::fromFloat(20.));
-
-  /**
-   * There are many unary operators too:
-   *
-   * $d1->abs();
-   * $d1->sqrt();
-   * $d1->log10();
-   * $d1->round($scale);
-   * $d1->additiveInverse();
-   */
-
-  $five  = Decimal::fromInteger(-5)->abs();
-  $six   = Decimal::fromInteger(6)->abs();
-
-  $three = Decimal::fromInteger(9)->sqrt();
-
-  Decimal::fromString('0.06')->round(0)->equals(Decimal::fromString('0'));   // returns true
-  Decimal::fromString('0.06')->round(1)->equals(Decimal::fromString('0.1')); // returns true
-
-  $five->additiveInverse()->equals(Decimal::fromInteger(-5)); // returns true
-
-  /**
-   * You can check many properties of your numbers:
-   *
-   * $d1->isNegative();
-   * $d1->isZero();
-   * $d1->isPositive();
-   * $d1->isInfinite();
-   * $d1->isNaN();
-   */
-
-  $zero = Decimal::fromInteger(0);
-  $zero->isZero(); // Returns true
-
-  $five->div($zero)->isNaN(); // Returns true
-  $zero->div($five)->isNaN(); // Returns false
-
-  $five->additiveInverse()->sqrt()->isNaN(); // Returns true
-?>
-```
-
-The documentation is incomplete, if you want to use
-all the features of this package, you can see which
-public methods are declared in the Decimal class.
+Litipk\BigNumbers is licensed under the [MIT License](https://github.com/Litipk/php-bignumbers/blob/master/LICENSE).
