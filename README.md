@@ -2,13 +2,14 @@ php-bignumbers [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://git
 ==============
 
 A robust library to handle immutable big numbers inside PHP applications
-The current stable version is 0.6.0.
+The current stable version is 0.7.0.
 
 
 Status Label  | Status Value
 --------------|-------------
-Build | [![Build Status](https://api.travis-ci.org/Litipk/php-bignumbers.png?tag=0.6.0)](https://travis-ci.org/Litipk/php-bignumbers)
-Coverage (from Coveralls): | [![Coverage Status](https://coveralls.io/repos/Litipk/php-bignumbers/badge.png?tag=0.6.0)](https://coveralls.io/r/Litipk/php-bignumbers?branch=master)
+Build | [![Build Status](https://api.travis-ci.org/Litipk/php-bignumbers.png?tag=0.7.0)](https://travis-ci.org/Litipk/php-bignumbers)
+HHVM support | [![HHVM Status](http://hhvm.h4cc.de/badge/litipk/php-bignumbers.svg)](http://hhvm.h4cc.de/package/litipk/php-bignumbers)
+Coverage (from Coveralls): | [![Coverage Status](https://coveralls.io/repos/Litipk/php-bignumbers/badge.png?tag=0.7.0)](https://coveralls.io/r/Litipk/php-bignumbers?branch=master)
 Coverage (from Scrutinizer): | [![Code Coverage](https://scrutinizer-ci.com/g/Litipk/php-bignumbers/badges/coverage.png?s=58936d9334e7fc2413a43ad6cf1c7c1577f1f39c)](https://scrutinizer-ci.com/g/Litipk/php-bignumbers/)
 Code Quality: | [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/Litipk/php-bignumbers/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Litipk/php-bignumbers/)
 Dependencies: | [![Dependency Status](https://www.versioneye.com/user/projects/52cc91c6ec13754970000275/badge.png)](https://www.versioneye.com/user/projects/52cc91c6ec13754970000275)
@@ -28,7 +29,7 @@ composer.json file the following text:
 ```json
 {
     "require": {
-        "litipk/php-bignumbers": "0.6.0"
+        "litipk/php-bignumbers": "0.7.0"
     }
 }
 ```
