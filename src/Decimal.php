@@ -548,6 +548,7 @@ class Decimal
         return new Decimal($value, $this->scale);
     }
 
+
     /**
      * "Rounds" the Decimal to have at most $scale digits after the point
      * @param  integer $scale
@@ -618,6 +619,18 @@ class Decimal
         }
 
         return $this->additiveInverse();
+    }
+
+    /**
+     * Calculate modulo with a decimal
+     * @param $d
+     * @return $this % $d
+     */
+    public function mod(Decimal $d, $scale = null)
+    {
+        // integer division
+        $div = $this->div($d, 1)->floor();
+        return $this->sub($div->mul($d, $scale));
     }
 
     public function hasSameSign(Decimal $b) {
