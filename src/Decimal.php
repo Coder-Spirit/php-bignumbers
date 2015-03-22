@@ -633,6 +633,123 @@ class Decimal
         return $this->sub($div->mul($d, $scale));
     }
 
+    /**
+     * Calculates the sine of this method with the highest possible accuracy
+     * Note that accuracy is limited by the accuracy of predefined PI;
+     *
+     * @param null $scale
+     * @return Decimal sin($this)
+     */
+    public function sin($scale = null) {
+        // First normalise the number in the [0, 2PI] domain
+        $twoPi = NumConstants::PI()->mul(Decimal::fromString("2"));
+        $x = $this->mod($twoPi);
+        $zero = Decimal::fromString("0");
+
+        // PI has only 32 siginficant numbers
+        $significantNumbers = is_null($scale) ? 32 : $scale;
+
+        // Next use Maclaurin's theorem to approximate sin with high enough accuracy
+        // note that the accuracy is depended on the accuracy of the given PI constant
+        $faculty = Decimal::fromString("1");    // Calculates the faculty under the sign
+        $loopCounter = 1;                       // Calculates the iteration we are in
+        $xPowerN = Decimal::fromString("1");    // Calculates x^n
+        $approx = Decimal::fromString("0");     // keeps track of our approximation for sin(x)
+
+        while (true) {
+            // update x^n and n! for this walkthrough
+            $xPowerN = $xPowerN->mul($x);
+            $faculty = $faculty->mul(Decimal::fromString((string) $loopCounter));
+
+            // only do calculations if n is uneven
+            // otherwise result is zero anyways
+            if ($loopCounter % 2 === 1) {
+                // calculate the absolute change in this iteration.
+                $change = $xPowerN->div($faculty);
+
+                // change should be added if x mod 4 == 1 and subtracted if x mod 4 == 3
+                if ($loopCounter % 4 === 1) {
+                    $approx = $approx->add($change);
+                } else {
+                    $approx = $approx->sub($change);
+                }
+
+                // Terminate the method if our change is sufficiently small
+                if ($change->floor($significantNumbers)->equals($zero)) {
+                    return $approx->round($significantNumbers);
+                }
+            }
+
+
+            $loopCounter++;
+        }
+    }
+
+    /**
+     * Calculates the cosine of this method with the highest possible accuracy
+     * Note that accuracy is limited by the accuracy of predefined PI;
+     *
+     * @param null $scale
+     * @return Decimal cos($this)
+     */
+    public function cos($scale = null) {
+        // First normalise the number in the [0, 2PI] domain
+        $twoPi = NumConstants::PI()->mul(Decimal::fromString("2"));
+        $x = $this->mod($twoPi);
+        $zero = Decimal::fromString("0");
+
+        // PI has only 32 siginficant numbers
+        $significantNumbers = is_null($scale) ? 32 : $scale;
+
+        // Next use Maclaurin's theorem to approximate sin with high enough accuracy
+        // note that the accuracy is depended on the accuracy of the given PI constant
+        $faculty = Decimal::fromString("1");    // Calculates the faculty under the sign
+        $loopCounter = 1;                       // Calculates the iteration we are in
+        $xPowerN = Decimal::fromString("1");    // Calculates x^n
+        $approx = Decimal::fromString("1");     // keeps track of our approximation for sin(x)
+
+        while (true) {
+            // update x^n and n! for this walkthrough
+            $xPowerN = $xPowerN->mul($x);
+            $faculty = $faculty->mul(Decimal::fromString((string) $loopCounter));
+
+            // only do calculations if n is uneven
+            // otherwise result is zero anyways
+            if ($loopCounter % 2 === 0) {
+                // calculate the absolute change in this iteration.
+                $change = $xPowerN->div($faculty);
+
+                // change should be added if x mod 4 == 1 and subtracted if x mod 4 == 3
+                if ($loopCounter % 4 === 0) {
+                    $approx = $approx->add($change);
+                } else {
+                    $approx = $approx->sub($change);
+                }
+
+                // Terminate the method if our change is sufficiently small
+                if ($change->floor($significantNumbers )->equals($zero)) {
+                    return $approx->round($significantNumbers);
+                }
+            }
+
+
+            $loopCounter++;
+        }
+    }
+
+    /**
+     * Calculates the tangent of this method with the highest possible accuracy
+     * Note that accuracy is limited by the accuracy of predefined PI;
+     *
+     * @param null $scale
+     * @return Decimal tan($this)
+     */
+    public function tan($scale = null) {
+        return $this->sin($scale + 2)
+            ->div($this->cos($scale + 2))
+            ->floor($scale);
+    }
+
     public function hasSameSign(Decimal $b) {
         return $this->isPositive() && $b->isPositive() || $this->isNegative() && $b->isNegative();
     }
