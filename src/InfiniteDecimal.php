@@ -257,6 +257,30 @@ class InfiniteDecimal extends Decimal
     	return $this;
     }
 
+    public function sin($scale = null)
+    {
+        throw new \DomainException(($this === self::$pInf) ?
+            "Sinus function hasn't limit in the positive infinite." :
+            "Sinus function hasn't limit in the negative infinite."
+        );
+    }
+
+    public function cos($scale = null)
+    {
+        throw new \DomainException(($this === self::$pInf) ?
+            "Cosinus function hasn't limit in the positive infinite." :
+            "Cosinus function hasn't limit in the negative infinite."
+        );
+    }
+
+    public function tan($scale = null)
+    {
+        throw new \DomainException(($this === self::$pInf) ?
+            "Tangent function hasn't limit in the positive infinite." :
+            "Tangent function hasn't limit in the negative infinite."
+        );
+    }
+
     /**
      * @return boolean
      */

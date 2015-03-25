@@ -33,13 +33,4 @@ class DecimalCeilTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(Decimal::fromString('3.45')->ceil(2)->equals(Decimal::fromString('3.45')));
         $this->assertTrue(Decimal::fromString('3.45')->ceil(3)->equals(Decimal::fromString('3.45')));
     }
-
-    public function testInfiniteRound()
-    {
-        $pInf = Decimal::getPositiveInfinite();
-        $nInf = Decimal::getNegativeInfinite();
-
-        $this->assertTrue($pInf->ceil()->equals($pInf));
-        $this->assertTrue($nInf->ceil()->equals($nInf));
-    }
 }

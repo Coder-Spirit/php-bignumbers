@@ -637,7 +637,7 @@ class Decimal
      * Calculates the sine of this method with the highest possible accuracy
      * Note that accuracy is limited by the accuracy of predefined PI;
      *
-     * @param null $scale
+     * @param integer $scale
      * @return Decimal sin($this)
      */
     public function sin($scale = null) {
@@ -689,7 +689,7 @@ class Decimal
      * Calculates the cosine of this method with the highest possible accuracy
      * Note that accuracy is limited by the accuracy of predefined PI;
      *
-     * @param null $scale
+     * @param integer $scale
      * @return Decimal cos($this)
      */
     public function cos($scale = null) {
@@ -741,7 +741,7 @@ class Decimal
      * Calculates the tangent of this method with the highest possible accuracy
      * Note that accuracy is limited by the accuracy of predefined PI;
      *
-     * @param null $scale
+     * @param integer $scale
      * @return Decimal tan($this)
      */
     public function tan($scale = null) {
