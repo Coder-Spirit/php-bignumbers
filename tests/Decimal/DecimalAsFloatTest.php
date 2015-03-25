@@ -8,7 +8,7 @@ date_default_timezone_set('UTC');
 
 class DecimalAsFloatTest extends PHPUnit_Framework_TestCase
 {
-    public function testFloat()
+    public function testAsFloat()
     {
         $this->assertEquals(1.0, Decimal::fromString('1.0')->asFloat());
         $this->assertTrue(is_float(Decimal::fromString('1.0')->asFloat()));

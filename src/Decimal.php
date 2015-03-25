@@ -755,6 +755,45 @@ class Decimal
     }
 
     /**
+     * Return value as a float
+     *
+     * @return float
+     */
+    public function asFloat()
+    {
+        return floatval($this->value);
+    }
+
+    /**
+     * Return value as a integer
+     *
+     * @return float
+     */
+    public function asInteger()
+    {
+        return intval($this->value);
+    }
+
+    /**
+     * Return the inner representation of the class
+     * use with caution
+     *
+     * @return number
+     */
+    public function _innerValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->value;
+    }
+
+    /**
      * "Rounds" the decimal string to have at most $scale digits after the point
      *
      * @param  string  $value
@@ -937,44 +976,5 @@ class Decimal
         return strlen($val->value) - (
             ($abs->comp($one) === -1) ? 2 : max($val->scale, 1)
         ) - ($val->isNegative() ? 1 : 0);
-    }
-
-    /**
-     * Return value as a float
-     *
-     * @return float
-     */
-    public function asFloat()
-    {
-        return floatval($this->value);
-    }
-
-    /**
-     * Return value as a integer
-     *
-     * @return float
-     */
-    public function asInteger()
-    {
-        return intval($this->value);
-    }
-
-    /**
-     * Return the inner representation of the class
-     * use with caution
-     *
-     * @return number
-     */
-    public function _innerValue()
-    {
-        return $this->value;
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->value;
     }
 }

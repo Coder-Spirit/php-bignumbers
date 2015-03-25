@@ -43,6 +43,9 @@ class DecimalCreateTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(Decimal::create(-35.125)->equals(Decimal::fromFloat(-35.125)));
         $this->assertTrue(Decimal::create(0.0)->equals(Decimal::fromFloat(0.0)));
         $this->assertTrue(Decimal::create(35.125)->equals(Decimal::fromFloat(35.125)));
+
+        $this->assertTrue(Decimal::create(INF)->equals(Decimal::getPositiveInfinite()));
+        $this->assertTrue(Decimal::create(-INF)->equals(Decimal::getNegativeInfinite()));
     }
 
     public function testCreateFromString()

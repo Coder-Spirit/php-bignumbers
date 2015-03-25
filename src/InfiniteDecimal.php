@@ -3,8 +3,9 @@
 namespace Litipk\BigNumbers;
 
 use Litipk\BigNumbers\Decimal as Decimal;
+use Litipk\Exceptions\InvalidCastException;
 
- /**
+/**
  * Immutable object that represents an infinite number
  *
  * @author Andreu Correa Casablanca <castarco@litipk.com>
@@ -286,5 +287,25 @@ class InfiniteDecimal extends Decimal
     public function isInfinite()
     {
         return true;
+    }
+
+    /**
+     * Return value as a float
+     *
+     * @return float
+     */
+    public function asFloat()
+    {
+        return ($this === self::$pInf) ? INF : -INF;
+    }
+
+    /**
+     * Return value as a integer
+     *
+     * @return float
+     */
+    public function asInteger()
+    {
+        throw new InvalidCastException("InfiniteDecimal", "int", "PHP integers can't represent infinite values.");
     }
 }

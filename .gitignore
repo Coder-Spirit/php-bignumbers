@@ -1,4 +1,4 @@
 composer.lock
 vendor
-vendor/
-vendor/*
+.idea
+coverage_report
