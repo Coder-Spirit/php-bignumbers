@@ -26,4 +26,20 @@ class DecimalTanTest extends PHPUnit_Framework_TestCase
         $tanX = $x->tan($digits);
         $this->assertTrue(Decimal::fromString($answer)->equals($tanX));
     }
+
+    // the fonction tan shouldn't work on π/2
+    public function testTanPiTwoDiv()
+    {    	
+        $PI  = NumConstants::PI();
+        $two = Decimal::fromInteger(2);
+        $PiDividedByTwo = $PI->div($two);
+
+        $catched = false;
+        try {
+            $PiDividedByTwo->tan();
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
+    }
 }
