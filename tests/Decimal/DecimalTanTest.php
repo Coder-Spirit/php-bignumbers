@@ -1,6 +1,7 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
+use \Litipk\BigNumbers\DecimalConstants as DecimalConstants;
 
 /**
  * @group tan
@@ -25,5 +26,20 @@ class DecimalTanTest extends PHPUnit_Framework_TestCase
         $x = Decimal::fromString($nr);
         $tanX = $x->tan($digits);
         $this->assertTrue(Decimal::fromString($answer)->equals($tanX));
+    }
+    
+    public function testTanPiTwoDiv()
+    {    	
+        $PI  = DecimalConstants::PI();
+        $two = Decimal::fromInteger(2);
+        $PiDividedByTwo = $PI->div($two);
+
+        $catched = false;
+        try {
+            $PiDividedByTwo->tan();
+        } catch (\DomainException $e) {
+            $catched = true;
+        }
+        $this->assertTrue($catched);
     }
 }

@@ -742,9 +742,16 @@ class Decimal
      * @return Decimal tan($this)
      */
     public function tan($scale = null) {
-        return $this->sin($scale + 2)
-            ->div($this->cos($scale + 2))
-            ->floor($scale);
+	    $cos = $this->cos($scale + 2);
+	    if ($cos->isZero()) {
+	        throw new \DomainException(
+	            "The tangent of this 'angle' is undefined."
+	        );
+	    }
+
+	    return $this->sin($scale + 2)
+	        ->div($cos)
+	        ->floor($scale);
     }
 
     public function hasSameSign(Decimal $b) {
