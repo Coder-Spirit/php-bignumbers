@@ -166,35 +166,35 @@ class Decimal
         } elseif (preg_match('/^([+\-]?)0*(([1-9][0-9]*|[0-9])(\.[0-9]+)?)$/', $strValue, $captures) === 1) {
 
             // Now it's time to strip leading zeros in order to normalize inner values
-            $value     = self::normalizeSign($captures[1]) . $captures[2];
-
-            $min_scale = isset($captures[4]) ?
-                max(0, strlen($captures[4])-1) :
-                0;
+            $value = self::normalizeSign($captures[1]) . $captures[2];
+            $min_scale = isset($captures[4]) ? max(0, strlen($captures[4]) - 1) : 0;
 
         } elseif (preg_match('/([+\-]?)0*([0-9](\.[0-9]+)?)[eE]([+\-]?)(\d+)/', $strValue, $captures) === 1) {
 
-            $mantissa_scale = max(strlen($captures[3])-1, 0);
+            $mantissa_scale = max(strlen($captures[3]) - 1, 0);
 
-            $exp_val  = (int)$captures[5];
+            $exp_val = (int)$captures[5];
 
             if (self::normalizeSign($captures[4]) === '') {
-                $min_scale      = max($mantissa_scale-$exp_val, 0);
+                $min_scale = max($mantissa_scale - $exp_val, 0);
                 $tmp_multiplier = bcpow(10, $exp_val);
             } else {
-                $min_scale      = $mantissa_scale + $exp_val;
+                $min_scale = $mantissa_scale + $exp_val;
                 $tmp_multiplier = bcpow(10, -$exp_val, $exp_val);
             }
 
             $value = self::normalizeSign($captures[1]) . bcmul(
-                $captures[2],
-                $tmp_multiplier,
-                max(
-                    $min_scale,
-                    $scale !== null ? $scale : 0
-                )
-            );
+                    $captures[2],
+                    $tmp_multiplier,
+                    max($min_scale, $scale !== null ? $scale : 0)
+                );
 
+        } else if (preg_match('/([+\-]?)(inf|Inf|INF)/', $strValue, $captures) === 1) {
+            if ($captures[1] === '-') {
+                return InfiniteDecimal::getNegativeInfinite();
+            } else {
+                return InfiniteDecimal::getPositiveInfinite();
+            }
         } else {
             throw new \InvalidArgumentException(
                 '$strValue must be a string that represents uniquely a float point number.'
@@ -207,10 +207,7 @@ class Decimal
             $dec_scale = $min_scale;
         }
 
-        return new Decimal(
-            self::innerRound($value, $dec_scale),
-            $dec_scale
-        );
+        return new Decimal(self::innerRound($value, $dec_scale), $dec_scale);
     }
 
     /**
@@ -642,7 +639,7 @@ class Decimal
      */
     public function sin($scale = null) {
         // First normalise the number in the [0, 2PI] domain
-        $twoPi = NumConstants::PI()->mul(Decimal::fromString("2"));
+        $twoPi = DecimalConstants::PI()->mul(Decimal::fromString("2"));
         $x = $this->mod($twoPi);
         $zero = Decimal::fromString("0");
 
@@ -694,7 +691,7 @@ class Decimal
      */
     public function cos($scale = null) {
         // First normalise the number in the [0, 2PI] domain
-        $twoPi = NumConstants::PI()->mul(Decimal::fromString("2"));
+        $twoPi = DecimalConstants::PI()->mul(Decimal::fromString("2"));
         $x = $this->mod($twoPi);
         $zero = Decimal::fromString("0");
 

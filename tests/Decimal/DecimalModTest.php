@@ -13,6 +13,8 @@ class DecimalModTest extends PHPUnit_Framework_TestCase
             array('34', '3.4', '0'),
             array('15.1615', '3.156156', '2.536876'),
             array('15.1615', '3.156156', '2.5365', 3),
+            array('3.4', '-2', '-0.6'),
+            array('-3.4', '2', '0.6')
         );
     }
     /**
@@ -25,7 +27,7 @@ class DecimalModTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue(
             Decimal::fromString($answer)->equals($decimalAnswer),
-            $decimalAnswer . ' must be equal to ' . $answer
+            $decimalAnswer . ' % ' . $mod . ' must be equal to ' . $answer . ', but was ' . $decimalAnswer
         );
     }
 }

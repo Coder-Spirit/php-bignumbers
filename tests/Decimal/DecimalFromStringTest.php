@@ -103,6 +103,33 @@ class DecimalFromStringTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testStringInfinite()
+    {
+        $infUU = Decimal::fromString("INF");
+        $infLL = Decimal::fromString("inf");
+        $infUL = Decimal::fromString("Inf");
+
+        $pInfUU = Decimal::fromString("+INF");
+        $pInfLL = Decimal::fromString("+inf");
+        $pInfUL = Decimal::fromString("+Inf");
+
+        $nInfUU = Decimal::fromString("-INF");
+        $nInfLL = Decimal::fromString("-inf");
+        $nInfUL = Decimal::fromString("-Inf");
+
+        $this->assertTrue($infUU->equals(Decimal::getPositiveInfinite()));
+        $this->assertTrue($infLL->equals(Decimal::getPositiveInfinite()));
+        $this->assertTrue($infUL->equals(Decimal::getPositiveInfinite()));
+
+        $this->assertTrue($pInfUU->equals(Decimal::getPositiveInfinite()));
+        $this->assertTrue($pInfLL->equals(Decimal::getPositiveInfinite()));
+        $this->assertTrue($pInfUL->equals(Decimal::getPositiveInfinite()));
+
+        $this->assertTrue($nInfUU->equals(Decimal::getNegativeInfinite()));
+        $this->assertTrue($nInfLL->equals(Decimal::getNegativeInfinite()));
+        $this->assertTrue($nInfUL->equals(Decimal::getNegativeInfinite()));
+    }
+
     /**
      * @expectedException Litipk\Exceptions\InvalidArgumentTypeException
      * @expectedExceptionMessage $strVlue must be of type string.

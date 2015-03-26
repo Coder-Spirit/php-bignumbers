@@ -28,15 +28,6 @@ class DecimalLog10Test extends PHPUnit_Framework_TestCase
         Decimal::fromInteger(-1)->log10();
     }
 
-    /**
-     * @expectedException \DomainException
-     * @expectedExceptionMessage Decimal can't handle logarithms of negative numbers (it's only for real numbers).
-     */
-    public function testNegativeInfiniteLog10()
-    {
-        Decimal::getNegativeInfinite()->log10();
-    }
-
     public function testBigNumbersLog10()
     {
         $bignumber = Decimal::fromString(bcpow('10', '2417'));
@@ -60,12 +51,5 @@ class DecimalLog10Test extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($seventyfive->log10(5)->equals(Decimal::fromString('1.87506')));
         $this->assertTrue($fortynine->log10(7)->equals(Decimal::fromString('1.6901961')));
-    }
-
-    public function testPInfiniteLog10()
-    {
-        $pInf = Decimal::getPositiveInfinite();
-
-        $this->assertTrue($pInf->log10()->equals($pInf));
     }
 }
