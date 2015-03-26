@@ -6,7 +6,7 @@ use Litipk\BigNumbers\Decimal as Decimal;
 
 
 /**
- * Static class that holds many important numeric constants
+ * git statu class that holds many important numeric constants
  *
  * @author Andreu Correa Casablanca <castarco@litipk.com>
  */
@@ -101,6 +101,6 @@ final class DecimalConstants
         if (self::$LightSpeed === null) {
             self::$LightSpeed = Decimal::fromInteger(299792458);
         }
-        return selfgit::$LightSpeed;
+        return self::$LightSpeed;
     }
 }
