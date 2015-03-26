@@ -643,8 +643,6 @@ class Decimal
     {
         $div = $this->div($d, 1)->floor();
         return $this->sub($div->mul($d), $scale);
-
-        return $res;
     }
 
     /**
@@ -658,45 +656,39 @@ class Decimal
         // First normalise the number in the [0, 2PI] domain
         $twoPi = DecimalConstants::PI()->mul(Decimal::fromString("2"));
         $x = $this->mod($twoPi);
-        $zero = Decimal::fromString("0");
 
-        // PI has only 32 siginficant numbers
+        // PI has only 32 significant numbers
         $significantNumbers = is_null($scale) ? 32 : $scale;
 
         // Next use Maclaurin's theorem to approximate sin with high enough accuracy
         // note that the accuracy is depended on the accuracy of the given PI constant
         $faculty = Decimal::fromString("1");    // Calculates the faculty under the sign
-        $loopCounter = 1;                       // Calculates the iteration we are in
         $xPowerN = Decimal::fromString("1");    // Calculates x^n
         $approx = Decimal::fromString("0");     // keeps track of our approximation for sin(x)
 
-        while (true) {
+        $change = InfiniteDecimal::getPositiveInfinite();
+
+        for ($i = 1; !$change->round($significantNumbers)->isZero(); $i++) {
             // update x^n and n! for this walkthrough
             $xPowerN = $xPowerN->mul($x);
-            $faculty = $faculty->mul(Decimal::fromString((string) $loopCounter));
+            $faculty = $faculty->mul(Decimal::fromString((string) $i));
 
             // only do calculations if n is uneven
             // otherwise result is zero anyways
-            if ($loopCounter % 2 === 1) {
+            if ($i % 2 === 1) {
                 // calculate the absolute change in this iteration.
                 $change = $xPowerN->div($faculty);
 
                 // change should be added if x mod 4 == 1 and subtracted if x mod 4 == 3
-                if ($loopCounter % 4 === 1) {
+                if ($i % 4 === 1) {
                     $approx = $approx->add($change);
                 } else {
                     $approx = $approx->sub($change);
                 }
-
-                // Terminate the method if our change is sufficiently small
-                if ($change->floor($significantNumbers)->equals($zero)) {
-                    return $approx->round($significantNumbers);
-                }
             }
-
-
-            $loopCounter++;
         }
+
+        return $approx->round($significantNumbers);
     }
 
     /**
