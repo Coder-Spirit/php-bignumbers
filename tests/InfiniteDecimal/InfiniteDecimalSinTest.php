@@ -9,7 +9,7 @@ class InfiniteDecimalSinTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException \DomainException
-     * @expectedExceptionMessage Sinus function hasn't limit in the positive infinite.
+     * @expectedExceptionMessage Sine function hasn't limit in the positive infinite.
      */
     public function testFinitePositiveInfiniteSin()
     {
@@ -18,7 +18,7 @@ class InfiniteDecimalSinTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \DomainException
-     * @expectedExceptionMessage Sinus function hasn't limit in the negative infinite.
+     * @expectedExceptionMessage Sine function hasn't limit in the negative infinite.
      */
     public function testFiniteNegativeInfiniteSin()
     {

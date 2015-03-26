@@ -9,7 +9,7 @@ class InfiniteDecimalCosTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException \DomainException
-     * @expectedExceptionMessage Cosinus function hasn't limit in the positive infinite.
+     * @expectedExceptionMessage Cosine function hasn't limit in the positive infinite.
      */
     public function testFinitePositiveInfiniteCos()
     {
@@ -18,7 +18,7 @@ class InfiniteDecimalCosTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \DomainException
-     * @expectedExceptionMessage Cosinus function hasn't limit in the negative infinite.
+     * @expectedExceptionMessage Cosine function hasn't limit in the negative infinite.
      */
     public function testFiniteNegativeInfiniteCos()
     {

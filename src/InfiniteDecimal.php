@@ -260,16 +260,16 @@ class InfiniteDecimal extends Decimal
     public function sin($scale = null)
     {
         throw new \DomainException(($this === self::$pInf) ?
-            "Sinus function hasn't limit in the positive infinite." :
-            "Sinus function hasn't limit in the negative infinite."
+            "Sine function hasn't limit in the positive infinite." :
+            "Sine function hasn't limit in the negative infinite."
         );
     }
 
     public function cos($scale = null)
     {
         throw new \DomainException(($this === self::$pInf) ?
-            "Cosinus function hasn't limit in the positive infinite." :
-            "Cosinus function hasn't limit in the negative infinite."
+            "Cosine function hasn't limit in the positive infinite." :
+            "Cosine function hasn't limit in the negative infinite."
         );
     }
 
