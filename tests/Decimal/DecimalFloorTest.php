@@ -37,4 +37,10 @@ class DecimalFloorTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(Decimal::fromString('3.45')->floor(2)->equals(Decimal::fromString('3.45')));
         $this->assertTrue(Decimal::fromString('3.45')->floor(3)->equals(Decimal::fromString('3.45')));
     }
+
+    public function testNegativeFloor()
+    {
+        $this->assertTrue(Decimal::fromFloat(-3.4)->floor()->equals(Decimal::fromFloat(-4.0)));
+        $this->assertTrue(Decimal::fromFloat(-3.6)->floor()->equals(Decimal::fromFloat(-4.0)));
+    }
 }

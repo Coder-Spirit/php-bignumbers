@@ -571,21 +571,32 @@ class Decimal
             return $this;
         }
 
+        if ($this->isNegative()) {
+            return self::fromString(bcadd($this->value, '0', $scale));
+        }
+
+        return $this->innerTruncate($scale);
+    }
+
+    private function innerTruncate($scale = 0, $ceil = true)
+    {
         $rounded = bcadd($this->value, '0', $scale);
 
         $rlen = strlen($rounded);
         $tlen = strlen($this->value);
 
-        $mustCeil = false;
+        $mustTruncate = false;
         for ($i=$tlen-1; $i >= $rlen; $i--) {
             if ((int)$this->value[$i] > 0) {
-                $mustCeil = true;
+                $mustTruncate = true;
                 break;
             }
         }
 
-        if ($mustCeil) {
-            $rounded = bcadd($rounded, bcpow('10', -$scale, $scale), $scale);
+        if ($mustTruncate) {
+            $rounded = $ceil ?
+                bcadd($rounded, bcpow('10', -$scale, $scale), $scale) :
+                bcsub($rounded, bcpow('10', -$scale, $scale), $scale);
         }
 
         return self::fromString($rounded, $scale);
@@ -600,6 +611,10 @@ class Decimal
     {
         if ($scale >= $this->scale) {
             return $this;
+        }
+
+        if ($this->isNegative()) {
+            return $this->innerTruncate($scale, false);
         }
 
         return self::fromString(bcadd($this->value, '0', $scale));
@@ -620,14 +635,16 @@ class Decimal
 
     /**
      * Calculate modulo with a decimal
-     * @param $d
+     * @param Decimal $d
+     * @param integer $scale
      * @return $this % $d
      */
     public function mod(Decimal $d, $scale = null)
     {
-        // integer division
         $div = $this->div($d, 1)->floor();
-        return $this->sub($div->mul($d, $scale));
+        return $this->sub($div->mul($d), $scale);
+
+        return $res;
     }
 
     /**
@@ -744,9 +761,15 @@ class Decimal
     public function tan($scale = null) {
         return $this->sin($scale + 2)
             ->div($this->cos($scale + 2))
-            ->floor($scale);
+            ->round($scale);
     }
 
+    /**
+     * Indicates if the passed parameter has the same sign as the method's bound object.
+     *
+     * @param Decimal $b
+     * @return bool
+     */
     public function hasSameSign(Decimal $b) {
         return $this->isPositive() && $b->isPositive() || $this->isNegative() && $b->isNegative();
     }

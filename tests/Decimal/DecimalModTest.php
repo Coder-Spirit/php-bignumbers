@@ -12,7 +12,8 @@ class DecimalModTest extends PHPUnit_Framework_TestCase
             array('10', '3', '1'),
             array('34', '3.4', '0'),
             array('15.1615', '3.156156', '2.536876'),
-            array('15.1615', '3.156156', '2.5365', 3),
+            array('15.1615', '3.156156', '2.5369', 4),
+            array('-3.4', '-2', '-1.4'),
             array('3.4', '-2', '-0.6'),
             array('-3.4', '2', '0.6')
         );
@@ -20,7 +21,7 @@ class DecimalModTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider modProvider
      */
-    public function testMod($number, $mod, $answer, $scale = null) {
+    public function testFiniteFiniteMod($number, $mod, $answer, $scale = null) {
         $numberDec = Decimal::fromString($number);
         $modDec = Decimal::fromString($mod);
         $decimalAnswer = $numberDec->mod($modDec, $scale);

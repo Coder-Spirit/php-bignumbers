@@ -10,7 +10,7 @@ use Litipk\BigNumbers\Decimal as Decimal;
  *
  * @author Andreu Correa Casablanca <castarco@litipk.com>
  */
-class DecimalConstants
+final class DecimalConstants
 {
     private static $PI = null;
     private static $E = null;
