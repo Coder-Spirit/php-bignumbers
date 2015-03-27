@@ -571,21 +571,32 @@ class Decimal
             return $this;
         }
 
+        if ($this->isNegative()) {
+            return self::fromString(bcadd($this->value, '0', $scale));
+        }
+
+        return $this->innerTruncate($scale);
+    }
+
+    private function innerTruncate($scale = 0, $ceil = true)
+    {
         $rounded = bcadd($this->value, '0', $scale);
 
         $rlen = strlen($rounded);
         $tlen = strlen($this->value);
 
-        $mustCeil = false;
+        $mustTruncate = false;
         for ($i=$tlen-1; $i >= $rlen; $i--) {
             if ((int)$this->value[$i] > 0) {
-                $mustCeil = true;
+                $mustTruncate = true;
                 break;
             }
         }
 
-        if ($mustCeil) {
-            $rounded = bcadd($rounded, bcpow('10', -$scale, $scale), $scale);
+        if ($mustTruncate) {
+            $rounded = $ceil ?
+                bcadd($rounded, bcpow('10', -$scale, $scale), $scale) :
+                bcsub($rounded, bcpow('10', -$scale, $scale), $scale);
         }
 
         return self::fromString($rounded, $scale);
@@ -600,6 +611,10 @@ class Decimal
     {
         if ($scale >= $this->scale) {
             return $this;
+        }
+
+        if ($this->isNegative()) {
+            return $this->innerTruncate($scale, false);
         }
 
         return self::fromString(bcadd($this->value, '0', $scale));
@@ -620,14 +635,14 @@ class Decimal
 
     /**
      * Calculate modulo with a decimal
-     * @param $d
+     * @param Decimal $d
+     * @param integer $scale
      * @return $this % $d
      */
     public function mod(Decimal $d, $scale = null)
     {
-        // integer division
         $div = $this->div($d, 1)->floor();
-        return $this->sub($div->mul($d, $scale));
+        return $this->sub($div->mul($d), $scale);
     }
 
     /**
@@ -639,47 +654,40 @@ class Decimal
      */
     public function sin($scale = null) {
         // First normalise the number in the [0, 2PI] domain
-        $twoPi = DecimalConstants::PI()->mul(Decimal::fromString("2"));
-        $x = $this->mod($twoPi);
-        $zero = Decimal::fromString("0");
+        $x = $this->mod(DecimalConstants::PI()->mul(Decimal::fromString("2")));
 
-        // PI has only 32 siginficant numbers
+        // PI has only 32 significant numbers
         $significantNumbers = is_null($scale) ? 32 : $scale;
 
         // Next use Maclaurin's theorem to approximate sin with high enough accuracy
         // note that the accuracy is depended on the accuracy of the given PI constant
         $faculty = Decimal::fromString("1");    // Calculates the faculty under the sign
-        $loopCounter = 1;                       // Calculates the iteration we are in
         $xPowerN = Decimal::fromString("1");    // Calculates x^n
         $approx = Decimal::fromString("0");     // keeps track of our approximation for sin(x)
 
-        while (true) {
+        $change = InfiniteDecimal::getPositiveInfinite();
+
+        for ($i = 1; !$change->round($significantNumbers)->isZero(); $i++) {
             // update x^n and n! for this walkthrough
             $xPowerN = $xPowerN->mul($x);
-            $faculty = $faculty->mul(Decimal::fromString((string) $loopCounter));
+            $faculty = $faculty->mul(Decimal::fromString((string) $i));
 
             // only do calculations if n is uneven
             // otherwise result is zero anyways
-            if ($loopCounter % 2 === 1) {
+            if ($i % 2 === 1) {
                 // calculate the absolute change in this iteration.
                 $change = $xPowerN->div($faculty);
 
                 // change should be added if x mod 4 == 1 and subtracted if x mod 4 == 3
-                if ($loopCounter % 4 === 1) {
+                if ($i % 4 === 1) {
                     $approx = $approx->add($change);
                 } else {
                     $approx = $approx->sub($change);
                 }
-
-                // Terminate the method if our change is sufficiently small
-                if ($change->floor($significantNumbers)->equals($zero)) {
-                    return $approx->round($significantNumbers);
-                }
             }
-
-
-            $loopCounter++;
         }
+
+        return $approx->round($significantNumbers);
     }
 
     /**
@@ -691,47 +699,40 @@ class Decimal
      */
     public function cos($scale = null) {
         // First normalise the number in the [0, 2PI] domain
-        $twoPi = DecimalConstants::PI()->mul(Decimal::fromString("2"));
-        $x = $this->mod($twoPi);
-        $zero = Decimal::fromString("0");
+        $x = $this->mod(DecimalConstants::PI()->mul(Decimal::fromString("2")));
 
-        // PI has only 32 siginficant numbers
+        // PI has only 32 significant numbers
         $significantNumbers = is_null($scale) ? 32 : $scale;
 
         // Next use Maclaurin's theorem to approximate sin with high enough accuracy
         // note that the accuracy is depended on the accuracy of the given PI constant
         $faculty = Decimal::fromString("1");    // Calculates the faculty under the sign
-        $loopCounter = 1;                       // Calculates the iteration we are in
         $xPowerN = Decimal::fromString("1");    // Calculates x^n
         $approx = Decimal::fromString("1");     // keeps track of our approximation for sin(x)
 
-        while (true) {
+        $change = InfiniteDecimal::getPositiveInfinite();
+
+        for ($i = 1; !$change->floor($significantNumbers)->isZero(); $i++) {
             // update x^n and n! for this walkthrough
             $xPowerN = $xPowerN->mul($x);
-            $faculty = $faculty->mul(Decimal::fromString((string) $loopCounter));
+            $faculty = $faculty->mul(Decimal::fromString((string) $i));
 
             // only do calculations if n is uneven
             // otherwise result is zero anyways
-            if ($loopCounter % 2 === 0) {
+            if ($i % 2 === 0) {
                 // calculate the absolute change in this iteration.
                 $change = $xPowerN->div($faculty);
 
-                // change should be added if x mod 4 == 1 and subtracted if x mod 4 == 3
-                if ($loopCounter % 4 === 0) {
+                // change should be added if x mod 4 == 0 and subtracted if x mod 4 == 2
+                if ($i % 4 === 0) {
                     $approx = $approx->add($change);
                 } else {
                     $approx = $approx->sub($change);
                 }
-
-                // Terminate the method if our change is sufficiently small
-                if ($change->floor($significantNumbers )->equals($zero)) {
-                    return $approx->round($significantNumbers);
-                }
             }
-
-
-            $loopCounter++;
         }
+
+        return $approx->round($significantNumbers);
     }
 
     /**
@@ -749,11 +750,15 @@ class Decimal
 	        );
 	    }
 
-	    return $this->sin($scale + 2)
-	        ->div($cos)
-	        ->floor($scale);
+	    return $this->sin($scale + 2)->div($cos)->round($scale);
     }
 
+    /**
+     * Indicates if the passed parameter has the same sign as the method's bound object.
+     *
+     * @param Decimal $b
+     * @return bool
+     */
     public function hasSameSign(Decimal $b) {
         return $this->isPositive() && $b->isPositive() || $this->isNegative() && $b->isNegative();
     }

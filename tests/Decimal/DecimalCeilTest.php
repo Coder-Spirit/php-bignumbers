@@ -33,4 +33,10 @@ class DecimalCeilTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(Decimal::fromString('3.45')->ceil(2)->equals(Decimal::fromString('3.45')));
         $this->assertTrue(Decimal::fromString('3.45')->ceil(3)->equals(Decimal::fromString('3.45')));
     }
+
+    public function testNegativeCeil()
+    {
+        $this->assertTrue(Decimal::fromFloat(-3.4)->ceil()->equals(Decimal::fromFloat(-3.0)));
+        $this->assertTrue(Decimal::fromFloat(-3.6)->ceil()->equals(Decimal::fromFloat(-3.0)));
+    }
 }

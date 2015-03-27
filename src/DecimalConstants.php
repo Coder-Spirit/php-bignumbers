@@ -6,11 +6,11 @@ use Litipk\BigNumbers\Decimal as Decimal;
 
 
 /**
- * Static class that holds many important numeric constants
+ * git statu class that holds many important numeric constants
  *
  * @author Andreu Correa Casablanca <castarco@litipk.com>
  */
-class DecimalConstants
+final class DecimalConstants
 {
     private static $PI = null;
     private static $E = null;
@@ -38,64 +38,69 @@ class DecimalConstants
 
     /**
      * Returns the Pi number.
+     * @return Decimal
      */
     public static function PI()
     {
-        if (static::$PI === null) {
-            static::$PI = Decimal::fromString(
+        if (self::$PI === null) {
+            self::$PI = Decimal::fromString(
                 "3.14159265358979323846264338327950"
             );
         }
-        return static::$PI;
+        return self::$PI;
     }
 
     /**
      * Returns the Euler's E number.
+     * @return Decimal
      */
     public static function E()
     {
-        if (static::$E === null) {
-            static::$E = Decimal::fromString(
+        if (self::$E === null) {
+            self::$E = Decimal::fromString(
                 "2.71828182845904523536028747135266"
             );
         }
-        return static::$E;
+        return self::$E;
     }
 
     /**
      * Returns the Euler-Mascheroni constant.
+     * @return Decimal
      */
     public static function EulerMascheroni()
     {
-        if (static::$EulerMascheroni === null) {
-            static::$EulerMascheroni = Decimal::fromString(
+        if (self::$EulerMascheroni === null) {
+            self::$EulerMascheroni = Decimal::fromString(
                 "0.57721566490153286060651209008240"
             );
         }
-        return static::$EulerMascheroni;
+        return self::$EulerMascheroni;
     }
 
     /**
      * Returns the Golden Ration, also named Phi.
+     * @return Decimal
      */
     public static function GoldenRatio()
     {
-        if (static::$GoldenRatio === null) {
-            static::$GoldenRatio = Decimal::fromString(
+        if (self::$GoldenRatio === null) {
+            self::$GoldenRatio = Decimal::fromString(
                 "1.61803398874989484820458683436564"
             );
         }
-        return static::$GoldenRatio;
+        return self::$GoldenRatio;
     }
 
     /**
      * Returns the Light of Speed measured in meters / second.
+     * @return Decimal
      */
     public static function LightSpeed()
     {
-        if (static::$LightSpeed === null) {
-            static::$LightSpeed = Decimal::fromInteger(299792458);
+        if (self::$LightSpeed === null) {
+            self::$LightSpeed = Decimal::fromInteger(299792458);
         }
-        return static::$LightSpeed;
+        return self::$LightSpeed;
     }
 }
