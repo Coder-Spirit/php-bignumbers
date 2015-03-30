@@ -2,6 +2,7 @@
 
 namespace Litipk\BigNumbers;
 
+use Litipk\BigNumbers\DecimalConstants as DecimalConstants;
 use Litipk\BigNumbers\InfiniteDecimal as InfiniteDecimal;
 
 use Litipk\Exceptions\NotImplementedException as NotImplementedException;
@@ -66,8 +67,9 @@ class Decimal
     /**
      * Decimal "constructor".
      *
-     * @param mixed   $value
-     * @param integer $scale
+     * @param  mixed   $value
+     * @param  integer $scale
+     * @return Decimal
      */
     public static function create($value, $scale = null)
     {
@@ -286,7 +288,7 @@ class Decimal
         if ($b->isInfinite()) {
             return $b->mul($this);
         } elseif ($b->isZero()) {
-            return Decimal::fromInteger(0, $scale);
+            return DecimalConstants::Zero();
         }
 
         return self::fromString(
@@ -311,10 +313,8 @@ class Decimal
 
         if ($b->isZero()) {
             throw new \DomainException("Division by zero is not allowed.");
-        } elseif ($this->isZero()) {
-            return self::fromDecimal($this, $scale);
-        } elseif ($b->isInfinite()) {
-            return Decimal::fromInteger(0, $scale);
+        } elseif ($this->isZero() || $b->isInfinite()) {
+            return DecimalConstants::Zero();
         } else {
             if ($scale !== null) {
                 $divscale = $scale;
@@ -356,7 +356,7 @@ class Decimal
                 "Decimal can't handle square roots of negative numbers (it's only for real numbers)."
             );
         } elseif ($this->isZero()) {
-            return Decimal::fromDecimal($this, $scale);
+            return DecimalConstants::Zero();
         }
 
         $sqrt_scale = ($scale !== null ? $scale : $this->scale);
@@ -385,7 +385,7 @@ class Decimal
                 );
             }
         } elseif ($b->isZero()) {
-            return Decimal::fromInteger(1, $scale);
+            return DecimalConstants::One();
         } elseif ($b->scale == 0) {
             $pow_scale = $scale === null ?
                 max($this->scale, $b->scale) : max($this->scale, $b->scale, $scale);
@@ -445,6 +445,7 @@ class Decimal
     }
 
     /**
+     * @param  integer $scale
      * @return boolean
      */
     public function isZero($scale = null)
@@ -468,6 +469,14 @@ class Decimal
     public function isNegative()
     {
         return ($this->value[0] === '-');
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isInteger()
+    {
+        return (preg_match('/^[+\-]?[0-9]+(\.0+)?$/', $this->value, $captures) === 1);
     }
 
     /**
@@ -509,6 +518,7 @@ class Decimal
      * $this > $b : returns 1 , $this < $b : returns -1 , $this == $b : returns 0
      *
      * @param  Decimal $b
+     * @param  integer $scale
      * @return integer
      */
     public function comp(Decimal $b, $scale = null)
@@ -661,9 +671,9 @@ class Decimal
 
         // Next use Maclaurin's theorem to approximate sin with high enough accuracy
         // note that the accuracy is depended on the accuracy of the given PI constant
-        $faculty = Decimal::fromString("1");    // Calculates the faculty under the sign
-        $xPowerN = Decimal::fromString("1");    // Calculates x^n
-        $approx = Decimal::fromString("0");     // keeps track of our approximation for sin(x)
+        $faculty = DecimalConstants::One();    // Calculates the faculty under the sign
+        $xPowerN = DecimalConstants::One();    // Calculates x^n
+        $approx = DecimalConstants::Zero();     // keeps track of our approximation for sin(x)
 
         $change = InfiniteDecimal::getPositiveInfinite();
 
@@ -706,9 +716,9 @@ class Decimal
 
         // Next use Maclaurin's theorem to approximate sin with high enough accuracy
         // note that the accuracy is depended on the accuracy of the given PI constant
-        $faculty = Decimal::fromString("1");    // Calculates the faculty under the sign
-        $xPowerN = Decimal::fromString("1");    // Calculates x^n
-        $approx = Decimal::fromString("1");     // keeps track of our approximation for sin(x)
+        $faculty = DecimalConstants::One();    // Calculates the faculty under the sign
+        $xPowerN = DecimalConstants::One();    // Calculates x^n
+        $approx = DecimalConstants::One();     // keeps track of our approximation for sin(x)
 
         $change = InfiniteDecimal::getPositiveInfinite();
 
@@ -980,10 +990,8 @@ class Decimal
      */
     private static function countSignificativeDigits(Decimal $val, Decimal $abs)
     {
-        $one = Decimal::fromInteger(1);
-
         return strlen($val->value) - (
-            ($abs->comp($one) === -1) ? 2 : max($val->scale, 1)
+            ($abs->comp(DecimalConstants::One()) === -1) ? 2 : max($val->scale, 1)
         ) - ($val->isNegative() ? 1 : 0);
     }
 }
