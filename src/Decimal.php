@@ -69,16 +69,17 @@ class Decimal
      *
      * @param  mixed   $value
      * @param  integer $scale
+     * @param  boolean $removeZeros If true then removes trailing zeros from the number representation
      * @return Decimal
      */
-    public static function create($value, $scale = null)
+    public static function create($value, $scale = null, $removeZeros = false)
     {
         if (is_int($value)) {
-            return self::fromInteger($value, $scale);
+            return self::fromInteger($value);
         } elseif (is_float($value)) {
-            return self::fromFloat($value, $scale);
+            return self::fromFloat($value, $scale, $removeZeros);
         } elseif (is_string($value)) {
-            return self::fromString($value, $scale);
+            return self::fromString($value, $scale, $removeZeros);
         } elseif ($value instanceof Decimal) {
             return self::fromDecimal($value, $scale);
         } else {
@@ -112,9 +113,10 @@ class Decimal
     /**
      * @param  float   $fltValue
      * @param  integer $scale
+     * @param  boolean $removeZeros If true then removes trailing zeros from the number representation
      * @return Decimal
      */
-    public static function fromFloat($fltValue, $scale = null)
+    public static function fromFloat($fltValue, $scale = null, $removeZeros = false)
     {
         self::paramsValidation($fltValue, $scale);
 
@@ -136,18 +138,23 @@ class Decimal
             );
         }
 
-        $dec_scale = $scale === null ? 8 : $scale;
-        $strValue = self::floatToString($fltValue, $dec_scale);
+        $scale = ($scale === null) ? 8 : $scale;
 
-        return new Decimal($strValue, $dec_scale);
+        $strValue = number_format($fltValue, $scale, '.', '');
+        if ($removeZeros) {
+            $strValue = self::removeTrailingZeros($strValue, $scale);
+        }
+
+        return new Decimal($strValue, $scale);
     }
 
     /**
      * @param  string  $strValue
      * @param  integer $scale
+     * @param  boolean $removeZeros If true then removes trailing zeros from the number representation
      * @return Decimal
      */
-    public static function fromString($strValue, $scale = null)
+    public static function fromString($strValue, $scale = null, $removeZeros = false)
     {
         self::paramsValidation($strValue, $scale);
 
@@ -178,10 +185,10 @@ class Decimal
             }
 
             $value = self::normalizeSign($captures[1]) . bcmul(
-                    $captures[2],
-                    $tmp_multiplier,
-                    max($min_scale, $scale !== null ? $scale : 0)
-                );
+                $captures[2],
+                $tmp_multiplier,
+                max($min_scale, $scale !== null ? $scale : 0)
+            );
 
         } else if (preg_match('/([+\-]?)(inf|Inf|INF)/', $strValue, $captures) === 1) {
             if ($captures[1] === '-') {
@@ -195,13 +202,15 @@ class Decimal
             );
         }
 
-        if ($scale!==null) {
-            $dec_scale = $scale;
-        } else {
-            $dec_scale = $min_scale;
+        $scale = ($scale!==null) ? $scale : $min_scale;
+        if ($scale < $min_scale) {
+            $value = self::innerRound($value, $scale);
+        }
+        if ($removeZeros) {
+            $value = self::removeTrailingZeros($value, $scale);
         }
 
-        return new Decimal(self::innerRound($value, $dec_scale), $dec_scale);
+        return new Decimal($value, $scale);
     }
 
     /**
@@ -217,7 +226,7 @@ class Decimal
         self::paramsValidation($decValue, $scale);
 
         // This block protect us from unnecessary additional instances
-        if ($scale === null || $scale === $decValue->scale || $decValue->isInfinite()) {
+        if ($scale === null || $scale >= $decValue->scale || $decValue->isInfinite()) {
             return $decValue;
         }
 
@@ -330,8 +339,7 @@ class Decimal
             }
 
             return self::fromString(
-                bcdiv($this->value, $b->value, $divscale+1),
-                $divscale
+                bcdiv($this->value, $b->value, $divscale+1), $divscale
             );
         }
     }
@@ -659,7 +667,7 @@ class Decimal
         $x = $this->mod(DecimalConstants::PI()->mul(Decimal::fromString("2")));
 
         // PI has only 32 significant numbers
-        $significantNumbers = is_null($scale) ? 32 : $scale;
+        $significantNumbers = ($scale === null) ? 32 : $scale;
 
         // Next use Maclaurin's theorem to approximate sin with high enough accuracy
         // note that the accuracy is depended on the accuracy of the given PI constant
@@ -672,7 +680,7 @@ class Decimal
         for ($i = 1; !$change->round($significantNumbers)->isZero(); $i++) {
             // update x^n and n! for this walkthrough
             $xPowerN = $xPowerN->mul($x);
-            $faculty = $faculty->mul(Decimal::fromString((string) $i));
+            $faculty = $faculty->mul(Decimal::fromInteger($i));
 
             // only do calculations if n is uneven
             // otherwise result is zero anyways
@@ -704,7 +712,7 @@ class Decimal
         $x = $this->mod(DecimalConstants::PI()->mul(Decimal::fromString("2")));
 
         // PI has only 32 significant numbers
-        $significantNumbers = is_null($scale) ? 32 : $scale;
+        $significantNumbers = ($scale === null) ? 32 : $scale;
 
         // Next use Maclaurin's theorem to approximate sin with high enough accuracy
         // note that the accuracy is depended on the accuracy of the given PI constant
@@ -717,7 +725,7 @@ class Decimal
         for ($i = 1; !$change->floor($significantNumbers)->isZero(); $i++) {
             // update x^n and n! for this walkthrough
             $xPowerN = $xPowerN->mul($x);
-            $faculty = $faculty->mul(Decimal::fromString((string) $i));
+            $faculty = $faculty->mul(Decimal::fromInteger($i));
 
             // only do calculations if n is uneven
             // otherwise result is zero anyways
@@ -973,15 +981,13 @@ class Decimal
         return $sign;
     }
 
-    private static function floatToString($fltValue, &$scale)
+    private static function removeTrailingZeros($strValue, &$scale)
     {
-        $strValue = number_format($fltValue, $scale, '.', '');
-
         preg_match('/^[+\-]?[0-9]+(\.([0-9]*[1-9])?(0+)?)?$/', $strValue, $captures);
 
         if (count($captures) === 4) {
             $toRemove = strlen($captures[3]);
-            $scale -= $toRemove;
+            $scale = strlen($captures[2]);
             $strValue = substr($strValue, 0, strlen($strValue)-$toRemove-($scale===0 ? 1 : 0));
         }
 

@@ -20,6 +20,7 @@
 		"litipk/php-exceptions": ">=0.1.3"
 	},
 	"require-dev": {
+		"psy/psysh": ">=0.4.4",
 		"phpunit/phpunit": "4.5.*",
 		"squizlabs/php_codesniffer": "2.3.*",
 		"satooshi/php-coveralls": "dev-master"
