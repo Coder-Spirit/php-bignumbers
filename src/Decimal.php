@@ -92,12 +92,11 @@ class Decimal
 
     /**
      * @param  integer $intValue
-     * @param  integer $scale
      * @return Decimal
      */
-    public static function fromInteger($intValue, $scale = null)
+    public static function fromInteger($intValue)
     {
-        self::paramsValidation($intValue, $scale);
+        self::paramsValidation($intValue, null);
 
         if (!is_int($intValue)) {
             throw new InvalidArgumentTypeException(
@@ -107,10 +106,7 @@ class Decimal
             );
         }
 
-        return new Decimal(
-            $scale === null ? (string)$intValue : bcadd((string)$intValue, '0', $scale),
-            $scale === null ? 0 : $scale
-        );
+        return new Decimal((string)$intValue, 0);
     }
 
     /**
@@ -140,14 +136,10 @@ class Decimal
             );
         }
 
-        $dec_scale = $scale === null ?
-            8 :
-            $scale;
+        $dec_scale = $scale === null ? 8 : $scale;
+        $strValue = self::floatToString($fltValue, $dec_scale);
 
-        return new Decimal(
-            number_format($fltValue, $dec_scale, '.', ''),
-            $dec_scale
-        );
+        return new Decimal($strValue, $dec_scale);
     }
 
     /**
@@ -981,8 +973,24 @@ class Decimal
         return $sign;
     }
 
+    private static function floatToString($fltValue, &$scale)
+    {
+        $strValue = number_format($fltValue, $scale, '.', '');
+
+        preg_match('/^[+\-]?[0-9]+(\.([0-9]*[1-9])?(0+)?)?$/', $strValue, $captures);
+
+        if (count($captures) === 4) {
+            $toRemove = strlen($captures[3]);
+            $scale -= $toRemove;
+            $strValue = substr($strValue, 0, strlen($strValue)-$toRemove-($scale===0 ? 1 : 0));
+        }
+
+        return $strValue;
+    }
+
     /**
-     * Counts the number of significative digits of $val
+     * Counts the number of significative digits of $val.
+     * Assumes a consistent internal state (without zeros at the end or the start).
      *
      * @param  Decimal $val
      * @param  Decimal $abs $val->abs()
