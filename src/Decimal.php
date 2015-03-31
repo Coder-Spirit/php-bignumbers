@@ -754,6 +754,24 @@ class Decimal
     }
 
     /**
+     * Calculates the cotangent of this method with the highest possible accuracy
+     * Note that accuracy is limited by the accuracy of predefined PI;
+     *
+     * @param integer $scale
+     * @return Decimal cotan($this)
+     */
+    public function cotan($scale = null) {
+	    $sin = $this->sin($scale + 2);
+	    if ($sin->isZero()) {
+	        throw new \DomainException(
+	            "The cotangent of this 'angle' is undefined."
+	        );
+	    }
+
+	    return $this->cos($scale + 2)->div($sin)->round($scale);
+    }
+
+    /**
      * Indicates if the passed parameter has the same sign as the method's bound object.
      *
      * @param Decimal $b
