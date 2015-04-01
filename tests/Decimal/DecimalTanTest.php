@@ -1,6 +1,6 @@
 <?php
 
-use Litipk\BigNumbers\Decimal as Decimal;
+use \Litipk\BigNumbers\Decimal as Decimal;
 use \Litipk\BigNumbers\DecimalConstants as DecimalConstants;
 
 /**
@@ -39,4 +39,5 @@ class DecimalTanTest extends PHPUnit_Framework_TestCase
         $PiDividedByTwo = DecimalConstants::PI()->div(Decimal::fromInteger(2));
         $PiDividedByTwo->tan();
     }
+
 }
