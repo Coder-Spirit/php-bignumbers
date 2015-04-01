@@ -46,10 +46,7 @@ class DecimalLog10Test extends PHPUnit_Framework_TestCase
 
     public function testMediumNumbersLog10()
     {
-        $seventyfive = Decimal::fromInteger(75);
-        $fortynine = Decimal::fromInteger(49);
-
-        $this->assertTrue($seventyfive->log10(5)->equals(Decimal::fromString('1.87506')));
-        $this->assertTrue($fortynine->log10(7)->equals(Decimal::fromString('1.6901961')));
+        $this->assertTrue(Decimal::fromInteger(75)->log10(5)->equals(Decimal::fromString('1.87506')));
+        $this->assertTrue(Decimal::fromInteger(49)->log10(7)->equals(Decimal::fromString('1.6901961')));
     }
 }

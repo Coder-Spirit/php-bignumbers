@@ -2,6 +2,7 @@
 
 namespace Litipk\BigNumbers;
 
+use Litipk\BigNumbers\DecimalConstants as DecimalConstants;
 use Litipk\BigNumbers\InfiniteDecimal as InfiniteDecimal;
 
 use Litipk\Exceptions\NotImplementedException as NotImplementedException;
@@ -66,17 +67,19 @@ class Decimal
     /**
      * Decimal "constructor".
      *
-     * @param mixed   $value
-     * @param integer $scale
+     * @param  mixed   $value
+     * @param  integer $scale
+     * @param  boolean $removeZeros If true then removes trailing zeros from the number representation
+     * @return Decimal
      */
-    public static function create($value, $scale = null)
+    public static function create($value, $scale = null, $removeZeros = false)
     {
         if (is_int($value)) {
-            return self::fromInteger($value, $scale);
+            return self::fromInteger($value);
         } elseif (is_float($value)) {
-            return self::fromFloat($value, $scale);
+            return self::fromFloat($value, $scale, $removeZeros);
         } elseif (is_string($value)) {
-            return self::fromString($value, $scale);
+            return self::fromString($value, $scale, $removeZeros);
         } elseif ($value instanceof Decimal) {
             return self::fromDecimal($value, $scale);
         } else {
@@ -90,12 +93,11 @@ class Decimal
 
     /**
      * @param  integer $intValue
-     * @param  integer $scale
      * @return Decimal
      */
-    public static function fromInteger($intValue, $scale = null)
+    public static function fromInteger($intValue)
     {
-        self::paramsValidation($intValue, $scale);
+        self::paramsValidation($intValue, null);
 
         if (!is_int($intValue)) {
             throw new InvalidArgumentTypeException(
@@ -105,18 +107,16 @@ class Decimal
             );
         }
 
-        return new Decimal(
-            $scale === null ? (string)$intValue : bcadd((string)$intValue, '0', $scale),
-            $scale === null ? 0 : $scale
-        );
+        return new Decimal((string)$intValue, 0);
     }
 
     /**
      * @param  float   $fltValue
      * @param  integer $scale
+     * @param  boolean $removeZeros If true then removes trailing zeros from the number representation
      * @return Decimal
      */
-    public static function fromFloat($fltValue, $scale = null)
+    public static function fromFloat($fltValue, $scale = null, $removeZeros = false)
     {
         self::paramsValidation($fltValue, $scale);
 
@@ -138,22 +138,23 @@ class Decimal
             );
         }
 
-        $dec_scale = $scale === null ?
-            8 :
-            $scale;
+        $scale = ($scale === null) ? 8 : $scale;
 
-        return new Decimal(
-            number_format($fltValue, $dec_scale, '.', ''),
-            $dec_scale
-        );
+        $strValue = number_format($fltValue, $scale, '.', '');
+        if ($removeZeros) {
+            $strValue = self::removeTrailingZeros($strValue, $scale);
+        }
+
+        return new Decimal($strValue, $scale);
     }
 
     /**
      * @param  string  $strValue
      * @param  integer $scale
+     * @param  boolean $removeZeros If true then removes trailing zeros from the number representation
      * @return Decimal
      */
-    public static function fromString($strValue, $scale = null)
+    public static function fromString($strValue, $scale = null, $removeZeros = false)
     {
         self::paramsValidation($strValue, $scale);
 
@@ -184,10 +185,10 @@ class Decimal
             }
 
             $value = self::normalizeSign($captures[1]) . bcmul(
-                    $captures[2],
-                    $tmp_multiplier,
-                    max($min_scale, $scale !== null ? $scale : 0)
-                );
+                $captures[2],
+                $tmp_multiplier,
+                max($min_scale, $scale !== null ? $scale : 0)
+            );
 
         } else if (preg_match('/([+\-]?)(inf|Inf|INF)/', $strValue, $captures) === 1) {
             if ($captures[1] === '-') {
@@ -201,13 +202,15 @@ class Decimal
             );
         }
 
-        if ($scale!==null) {
-            $dec_scale = $scale;
-        } else {
-            $dec_scale = $min_scale;
+        $scale = ($scale!==null) ? $scale : $min_scale;
+        if ($scale < $min_scale) {
+            $value = self::innerRound($value, $scale);
+        }
+        if ($removeZeros) {
+            $value = self::removeTrailingZeros($value, $scale);
         }
 
-        return new Decimal(self::innerRound($value, $dec_scale), $dec_scale);
+        return new Decimal($value, $scale);
     }
 
     /**
@@ -223,7 +226,7 @@ class Decimal
         self::paramsValidation($decValue, $scale);
 
         // This block protect us from unnecessary additional instances
-        if ($scale === null || $scale === $decValue->scale || $decValue->isInfinite()) {
+        if ($scale === null || $scale >= $decValue->scale || $decValue->isInfinite()) {
             return $decValue;
         }
 
@@ -286,7 +289,7 @@ class Decimal
         if ($b->isInfinite()) {
             return $b->mul($this);
         } elseif ($b->isZero()) {
-            return Decimal::fromInteger(0, $scale);
+            return DecimalConstants::Zero();
         }
 
         return self::fromString(
@@ -311,10 +314,8 @@ class Decimal
 
         if ($b->isZero()) {
             throw new \DomainException("Division by zero is not allowed.");
-        } elseif ($this->isZero()) {
-            return self::fromDecimal($this, $scale);
-        } elseif ($b->isInfinite()) {
-            return Decimal::fromInteger(0, $scale);
+        } elseif ($this->isZero() || $b->isInfinite()) {
+            return DecimalConstants::Zero();
         } else {
             if ($scale !== null) {
                 $divscale = $scale;
@@ -327,19 +328,18 @@ class Decimal
                     self::innerLog10($this_abs->value, $this_abs->scale, 1) -
                     self::innerLog10($b_abs->value, $b_abs->scale, 1);
 
-                $divscale = max(
+                $divscale = (int)max(
                     $this->scale + $b->scale,
                     max(
                         self::countSignificativeDigits($this, $this_abs),
                         self::countSignificativeDigits($b, $b_abs)
                     ) - max(ceil($log10_result), 0),
-                    ceil(-$log10_result)
+                    ceil(-$log10_result) + 1
                 );
             }
 
             return self::fromString(
-                bcdiv($this->value, $b->value, $divscale+1),
-                $divscale
+                bcdiv($this->value, $b->value, $divscale+1), $divscale
             );
         }
     }
@@ -356,7 +356,7 @@ class Decimal
                 "Decimal can't handle square roots of negative numbers (it's only for real numbers)."
             );
         } elseif ($this->isZero()) {
-            return Decimal::fromDecimal($this, $scale);
+            return DecimalConstants::Zero();
         }
 
         $sqrt_scale = ($scale !== null ? $scale : $this->scale);
@@ -385,7 +385,11 @@ class Decimal
                 );
             }
         } elseif ($b->isZero()) {
-            return Decimal::fromInteger(1, $scale);
+            return DecimalConstants::One();
+        } else if ($b->isNegative()) {
+            return DecimalConstants::One()->div(
+                $this->pow($b->additiveInverse()), $scale
+            );
         } elseif ($b->scale == 0) {
             $pow_scale = $scale === null ?
                 max($this->scale, $b->scale) : max($this->scale, $b->scale, $scale);
@@ -415,6 +419,16 @@ class Decimal
                     $pow_scale
                 );
             } else { // elseif ($this->isNegative())
+                if ($b->isInteger()) {
+                    if (preg_match('/^[+\-]?[0-9]*[02468](\.0+)?$/', $b->value, $captures) === 1) {
+                        // $b is an even number
+                        return $this->additiveInverse()->pow($b, $scale);
+                    } else {
+                        // $b is an odd number
+                        return $this->additiveInverse()->pow($b, $scale)->additiveInverse();
+                    }
+                }
+
                 throw new NotImplementedException(
                     "Usually negative numbers can't be powered to non integer numbers. " .
                     "The cases where is possible are not implemented."
@@ -445,6 +459,7 @@ class Decimal
     }
 
     /**
+     * @param  integer $scale
      * @return boolean
      */
     public function isZero($scale = null)
@@ -468,6 +483,14 @@ class Decimal
     public function isNegative()
     {
         return ($this->value[0] === '-');
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isInteger()
+    {
+        return (preg_match('/^[+\-]?[0-9]+(\.0+)?$/', $this->value, $captures) === 1);
     }
 
     /**
@@ -509,6 +532,7 @@ class Decimal
      * $this > $b : returns 1 , $this < $b : returns -1 , $this == $b : returns 0
      *
      * @param  Decimal $b
+     * @param  integer $scale
      * @return integer
      */
     public function comp(Decimal $b, $scale = null)
@@ -657,20 +681,20 @@ class Decimal
         $x = $this->mod(DecimalConstants::PI()->mul(Decimal::fromString("2")));
 
         // PI has only 32 significant numbers
-        $significantNumbers = is_null($scale) ? 32 : $scale;
+        $significantNumbers = ($scale === null) ? 32 : $scale;
 
         // Next use Maclaurin's theorem to approximate sin with high enough accuracy
         // note that the accuracy is depended on the accuracy of the given PI constant
-        $faculty = Decimal::fromString("1");    // Calculates the faculty under the sign
-        $xPowerN = Decimal::fromString("1");    // Calculates x^n
-        $approx = Decimal::fromString("0");     // keeps track of our approximation for sin(x)
+        $faculty = DecimalConstants::One();    // Calculates the faculty under the sign
+        $xPowerN = DecimalConstants::One();    // Calculates x^n
+        $approx = DecimalConstants::Zero();     // keeps track of our approximation for sin(x)
 
         $change = InfiniteDecimal::getPositiveInfinite();
 
         for ($i = 1; !$change->round($significantNumbers)->isZero(); $i++) {
             // update x^n and n! for this walkthrough
             $xPowerN = $xPowerN->mul($x);
-            $faculty = $faculty->mul(Decimal::fromString((string) $i));
+            $faculty = $faculty->mul(Decimal::fromInteger($i));
 
             // only do calculations if n is uneven
             // otherwise result is zero anyways
@@ -702,20 +726,20 @@ class Decimal
         $x = $this->mod(DecimalConstants::PI()->mul(Decimal::fromString("2")));
 
         // PI has only 32 significant numbers
-        $significantNumbers = is_null($scale) ? 32 : $scale;
+        $significantNumbers = ($scale === null) ? 32 : $scale;
 
         // Next use Maclaurin's theorem to approximate sin with high enough accuracy
         // note that the accuracy is depended on the accuracy of the given PI constant
-        $faculty = Decimal::fromString("1");    // Calculates the faculty under the sign
-        $xPowerN = Decimal::fromString("1");    // Calculates x^n
-        $approx = Decimal::fromString("1");     // keeps track of our approximation for sin(x)
+        $faculty = DecimalConstants::One();    // Calculates the faculty under the sign
+        $xPowerN = DecimalConstants::One();    // Calculates x^n
+        $approx = DecimalConstants::One();     // keeps track of our approximation for sin(x)
 
         $change = InfiniteDecimal::getPositiveInfinite();
 
         for ($i = 1; !$change->floor($significantNumbers)->isZero(); $i++) {
             // update x^n and n! for this walkthrough
             $xPowerN = $xPowerN->mul($x);
-            $faculty = $faculty->mul(Decimal::fromString((string) $i));
+            $faculty = $faculty->mul(Decimal::fromInteger($i));
 
             // only do calculations if n is uneven
             // otherwise result is zero anyways
@@ -989,8 +1013,22 @@ class Decimal
         return $sign;
     }
 
+    private static function removeTrailingZeros($strValue, &$scale)
+    {
+        preg_match('/^[+\-]?[0-9]+(\.([0-9]*[1-9])?(0+)?)?$/', $strValue, $captures);
+
+        if (count($captures) === 4) {
+            $toRemove = strlen($captures[3]);
+            $scale = strlen($captures[2]);
+            $strValue = substr($strValue, 0, strlen($strValue)-$toRemove-($scale===0 ? 1 : 0));
+        }
+
+        return $strValue;
+    }
+
     /**
-     * Counts the number of significative digits of $val
+     * Counts the number of significative digits of $val.
+     * Assumes a consistent internal state (without zeros at the end or the start).
      *
      * @param  Decimal $val
      * @param  Decimal $abs $val->abs()
@@ -998,10 +1036,8 @@ class Decimal
      */
     private static function countSignificativeDigits(Decimal $val, Decimal $abs)
     {
-        $one = Decimal::fromInteger(1);
-
         return strlen($val->value) - (
-            ($abs->comp($one) === -1) ? 2 : max($val->scale, 1)
+            ($abs->comp(DecimalConstants::One()) === -1) ? 2 : max($val->scale, 1)
         ) - ($val->isNegative() ? 1 : 0);
     }
 }

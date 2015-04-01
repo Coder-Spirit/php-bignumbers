@@ -23,7 +23,7 @@ class DecimalInternalValidationTest extends PHPUnit_Framework_TestCase
      */
     public function testConstructorNegativeScaleValidation()
     {
-        Decimal::fromInteger(25, -15);
+        Decimal::fromString("25", -15);
     }
 
     /**
@@ -32,7 +32,7 @@ class DecimalInternalValidationTest extends PHPUnit_Framework_TestCase
      */
     public function testConstructorNotIntegerScaleValidation()
     {
-        Decimal::fromInteger(25, "hola mundo");
+        Decimal::fromString("25", "hola mundo");
     }
 
     /**

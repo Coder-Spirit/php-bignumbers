@@ -3,7 +3,9 @@
 namespace Litipk\BigNumbers;
 
 use Litipk\BigNumbers\Decimal as Decimal;
+use Litipk\BigNumbers\DecimalConstants as DecimalConstants;
 use Litipk\Exceptions\InvalidCastException;
+use Litipk\Exceptions\NotImplementedException;
 
 /**
  * Immutable object that represents an infinite number
@@ -26,7 +28,6 @@ class InfiniteDecimal extends Decimal
 
     /**
      * Private constructor
-     * @param integer $scale
      * @param string $value
      */
     private function __construct($value)
@@ -169,6 +170,44 @@ class InfiniteDecimal extends Decimal
     }
 
     /**
+     * Powers this value to $b
+     *
+     * @param  Decimal  $b      exponent
+     * @param  integer  $scale
+     * @return Decimal
+     */
+    public function pow(Decimal $b, $scale = null)
+    {
+        if ($b->isPositive()) {
+            if ($this->isPositive()) {
+                return $this;
+            }
+
+            // if ($this->isNegative())
+            if ($b->isInfinite()) {
+                throw new \DomainException("Negative infinite elevated to infinite is undefined.");
+            }
+
+            if ($b->isInteger()) {
+                if (preg_match('/^[+\-]?[0-9]*[02468](\.0+)?$/', $b->value, $captures) === 1) {
+                    // $b is an even number
+                    return self::$pInf;
+                } else {
+                    // $b is an odd number
+                    return $this; // self::$nInf;
+                }
+            }
+
+            throw new NotImplementedException("See issues #21, #22, #23 and #24 on Github.");
+
+        } else if ($b->isNegative()) {
+            return DecimalConstants::Zero();
+        } else if ($b->isZero()) {
+            throw new \DomainException("Infinite elevated to zero is undefined.");
+        }
+    }
+
+    /**
      * Returns the object's logarithm in base 10
      * @param  integer $scale
      * @return Decimal
@@ -199,6 +238,7 @@ class InfiniteDecimal extends Decimal
      * $this > $b : returns 1 , $this < $b : returns -1 , $this == $b : returns 0
      *
      * @param  Decimal $b
+     * @param  integer $scale
      * @return integer
      */
     public function comp(Decimal $b, $scale = null)
@@ -290,6 +330,7 @@ class InfiniteDecimal extends Decimal
     }
 
     /**
+     * @param  integer $scale Has no effect, exists only for compatibility.
      * @return boolean
      */
     public function isZero($scale = null)
@@ -311,6 +352,14 @@ class InfiniteDecimal extends Decimal
     public function isNegative()
     {
         return ($this === self::$nInf);
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isInteger()
+    {
+        return false;
     }
 
     /**

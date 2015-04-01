@@ -12,6 +12,9 @@ use Litipk\BigNumbers\Decimal as Decimal;
  */
 final class DecimalConstants
 {
+    private static $ZERO = null;
+    private static $ONE = null;
+
     private static $PI = null;
     private static $E = null;
     private static $EulerMascheroni = null;
@@ -34,6 +37,22 @@ final class DecimalConstants
     private function __clone()
     {
 
+    }
+
+    public static function Zero()
+    {
+        if (self::$ZERO === null) {
+            self::$ZERO = Decimal::fromString("0");
+        }
+        return self::$ZERO;
+    }
+
+    public static function One()
+    {
+        if (self::$ONE === null) {
+            self::$ONE = Decimal::fromString("1");
+        }
+        return self::$ONE;
     }
 
     /**
