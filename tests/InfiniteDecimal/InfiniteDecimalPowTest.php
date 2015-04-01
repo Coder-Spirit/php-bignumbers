@@ -62,13 +62,21 @@ class InfiniteDecimalPowTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($nInf->pow($nInf)->equals($zero));
     }
 
+    /**
+     * @expectedException \DomainException
+     * @expectedExceptionMessage Infinite elevated to zero is undefined.
+     */
     public function testPositiveInfiniteZeroPower()
     {
-        $this->assertTrue(false);
+        InfiniteDecimal::getPositiveInfinite()->pow(DecimalConstants::Zero());
     }
 
+    /**
+     * @expectedException \DomainException
+     * @expectedExceptionMessage Infinite elevated to zero is undefined.
+     */
     public function testNegativeInfiniteZeroPower()
     {
-        $this->assertTrue(false);
+        InfiniteDecimal::getNegativeInfinite()->pow(DecimalConstants::Zero());
     }
 }

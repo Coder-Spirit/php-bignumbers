@@ -29,19 +29,14 @@ class DecimalTanTest extends PHPUnit_Framework_TestCase
             'tan('.$nr.') must be equal to '.$answer.', but was '.$tanX
         );
     }
-    
-    public function testTanPiTwoDiv()
-    {    	
-        $PI  = DecimalConstants::PI();
-        $two = Decimal::fromInteger(2);
-        $PiDividedByTwo = $PI->div($two);
 
-        $catched = false;
-        try {
-            $PiDividedByTwo->tan();
-        } catch (\DomainException $e) {
-            $catched = true;
-        }
-        $this->assertTrue($catched);
+    /**
+     * @expectedException \DomainException
+     * @expectedExceptionMessage The tangent of this 'angle' is undefined.
+     */
+    public function testTanPiTwoDiv()
+    {
+        $PiDividedByTwo = DecimalConstants::PI()->div(Decimal::fromInteger(2));
+        $PiDividedByTwo->tan();
     }
 }

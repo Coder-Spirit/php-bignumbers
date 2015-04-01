@@ -188,12 +188,22 @@ class InfiniteDecimal extends Decimal
                 throw new \DomainException("Negative infinite elevated to infinite is undefined.");
             }
 
-            
+            if ($b->isInteger()) {
+                if (preg_match('/^[+\-]?[0-9]*[02468](\.0+)?$/', $b->value, $captures) === 1) {
+                    // $b is an even number
+                    return self::$pInf;
+                } else {
+                    // $b is an odd number
+                    return $this; // self::$nInf;
+                }
+            }
 
             throw new NotImplementedException("See issues #21, #22, #23 and #24 on Github.");
 
         } else if ($b->isNegative()) {
             return DecimalConstants::Zero();
+        } else if ($b->isZero()) {
+            throw new \DomainException("Infinite elevated to zero is undefined.");
         }
     }
 
