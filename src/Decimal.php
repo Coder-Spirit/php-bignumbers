@@ -328,13 +328,13 @@ class Decimal
                     self::innerLog10($this_abs->value, $this_abs->scale, 1) -
                     self::innerLog10($b_abs->value, $b_abs->scale, 1);
 
-                $divscale = max(
+                $divscale = (int)max(
                     $this->scale + $b->scale,
                     max(
                         self::countSignificativeDigits($this, $this_abs),
                         self::countSignificativeDigits($b, $b_abs)
                     ) - max(ceil($log10_result), 0),
-                    ceil(-$log10_result)
+                    ceil(-$log10_result) + 1
                 );
             }
 
@@ -386,6 +386,10 @@ class Decimal
             }
         } elseif ($b->isZero()) {
             return DecimalConstants::One();
+        } else if ($b->isNegative()) {
+            return DecimalConstants::One()->div(
+                $this->pow($b->additiveInverse()), $scale
+            );
         } elseif ($b->scale == 0) {
             $pow_scale = $scale === null ?
                 max($this->scale, $b->scale) : max($this->scale, $b->scale, $scale);
@@ -415,6 +419,16 @@ class Decimal
                     $pow_scale
                 );
             } else { // elseif ($this->isNegative())
+                if ($b->isInteger()) {
+                    if (preg_match('/^[+\-]?[0-9]*[02468](\.0+)?$/', $b->value, $captures) === 1) {
+                        // $b is an even number
+                        return $this->additiveInverse()->pow($b, $scale);
+                    } else {
+                        // $b is an odd number
+                        return $this->additiveInverse()->pow($b, $scale)->additiveInverse();
+                    }
+                }
+
                 throw new NotImplementedException(
                     "Usually negative numbers can't be powered to non integer numbers. " .
                     "The cases where is possible are not implemented."

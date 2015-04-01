@@ -339,6 +339,14 @@ class InfiniteDecimal extends Decimal
     /**
      * @return boolean
      */
+    public function isInteger()
+    {
+        return false;
+    }
+
+    /**
+     * @return boolean
+     */
     public function isInfinite()
     {
         return true;
