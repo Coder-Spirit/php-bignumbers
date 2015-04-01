@@ -281,6 +281,14 @@ class InfiniteDecimal extends Decimal
         );
     }
 
+    public function cotan($scale = null)
+    {
+        throw new \DomainException(($this === self::$pInf) ?
+            "Cotangent function hasn't limit in the positive infinite." :
+            "Cotangent function hasn't limit in the negative infinite."
+        );
+    }
+
     /**
      * @return boolean
      */
