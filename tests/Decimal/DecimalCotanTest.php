@@ -31,17 +31,14 @@ class DecimalCotanTest extends PHPUnit_Framework_TestCase
         );
     }
     
+    /**
+     * @expectedException \DomainException
+     * @expectedExceptionMessage The cotangent of this 'angle' is undefined.
+     */
     public function testCotanPiDiv()
     {    	
         $PI  = DecimalConstants::PI();
-
-        $catched = false;
-        try {
-            $PI->cotan();
-        } catch (\DomainException $e) {
-            $catched = true;
-        }
-        $this->assertTrue($catched);
+        $PI->cotan();
     }
     
 }
