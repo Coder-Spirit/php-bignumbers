@@ -12,7 +12,7 @@ class DecimalCosTest extends PHPUnit_Framework_TestCase
         return array(
             array('1', '0.54030230586814', 14),
             array('123.123', '-0.82483472946164834', 17),
-            array('15000000000', '-0.72218064388924347681', 20)
+            array('15000000000', '-0.72218064388924347683', 20)
         );
     }
 
