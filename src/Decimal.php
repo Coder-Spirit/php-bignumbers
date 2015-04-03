@@ -858,8 +858,11 @@ class Decimal
         $diffDigit = bcsub($value, $rounded, $scale+1);
         $diffDigit = (int)$diffDigit[strlen($diffDigit)-1];
 
-        if ($diffDigit >= 5) {
+        if ($diffDigit >= 5 && $value[0] !== '-') {
             $rounded = bcadd($rounded, bcpow('10', -$scale, $scale), $scale);
+        }
+        if ($diffDigit >= 5 && $value[0] === '-') {
+            $rounded = bcsub($rounded, bcpow('10', -$scale, $scale), $scale);
         }
 
         return $rounded;
