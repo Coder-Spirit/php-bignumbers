@@ -9,11 +9,11 @@ class DecimalSinTest extends PHPUnit_Framework_TestCase
 {
     public function sinProvider() {
         // Some values providede by mathematica
-        return array(
-            array('1', '0.84147098480790', 14),
-            array('123.123', '-0.56537391969733569', 17),
-            array('15000000000', '0.69170450164193502844', 20)
-        );
+        return [
+            ['1', '0.84147098480790', 14],
+            ['123.123', '-0.56537391969733569', 17],
+            ['15000000000', '0.69170450164193502844', 20]
+        ];
     }
 
     /**

@@ -84,7 +84,7 @@ class Decimal
             return self::fromDecimal($value, $scale);
         } else {
             throw new InvalidArgumentTypeException(
-                array('int', 'float', 'string', 'Decimal'),
+                ['int', 'float', 'string', 'Decimal'],
                 is_object($value) ? get_class($value) : gettype($value),
                 'Invalid argument type.'
             );
@@ -101,7 +101,7 @@ class Decimal
 
         if (!is_int($intValue)) {
             throw new InvalidArgumentTypeException(
-                array('int'),
+                ['int'],
                 is_object($intValue) ? get_class($intValue) : gettype($intValue),
                 '$intValue must be of type int'
             );
@@ -122,7 +122,7 @@ class Decimal
 
         if (!is_float($fltValue)) {
             throw new InvalidArgumentTypeException(
-                array('float'),
+                ['float'],
                 is_object($fltValue) ?
                     get_class($fltValue) :
                     gettype($fltValue),
@@ -160,7 +160,7 @@ class Decimal
 
         if (!is_string($strValue)) {
             throw new InvalidArgumentTypeException(
-                array('string'),
+                ['string'],
                 is_object($strValue) ? get_class($strValue) : gettype($strValue),
                 '$strVlue must be of type string.'
             );
@@ -988,7 +988,7 @@ class Decimal
             $r = bcsub($exponent_remaining, $actual_rt, $inner_scale);
         }
 
-        return array($actual_index, $r);
+        return [$actual_index, $r];
     }
 
     /**

@@ -2,7 +2,7 @@ php-bignumbers [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://git
 ==============
 
 A robust library to handle immutable big numbers inside PHP applications
-The current stable version is 0.7.1. Litipk\BigNumbers supports PHP 5.3.x, 5.4.x, 5.5.x, and 5.6.,x
+The current stable version is 0.7.1. Litipk\BigNumbers supports PHP 5.4.x, 5.5.x, and 5.6.,x
 but also Facebook's [HHVM](http://www.hhvm.com).
 
 

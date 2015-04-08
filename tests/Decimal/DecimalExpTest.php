@@ -9,20 +9,20 @@ class DecimalExpTest extends PHPUnit_Framework_TestCase
 {
     public function expProvider() {
         // Some values provided by Mathematica
-        return array(
-            array('0', '1', 0),
-            array('0', '1', 1),
-            array('0', '1', 2),
+        return [
+            ['0', '1', 0],
+            ['0', '1', 1],
+            ['0', '1', 2],
 
-            array('1', '3', 0),
-            array('1', '2.7', 1),
-            array('1', '2.72', 2),
-            array('1', '2.718', 3),
+            ['1', '3', 0],
+            ['1', '2.7', 1],
+            ['1', '2.72', 2],
+            ['1', '2.718', 3],
 
-            array('-1', '0', 0),
-            array('-1', '0.4', 1),
-            array('-1', '0.37', 2)
-        );
+            ['-1', '0', 0],
+            ['-1', '0.4', 1],
+            ['-1', '0.37', 2]
+        ];
     }
 
     /**
