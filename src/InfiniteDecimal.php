@@ -194,7 +194,7 @@ class InfiniteDecimal extends Decimal
                     return self::$pInf;
                 } else {
                     // $b is an odd number
-                    return $this; // self::$nInf;
+                    return $this; // Negative Infinite
                 }
             }
 
