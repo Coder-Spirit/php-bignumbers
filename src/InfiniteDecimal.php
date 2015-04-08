@@ -297,6 +297,12 @@ class InfiniteDecimal extends Decimal
     	return $this;
     }
 
+    /**
+     * Throws exception because sine is undefined in the infinite.
+     *
+     * @param integer $scale
+     * @return null
+     */
     public function sin($scale = null)
     {
         throw new \DomainException(($this === self::$pInf) ?
@@ -305,12 +311,33 @@ class InfiniteDecimal extends Decimal
         );
     }
 
+    /**
+     * Throws exception because cosine is undefined in the infinite.
+     *
+     * @param integer $scale
+     * @return null
+     */
     public function cos($scale = null)
     {
         throw new \DomainException(($this === self::$pInf) ?
             "Cosine function hasn't limit in the positive infinite." :
             "Cosine function hasn't limit in the negative infinite."
         );
+    }
+
+    /**
+     * Returns exp($this), said in other words: e^$this .
+     *
+     * @param integer $scale
+     * @return Decimal
+     */
+    public function exp($scale = null)
+    {
+        if ($this == self::$pInf) {
+            return $this;
+        } else {
+            return DecimalConstants::zero();
+        }
     }
 
     public function tan($scale = null)
