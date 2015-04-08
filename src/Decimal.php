@@ -831,7 +831,7 @@ class Decimal
      *
      * @return number
      */
-    public function _innerValue()
+    public function innerValue()
     {
         return $this->value;
     }
