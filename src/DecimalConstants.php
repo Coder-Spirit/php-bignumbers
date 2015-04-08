@@ -39,7 +39,7 @@ final class DecimalConstants
 
     }
 
-    public static function Zero()
+    public static function zero()
     {
         if (self::$ZERO === null) {
             self::$ZERO = Decimal::fromString("0");
@@ -47,7 +47,7 @@ final class DecimalConstants
         return self::$ZERO;
     }
 
-    public static function One()
+    public static function one()
     {
         if (self::$ONE === null) {
             self::$ONE = Decimal::fromString("1");
@@ -59,7 +59,7 @@ final class DecimalConstants
      * Returns the Pi number.
      * @return Decimal
      */
-    public static function PI()
+    public static function pi()
     {
         if (self::$PI === null) {
             self::$PI = Decimal::fromString(
@@ -73,7 +73,7 @@ final class DecimalConstants
      * Returns the Euler's E number.
      * @return Decimal
      */
-    public static function E()
+    public static function e()
     {
         if (self::$E === null) {
             self::$E = Decimal::fromString(
@@ -87,7 +87,7 @@ final class DecimalConstants
      * Returns the Euler-Mascheroni constant.
      * @return Decimal
      */
-    public static function EulerMascheroni()
+    public static function eulerMascheroni()
     {
         if (self::$EulerMascheroni === null) {
             self::$EulerMascheroni = Decimal::fromString(
@@ -101,7 +101,7 @@ final class DecimalConstants
      * Returns the Golden Ration, also named Phi.
      * @return Decimal
      */
-    public static function GoldenRatio()
+    public static function goldenRatio()
     {
         if (self::$GoldenRatio === null) {
             self::$GoldenRatio = Decimal::fromString(
@@ -115,7 +115,7 @@ final class DecimalConstants
      * Returns the Light of Speed measured in meters / second.
      * @return Decimal
      */
-    public static function LightSpeed()
+    public static function lightSpeed()
     {
         if (self::$LightSpeed === null) {
             self::$LightSpeed = Decimal::fromInteger(299792458);
