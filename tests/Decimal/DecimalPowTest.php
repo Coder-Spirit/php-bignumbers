@@ -130,8 +130,8 @@ class DecimalPowTest extends PHPUnit_Framework_TestCase
         );
 
         $this->assertTrue(
-            $pFive->pow(Decimal::fromFloat(-4.5))->equals(Decimal::fromString("0.00071554")),
-            "The answer must be 0.00071554, but was " . $pFive->pow(Decimal::fromFloat(-4.5))
+            $pFive->pow(Decimal::fromFloat(-4.5))->equals(Decimal::fromString("0.0007155417527999")),
+            "The answer must be 0.0007155417527999, but was " . $pFive->pow(Decimal::fromFloat(-4.5))
         );
     }
 

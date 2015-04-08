@@ -138,7 +138,7 @@ class Decimal
             );
         }
 
-        $scale = ($scale === null) ? 8 : $scale;
+        $scale = ($scale === null) ? 16 : $scale;
 
         $strValue = number_format($fltValue, $scale, '.', '');
         if ($removeZeros) {
@@ -676,42 +676,24 @@ class Decimal
      * @param integer $scale
      * @return Decimal sin($this)
      */
-    public function sin($scale = null) {
+    public function sin($scale = null)
+    {
         // First normalise the number in the [0, 2PI] domain
         $x = $this->mod(DecimalConstants::PI()->mul(Decimal::fromString("2")));
 
         // PI has only 32 significant numbers
-        $significantNumbers = ($scale === null) ? 32 : $scale;
+        $scale = ($scale === null) ? 32 : $scale;
 
-        // Next use Maclaurin's theorem to approximate sin with high enough accuracy
-        // note that the accuracy is depended on the accuracy of the given PI constant
-        $faculty = DecimalConstants::One();    // Calculates the faculty under the sign
-        $xPowerN = DecimalConstants::One();    // Calculates x^n
-        $approx = DecimalConstants::Zero();     // keeps track of our approximation for sin(x)
-
-        $change = InfiniteDecimal::getPositiveInfinite();
-
-        for ($i = 1; !$change->round($significantNumbers)->isZero(); $i++) {
-            // update x^n and n! for this walkthrough
-            $xPowerN = $xPowerN->mul($x);
-            $faculty = $faculty->mul(Decimal::fromInteger($i));
-
-            // only do calculations if n is uneven
-            // otherwise result is zero anyways
-            if ($i % 2 === 1) {
-                // calculate the absolute change in this iteration.
-                $change = $xPowerN->div($faculty);
-
-                // change should be added if x mod 4 == 1 and subtracted if x mod 4 == 3
-                if ($i % 4 === 1) {
-                    $approx = $approx->add($change);
-                } else {
-                    $approx = $approx->sub($change);
-                }
-            }
-        }
-
-        return $approx->round($significantNumbers);
+        return self::factorialSerie(
+            $x,
+            DecimalConstants::zero(),
+            function ($i) {
+                return ($i % 2 === 1) ? (
+                ($i % 4 === 1) ? DecimalConstants::one() : DecimalConstants::negativeOne()
+                ) : DecimalConstants::zero();
+            },
+            $scale
+        );
     }
 
     /**
@@ -721,42 +703,79 @@ class Decimal
      * @param integer $scale
      * @return Decimal cos($this)
      */
-    public function cos($scale = null) {
+    public function cos($scale = null)
+    {
         // First normalise the number in the [0, 2PI] domain
         $x = $this->mod(DecimalConstants::PI()->mul(Decimal::fromString("2")));
 
         // PI has only 32 significant numbers
-        $significantNumbers = ($scale === null) ? 32 : $scale;
+        $scale = ($scale === null) ? 32 : $scale;
 
-        // Next use Maclaurin's theorem to approximate sin with high enough accuracy
-        // note that the accuracy is depended on the accuracy of the given PI constant
-        $faculty = DecimalConstants::One();    // Calculates the faculty under the sign
-        $xPowerN = DecimalConstants::One();    // Calculates x^n
-        $approx = DecimalConstants::One();     // keeps track of our approximation for sin(x)
+        return self::factorialSerie(
+            $x,
+            DecimalConstants::one(),
+            function ($i) {
+                return ($i % 2 === 0) ? (
+                    ($i % 4 === 0) ? DecimalConstants::one() : DecimalConstants::negativeOne()
+                ) : DecimalConstants::zero();
+            },
+            $scale
+        );
+    }
 
+    /**
+     * Returns exp($this), said in other words: e^$this .
+     *
+     * @param integer $scale
+     * @return Decimal
+     */
+    public function exp($scale = null)
+    {
+        if ($this->isZero()) {
+            return DecimalConstants::one();
+        }
+
+        $scale = ($scale === null) ? max(
+            $this->scale,
+            (int)($this->isNegative() ? self::innerLog10($this->value, $this->scale, 0) : 16)
+        ) : $scale;
+
+        return self::factorialSerie(
+            $this, DecimalConstants::one(), function ($i) { return DecimalConstants::one(); }, $scale
+        );
+    }
+
+    /**
+     * Internal method used to compute sin, cos and exp
+     *
+     * @param Decimal $x
+     * @param Decimal $firstTerm
+     * @param callable $generalTerm
+     * @param $scale
+     * @return Decimal
+     */
+    private static function factorialSerie (Decimal $x, Decimal $firstTerm, callable $generalTerm, $scale)
+    {
+        $approx = $firstTerm;
         $change = InfiniteDecimal::getPositiveInfinite();
 
-        for ($i = 1; !$change->floor($significantNumbers)->isZero(); $i++) {
+        $faculty = DecimalConstants::One();    // Calculates the faculty under the sign
+        $xPowerN = DecimalConstants::One();    // Calculates x^n
+
+        for ($i = 1; !$change->floor($scale+1)->isZero(); $i++) {
             // update x^n and n! for this walkthrough
             $xPowerN = $xPowerN->mul($x);
             $faculty = $faculty->mul(Decimal::fromInteger($i));
 
-            // only do calculations if n is uneven
-            // otherwise result is zero anyways
-            if ($i % 2 === 0) {
-                // calculate the absolute change in this iteration.
-                $change = $xPowerN->div($faculty);
+            $multiplier = $generalTerm($i);
 
-                // change should be added if x mod 4 == 0 and subtracted if x mod 4 == 2
-                if ($i % 4 === 0) {
-                    $approx = $approx->add($change);
-                } else {
-                    $approx = $approx->sub($change);
-                }
+            if (!$multiplier->isZero()) {
+                $change = $multiplier->mul($xPowerN, $scale + 2)->div($faculty, $scale + 2);
+                $approx = $approx->add($change, $scale + 2);
             }
         }
 
-        return $approx->round($significantNumbers);
+        return $approx->round($scale);
     }
 
     /**
@@ -784,7 +803,8 @@ class Decimal
      * @param integer $scale
      * @return Decimal cotan($this)
      */
-    public function cotan($scale = null) {
+    public function cotan($scale = null)
+    {
 	    $sin = $this->sin($scale + 2);
 	    if ($sin->isZero()) {
 	        throw new \DomainException(
@@ -801,7 +821,8 @@ class Decimal
      * @param Decimal $b
      * @return bool
      */
-    public function hasSameSign(Decimal $b) {
+    public function hasSameSign(Decimal $b)
+    {
         return $this->isPositive() && $b->isPositive() || $this->isNegative() && $b->isNegative();
     }
 
@@ -858,11 +879,12 @@ class Decimal
         $diffDigit = bcsub($value, $rounded, $scale+1);
         $diffDigit = (int)$diffDigit[strlen($diffDigit)-1];
 
-        if ($diffDigit >= 5 && $value[0] !== '-') {
-            $rounded = bcadd($rounded, bcpow('10', -$scale, $scale), $scale);
-        }
-        if ($diffDigit >= 5 && $value[0] === '-') {
-            $rounded = bcsub($rounded, bcpow('10', -$scale, $scale), $scale);
+        if ($diffDigit >= 5) {
+            if ($diffDigit >= 5 && $value[0] !== '-') {
+                $rounded = bcadd($rounded, bcpow('10', -$scale, $scale), $scale);
+            } else {
+                $rounded = bcsub($rounded, bcpow('10', -$scale, $scale), $scale);
+            }
         }
 
         return $rounded;

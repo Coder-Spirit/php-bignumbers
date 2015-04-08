@@ -14,6 +14,7 @@ final class DecimalConstants
 {
     private static $ZERO = null;
     private static $ONE = null;
+    private static $NEGATIVE_ONE = null;
 
     private static $PI = null;
     private static $E = null;
@@ -42,7 +43,7 @@ final class DecimalConstants
     public static function zero()
     {
         if (self::$ZERO === null) {
-            self::$ZERO = Decimal::fromString("0");
+            self::$ZERO = Decimal::fromInteger(0);
         }
         return self::$ZERO;
     }
@@ -50,9 +51,17 @@ final class DecimalConstants
     public static function one()
     {
         if (self::$ONE === null) {
-            self::$ONE = Decimal::fromString("1");
+            self::$ONE = Decimal::fromInteger(1);
         }
         return self::$ONE;
+    }
+
+    public static function negativeOne()
+    {
+        if (self::$NEGATIVE_ONE === null) {
+            self::$NEGATIVE_ONE = Decimal::fromInteger(-1);
+        }
+        return self::$NEGATIVE_ONE;
     }
 
     /**
