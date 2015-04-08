@@ -3,6 +3,7 @@
 namespace Litipk\BigNumbers;
 
 use Litipk\BigNumbers\Decimal as Decimal;
+use Litipk\Exceptions\InvalidArgumentTypeException;
 
 
 /**
@@ -17,7 +18,6 @@ final class DecimalConstants
     private static $NEGATIVE_ONE = null;
 
     private static $PI = null;
-    private static $E = null;
     private static $EulerMascheroni = null;
 
     private static $GoldenRatio = null;
@@ -80,16 +80,19 @@ final class DecimalConstants
 
     /**
      * Returns the Euler's E number.
+     * @param  integer $scale
      * @return Decimal
      */
-    public static function e()
+    public static function e($scale = 32)
     {
-        if (self::$E === null) {
-            self::$E = Decimal::fromString(
-                "2.71828182845904523536028747135266"
-            );
+        if (!is_int($scale)) {
+            throw new InvalidArgumentTypeException(['integer'], gettype($scale));
         }
-        return self::$E;
+        if ($scale < 0) {
+            throw new \InvalidArgumentException("\$scale must be positive.");
+        }
+
+        return self::$ONE->exp($scale);
     }
 
     /**
