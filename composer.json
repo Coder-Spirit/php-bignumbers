@@ -23,7 +23,6 @@
 		"psy/psysh": ">=0.4.4",
 		"phpunit/phpunit": "4.5.*",
 		"squizlabs/php_codesniffer": "2.3.*",
-		"satooshi/php-coveralls": "dev-master",
 		"codeclimate/php-test-reporter": "dev-master"
 	},
 	"minimum-stability": "stable",
