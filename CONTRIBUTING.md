@@ -5,7 +5,7 @@ Contributing with Code
 ----------------------
 
 In first place, if you want to contribute code to php-bignumbers, you should have installed some PHP version,
-preferably recent versions (PHP>=5.3, but recommended PHP>=5.6), or *HHVM*.
+preferably recent versions (PHP>=5.4, but recommended PHP>=5.6), or *HHVM*.
 
 If you don't know where to start, you can try searching inside the
 [issues list](https://github.com/Litipk/php-bignumbers/issues). Specially the ones marked with the
