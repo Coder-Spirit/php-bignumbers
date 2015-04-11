@@ -107,7 +107,7 @@ class Decimal
             );
         }
 
-        return new Decimal((string)$intValue, 0);
+        return new self((string)$intValue, 0);
     }
 
     /**
@@ -145,7 +145,7 @@ class Decimal
             $strValue = self::removeTrailingZeros($strValue, $scale);
         }
 
-        return new Decimal($strValue, $scale);
+        return new self($strValue, $scale);
     }
 
     /**
@@ -210,7 +210,7 @@ class Decimal
             $value = self::removeTrailingZeros($value, $scale);
         }
 
-        return new Decimal($value, $scale);
+        return new self($value, $scale);
     }
 
     /**
@@ -230,7 +230,7 @@ class Decimal
             return $decValue;
         }
 
-        return new Decimal(
+        return new self(
             self::innerRound($decValue->value, $scale),
             $scale
         );
@@ -566,7 +566,7 @@ class Decimal
             $value = '-' . $this->value;
         }
 
-        return new Decimal($value, $this->scale);
+        return new self($value, $this->scale);
     }
 
 
