@@ -545,10 +545,12 @@ class Decimal
             return -$b->comp($this);
         }
 
+        $cmp_scale = $scale !== null ? $scale : max($this->scale, $b->scale);
+
         return bccomp(
-            self::innerRound($this->value, $scale),
-            self::innerRound($b->value, $scale),
-            $scale
+            self::innerRound($this->value, $cmp_scale),
+            self::innerRound($b->value, $cmp_scale),
+            $cmp_scale
         );
     }
 
