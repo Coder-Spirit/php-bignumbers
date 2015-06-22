@@ -1,6 +1,7 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
+use Litipk\BigNumbers\InfiniteDecimal as InfiniteDecimal;
 use Litipk\BigNumbers\Formatter as Formatter;
 
 class FormatterTest extends PHPUnit_Framework_TestCase
@@ -103,6 +104,17 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         $options = ['sign'=>' -', 'tpl'=>'${num}{sign} !!!'];
         $this->assertFormat('$1,000,000.25 - !!!', '-1000000.25', $options);
         $this->assertFormat('$1,000,000.25 !!!'  ,  '1000000.25', $options);
+    }
+
+    public function testInfiniteDecimal()
+    {
+        $formatter = new Formatter();
+
+        $inf = InfiniteDecimal::getPositiveInfinite();
+        $this->assertEquals('INF', $formatter->format($inf));
+
+        $inf = InfiniteDecimal::getNegativeInfinite();
+        $this->assertEquals('-INF', $formatter->format($inf));
     }
 
     function format($number, $options=[])
