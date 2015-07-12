@@ -52,7 +52,7 @@ class DecimalFromFloatTest extends PHPUnit_Framework_TestCase
             [90.05, "90.05"],
         ];
 
-        if (PHP_INT_SIZE) {
+        if (PHP_INT_SIZE >= 8) {
             // These tests probably won't work if you're not testing on x86-64.
             // It might also be better to mark the tests skipped. It is certainly
             // useful to cover this functionality off though as it hits the exponent
