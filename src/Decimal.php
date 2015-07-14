@@ -138,9 +138,24 @@ class Decimal
             );
         }
 
-        $scale = ($scale === null) ? 16 : $scale;
+        $defaultScale = 16;
 
-        $strValue = number_format($fltValue, $scale, '.', '');
+        $strValue = (string) $fltValue;
+        if (preg_match("/^ (?P<int> \d*) (?: \. (?P<dec> \d+) ) E (?P<sign>[\+\-]) (?P<exp>\d+) $/x", $strValue, $capture)) {
+            if ($scale === null) {
+                if ($capture['sign'] == '-') {
+                    $scale = $capture['exp'] + strlen($capture['dec']);
+                } else {
+                    $scale = $defaultScale;
+                }
+            }
+            $strValue = number_format($fltValue, $scale, '.', '');
+        }
+
+        if ($scale === null) {
+            $scale = $defaultScale;
+        }
+
         if ($removeZeros) {
             $strValue = self::removeTrailingZeros($strValue, $scale);
         }
