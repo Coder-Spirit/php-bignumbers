@@ -714,6 +714,25 @@ class Decimal
     }
 
     /**
+     * Calculates the cosecant of this with the highest possible accuracy
+     * Note that accuracy is limited by the accuracy of predefined PI;
+     *
+     * @param integer $scale
+     * @return Decimal
+     */
+    public function cosec($scale = null)
+    {
+        $sin = $this->sin($scale + 2);
+        if ($sin->isZero()) {
+            throw new \DomainException(
+                "The cosecant of this 'angle' is undefined."
+            );
+        }
+
+        return Decimal::fromInteger(1)->div($sin)->round($scale);
+    }
+
+    /**
      * Calculates the cosine of this method with the highest possible accuracy
      * Note that accuracy is limited by the accuracy of predefined PI;
      *
