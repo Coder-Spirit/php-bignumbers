@@ -312,6 +312,20 @@ class InfiniteDecimal extends Decimal
     }
 
     /**
+     * Throws exception because cosecant is undefined in the infinite.
+     *
+     * @param integer $scale
+     * @return null
+     */
+    public function cosec($scale = null)
+    {
+        throw new \DomainException(($this === self::$pInf) ?
+            "Cosecant function hasn't limit in the positive infinite." :
+            "Cosecant function hasn't limit in the negative infinite."
+        );
+    }
+
+    /**
      * Throws exception because cosine is undefined in the infinite.
      *
      * @param integer $scale
