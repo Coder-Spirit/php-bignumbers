@@ -729,7 +729,7 @@ class Decimal
             );
         }
 
-        return Decimal::fromInteger(1)->div($sin)->round($scale);
+        return DecimalConstants::one()->div($sin)->round($scale);
     }
 
     /**
@@ -775,7 +775,7 @@ class Decimal
             );
         }
 
-        return Decimal::fromInteger(1)->div($cos)->round($scale);
+        return DecimalConstants::one()->div($cos)->round($scale);
     }
 
 
