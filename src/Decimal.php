@@ -760,6 +760,26 @@ class Decimal
     }
 
     /**
+     * Calculates the secant of this with the highest possible accuracy
+     * Note that accuracy is limited by the accuracy of predefined PI;
+     *
+     * @param integer $scale
+     * @return Decimal
+     */
+    public function sec($scale = null)
+    {
+        $cos = $this->cos($scale + 2);
+        if ($cos->isZero()) {
+            throw new \DomainException(
+                "The secant of this 'angle' is undefined."
+            );
+        }
+
+        return Decimal::fromInteger(1)->div($cos)->round($scale);
+    }
+
+
+    /**
      * Returns exp($this), said in other words: e^$this .
      *
      * @param integer $scale

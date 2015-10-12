@@ -340,6 +340,20 @@ class InfiniteDecimal extends Decimal
     }
 
     /**
+     * Throws exception because secant is undefined in the infinite.
+     *
+     * @param integer $scale
+     * @return null
+     */
+    public function sec($scale = null)
+    {
+        throw new \DomainException(($this === self::$pInf) ?
+            "Secant function hasn't limit in the positive infinite." :
+            "Secant function hasn't limit in the negative infinite."
+        );
+    }
+
+    /**
      * Returns exp($this), said in other words: e^$this .
      *
      * @param integer $scale

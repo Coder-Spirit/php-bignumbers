@@ -3,7 +3,7 @@
 use Litipk\BigNumbers\InfiniteDecimal as InfiniteDecimal;
 
 /**
- * @group cos
+ * @group cosec
  */
 class InfiniteDecimalCosecTest extends PHPUnit_Framework_TestCase
 {
