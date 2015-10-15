@@ -778,7 +778,38 @@ class Decimal
         return DecimalConstants::one()->div($cos)->round($scale);
     }
 
+    /**
+     *	Calculates the arcsine of this with the highest possible accuracy
+     *
+     * @param integer $scale [description]
+     * @return Decimal
+     */
+    public function arcsin($scale = null)
+    {
+        if($this->comp(DecimalConstants::one(), $scale + 2) === 1 || $this->comp(DecimalConstants::negativeOne(), $scale + 2) === -1) {
+            throw new \DomainException(
+                "The arcsin of this number is undefined."
+            );
+        }
 
+        if ($this->round($scale)->isZero()) {
+            return DecimalConstants::zero;
+        }
+        if ($this->round($scale)->equals(DecimalConstants::one())) {
+            return DecimalConstants::pi()->div(Decimal::fromInteger(2))->round($scale);
+        }
+        if ($this->round($scale)->equals(DecimalConstants::negativeOne())) {
+            return DecimalConstants::pi()->div(Decimal::fromInteger(-2))->round($scale);
+        }
+
+        $scale = ($scale === null) ? 32 : $scale;
+
+        return self::powerSerie(
+            $this,
+            DecimalConstants::zero(),
+            $scale
+        );
+    }
     /**
      * Returns exp($this), said in other words: e^$this .
      *
@@ -827,6 +858,56 @@ class Decimal
 
             if (!$multiplier->isZero()) {
                 $change = $multiplier->mul($xPowerN, $scale + 2)->div($faculty, $scale + 2);
+                $approx = $approx->add($change, $scale + 2);
+            }
+        }
+
+        return $approx->round($scale);
+    }
+
+
+    /**
+     * Internal method used to compute arcsine     *
+     *
+     * @param Decimal $x
+     * @param Decimal $firstTerm
+     * @param $scale
+     * @return Decimal
+     */
+    private static function powerSerie (Decimal $x, Decimal $firstTerm, $scale)
+    {
+        $approx = $firstTerm;
+        $change = InfiniteDecimal::getPositiveInfinite();
+
+        $xPowerN = DecimalConstants::One();     // Calculates x^n
+        $factorN = DecimalConstants::One();      // Calculates a_n
+
+        $numerator = DecimalConstants::one();
+        $denominator = DecimalConstants::one();
+
+        for ($i = 1; !$change->floor($scale + 2)->isZero(); $i++) {
+            $xPowerN = $xPowerN->mul($x);
+
+            if ($i % 2 == 0) {
+                $factorN = DecimalConstants::zero();
+            } elseif ($i == 1) {
+                $factorN = DecimalConstants::one();
+            } else {
+                $incrementNum = Decimal::fromInteger($i - 2);
+                $numerator = $numerator->mul($incrementNum, $scale +2);
+
+                $incrementDen = Decimal::fromInteger($i - 1);
+                $increment = Decimal::fromInteger($i);
+                $denominator = $denominator
+                    ->div($incrementNum, $scale +2)
+                    ->mul($incrementDen, $scale +2)
+                    ->mul($increment, $scale +2);
+
+                $factorN = $numerator->div($denominator, $scale + 2);
+            }
+
+            if (!$factorN->isZero()) {
+                $change = $factorN->mul($xPowerN, $scale + 2);
                 $approx = $approx->add($change, $scale + 2);
             }
         }
