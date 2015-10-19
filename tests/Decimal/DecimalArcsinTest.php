@@ -8,7 +8,7 @@ use Litipk\BigNumbers\Decimal as Decimal;
 class DecimalArcsinTest extends PHPUnit_Framework_TestCase
 {
     public function arcsinProvider() {
-        // Some values providede by wolframalpha
+        // Some values provided by wolframalpha
         return [
             ['0.154', '0.15461530016096', 14],
             ['1', '1.57079632679489662', 17],

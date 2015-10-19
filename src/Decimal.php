@@ -781,7 +781,7 @@ class Decimal
     /**
      *	Calculates the arcsine of this with the highest possible accuracy
      *
-     * @param integer $scale [description]
+     * @param integer $scale
      * @return Decimal
      */
     public function arcsin($scale = null)
@@ -810,6 +810,44 @@ class Decimal
             $scale
         );
     }
+
+    /**
+     *	Calculates the arccosine of this with the highest possible accuracy
+     *
+     * @param integer $scale
+     * @return Decimal
+     */
+    public function arccos($scale = null)
+    {
+        if($this->comp(DecimalConstants::one(), $scale + 2) === 1 || $this->comp(DecimalConstants::negativeOne(), $scale + 2) === -1) {
+            throw new \DomainException(
+                "The arccos of this number is undefined."
+            );
+        }
+
+        $piOverTwo = DecimalConstants::pi()->div(Decimal::fromInteger(2), $scale + 2)->round($scale);
+
+        if ($this->round($scale)->isZero()) {
+            return $piOverTwo;
+        }
+        if ($this->round($scale)->equals(DecimalConstants::one())) {
+            return DecimalConstants::zero();
+        }
+        if ($this->round($scale)->equals(DecimalConstants::negativeOne())) {
+            return DecimalConstants::pi()->round($scale);
+        }
+
+        $scale = ($scale === null) ? 32 : $scale;
+
+        return $piOverTwo->sub(
+            self::powerSerie(
+                $this,
+                DecimalConstants::zero(),
+                $scale
+            )
+        )->round($scale);
+    }
+
     /**
      * Returns exp($this), said in other words: e^$this .
      *
