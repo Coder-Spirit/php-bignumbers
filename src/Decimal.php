@@ -849,6 +849,35 @@ class Decimal
     }
 
     /**
+     *	Calculates the arctangente of this with the highest possible accuracy
+     *
+     * @param integer $scale
+     * @return Decimal
+     */
+    public function arctan($scale = null)
+    {
+        $piOverFour = DecimalConstants::pi()->div(Decimal::fromInteger(4), $scale + 2)->round($scale);
+
+        if ($this->round($scale)->isZero()) {
+            return DecimalConstants::zero();
+        }
+        if ($this->round($scale)->equals(DecimalConstants::one())) {
+            return $piOverFour;
+        }
+        if ($this->round($scale)->equals(DecimalConstants::negativeOne())) {
+            return DecimalConstants::negativeOne()->mul($piOverFour);
+        }
+
+        $scale = ($scale === null) ? 32 : $scale;
+
+        return self::simplePowerSerie(
+            $this,
+            DecimalConstants::zero(),
+            $scale
+        )->round($scale);
+    }
+
+    /**
      * Returns exp($this), said in other words: e^$this .
      *
      * @param integer $scale
@@ -905,7 +934,7 @@ class Decimal
 
 
     /**
-     * Internal method used to compute arcsine     *
+     * Internal method used to compute arcsine and arcosine
      *
      * @param Decimal $x
      * @param Decimal $firstTerm
@@ -942,6 +971,44 @@ class Decimal
                     ->mul($increment, $scale +2);
 
                 $factorN = $numerator->div($denominator, $scale + 2);
+            }
+
+            if (!$factorN->isZero()) {
+                $change = $factorN->mul($xPowerN, $scale + 2);
+                $approx = $approx->add($change, $scale + 2);
+            }
+        }
+
+        return $approx->round($scale);
+    }
+
+    /**
+     * Internal method used to compute arctan and arccotan
+     *
+     * @param Decimal $x
+     * @param Decimal $firstTerm
+     * @param $scale
+     * @return Decimal
+     */
+    private static function simplePowerSerie (Decimal $x, Decimal $firstTerm, $scale)
+    {
+        $approx = $firstTerm;
+        $change = InfiniteDecimal::getPositiveInfinite();
+
+        $xPowerN = DecimalConstants::One();     // Calculates x^n
+        $sign = DecimalConstants::One();      // Calculates a_n
+
+        for ($i = 1; !$change->floor($scale + 2)->isZero(); $i++) {
+            $xPowerN = $xPowerN->mul($x);
+
+            if ($i % 2 === 0) {
+                $factorN = DecimalConstants::zero();
+            } else {
+                 if ($i % 4 === 1) {
+                     $factorN = DecimalConstants::one()->div(Decimal::fromInteger($i), $scale + 2);
+                 } else {
+                     $factorN = DecimalConstants::negativeOne()->div(Decimal::fromInteger($i), $scale + 2);
+                 }
             }
 
             if (!$factorN->isZero()) {
