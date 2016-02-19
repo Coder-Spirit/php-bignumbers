@@ -873,7 +873,38 @@ class Decimal
         return self::simplePowerSerie(
             $this,
             DecimalConstants::zero(),
-            $scale
+            $scale + 2
+        )->round($scale);
+    }
+
+    /**
+     * Calculates the arccotangente of this with the highest possible accuracy
+     *
+     * @param integer $scale
+     * @return Decimal
+     */
+    public function arccot($scale = null) {
+        $scale = ($scale === null) ? 32 : $scale;
+
+        $piOverTwo = DecimalConstants::pi()->div(Decimal::fromInteger(2), $scale + 2);
+        if ($this->round($scale)->isZero()) {
+            return $piOverTwo->round($scale);
+        }
+
+        $piOverFour = DecimalConstants::pi()->div(Decimal::fromInteger(4), $scale + 2);
+        if ($this->round($scale)->equals(DecimalConstants::one())) {
+            return $piOverFour->round($scale);
+        }
+        if ($this->round($scale)->equals(DecimalConstants::negativeOne())) {
+            return DecimalConstants::negativeOne()->mul($piOverFour, $scale + 2)->round($scale);
+        }
+
+        return $piOverTwo->sub(
+            self::simplePowerSerie(
+                $this,
+                DecimalConstants::zero(),
+                $scale + 2
+            )
         )->round($scale);
     }
 
