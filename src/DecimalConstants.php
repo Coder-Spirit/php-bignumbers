@@ -22,6 +22,8 @@ final class DecimalConstants
 
     private static $GoldenRatio = null;
 
+    private static $SilverRatio = null;
+
     private static $LightSpeed = null;
 
     /**
@@ -121,6 +123,20 @@ final class DecimalConstants
             );
         }
         return self::$GoldenRatio;
+    }
+
+    /**
+     * Returns the Silver Ratio.
+     * @return Decimal
+     */
+    public static function silverRatio()
+    {
+        if (self::$SilverRatio === null) {
+            self::$SilverRatio = Decimal::fromString(
+                "2.41421356237309504880168872420970"
+            );
+        }
+        return self::$SilverRatio;
     }
 
     /**
