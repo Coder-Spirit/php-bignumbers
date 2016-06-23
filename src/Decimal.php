@@ -909,6 +909,68 @@ class Decimal
     }
 
     /**
+     * Calculates the arcsecant of this with the highest possible accuracy
+     *
+     * @param integer $scale
+     * @return Decimal
+     */
+    public function arcsec($scale = null) {
+        if($this->comp(DecimalConstants::one(), $scale + 2) === -1 && $this->comp(DecimalConstants::negativeOne(), $scale + 2) === 1) {
+            throw new \DomainException(
+                "The arcsecant of this number is undefined."
+            );
+        }
+
+        $piOverTwo = DecimalConstants::pi()->div(Decimal::fromInteger(2), $scale + 2)->round($scale);
+
+        if ($this->round($scale)->equals(DecimalConstants::one())) {
+            return DecimalConstants::zero();
+        }
+        if ($this->round($scale)->equals(DecimalConstants::negativeOne())) {
+            return DecimalConstants::pi()->round($scale);
+        }
+
+        $scale = ($scale === null) ? 32 : $scale;
+
+        return $piOverTwo->sub(
+            self::powerSerie(
+                DecimalConstants::one()->div($this, $scale + 2),
+                DecimalConstants::zero(),
+                $scale + 2
+            )
+        )->round($scale);
+    }
+
+    /**
+     * Calculates the arccosecant of this with the highest possible accuracy
+     *
+     * @param integer $scale
+     * @return Decimal
+     */
+    public function arccsc($scale = null) {
+        if($this->comp(DecimalConstants::one(), $scale + 2) === -1 && $this->comp(DecimalConstants::negativeOne(), $scale + 2) === 1) {
+            throw new \DomainException(
+                "The arccosecant of this number is undefined."
+            );
+        }
+
+        $scale = ($scale === null) ? 32 : $scale;
+
+        if ($this->round($scale)->equals(DecimalConstants::one())) {
+            return DecimalConstants::pi()->div(Decimal::fromInteger(2), $scale + 2)->round($scale);
+        }
+        if ($this->round($scale)->equals(DecimalConstants::negativeOne())) {
+            return DecimalConstants::pi()->div(Decimal::fromInteger(-2), $scale + 2)->round($scale);
+        }
+
+        return self::powerSerie(
+            DecimalConstants::one()->div($this, $scale + 2),
+            DecimalConstants::zero(),
+            $scale + 2
+        )->round($scale);
+    }
+
+    /**
      * Returns exp($this), said in other words: e^$this .
      *
      * @param integer $scale
