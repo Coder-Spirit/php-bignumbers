@@ -23,6 +23,10 @@ class DecimalConstantsTest extends PHPUnit_Framework_TestCase
             Decimal::fromString("1.61803398874989484820458683436564")
         ));
 
+        $this->assertTrue(DecimalConstants::silverRatio()->equals(
+            Decimal::fromString("2.41421356237309504880168872420970")
+        ));
+
         $this->assertTrue(DecimalConstants::lightSpeed()->equals(
             Decimal::fromInteger(299792458)
         ));
