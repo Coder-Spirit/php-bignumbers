@@ -84,7 +84,7 @@ class Decimal
         if (\is_infinite($fltValue)) {
             throw new InfiniteInputError('fltValue must be a finite number');
         } elseif (\is_nan($fltValue)) {
-            throw new NaNInputError("To ensure consistency, this class doesn't handle NaN objects.");
+            throw new NaNInputError("fltValue can't be NaN");
         }
 
         $defaultScale = 16;
@@ -149,9 +149,7 @@ class Decimal
             );
 
         } else {
-            throw new \InvalidArgumentException(
-                '$strValue must be a string that represents uniquely a finite float point number.'
-            );
+            throw new NaNInputError('strValue must be a number');
         }
 
         $scale = ($scale!==null) ? $scale : $min_scale;

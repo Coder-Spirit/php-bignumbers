@@ -11,7 +11,7 @@ class DecimalFromFloatTest extends TestCase
 {
     /**
      * @expectedException \DomainException
-     * @expectedExceptionMessage To ensure consistency, this class doesn't handle NaN objects.
+     * @expectedExceptionMessage fltValue can't be NaN
      */
     public function testNaN()
     {

@@ -103,8 +103,8 @@ class DecimalFromStringTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage $strValue must be a string that represents uniquely a finite float point number.
+     * @expectedException \Litipk\BigNumbers\Errors\NaNInputError
+     * @expectedExceptionMessage strValue must be a number
      */
     public function testBadString()
     {
