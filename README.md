@@ -8,7 +8,7 @@ The current stable version is 0.7.3. Litipk\BigNumbers supports PHP 7.x.
 Status Label  | Status Value
 --------------|-------------
 Build | [![Build Status](https://api.travis-ci.org/Litipk/php-bignumbers.png?tag=0.7.0)](https://travis-ci.org/Litipk/php-bignumbers)
-HHVM support | [![HHVM Status](http://hhvm.h4cc.de/badge/litipk/php-bignumbers.svg)](http://hhvm.h4cc.de/package/litipk/php-bignumbers)
+HHVM support | **Unsupported**
 Coverage (from Coveralls): | [![Coverage Status](https://coveralls.io/repos/Litipk/php-bignumbers/badge.png?tag=0.7.0)](https://coveralls.io/r/Litipk/php-bignumbers?branch=master)
 Coverage (from Scrutinizer): | [![Code Coverage](https://scrutinizer-ci.com/g/Litipk/php-bignumbers/badges/coverage.png?s=58936d9334e7fc2413a43ad6cf1c7c1577f1f39c)](https://scrutinizer-ci.com/g/Litipk/php-bignumbers/)
 Code Quality (Scrutinizer): | [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/Litipk/php-bignumbers/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Litipk/php-bignumbers/)
