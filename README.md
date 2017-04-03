@@ -25,7 +25,7 @@ composer.json file the following text:
 ```json
 {
     "require": {
-        "litipk/php-bignumbers": "0.7.3"
+        "litipk/php-bignumbers": "^0.8"
     }
 }
 ```
