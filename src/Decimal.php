@@ -16,6 +16,10 @@ use Litipk\BigNumbers\Errors\NotImplementedError;
  */
 class Decimal
 {
+    const CLASSIC_DECIMAL_NUMBER_REGEXP = '/^([+\-]?)0*(([1-9][0-9]*|[0-9])(\.[0-9]+)?)$/';
+    const EXP_NOTATION_NUMBER_REGEXP = '/([+\-]?)0*([0-9](\.[0-9]+)?)[eE]([+\-]?)(\d+)/';
+    const EXP_NUM_GROUPS_NUMBER_REGEXP = "/^ (?P<int> \d*) (?: \. (?P<dec> \d+) ) E (?P<sign>[\+\-]) (?P<exp>\d+) $/x";
+
     /**
      * Internal numeric value
      * @var string
@@ -90,7 +94,7 @@ class Decimal
         $defaultScale = 16;
 
         $strValue = (string) $fltValue;
-        if (\preg_match("/^ (?P<int> \d*) (?: \. (?P<dec> \d+) ) E (?P<sign>[\+\-]) (?P<exp>\d+) $/x", $strValue, $capture)) {
+        if (\preg_match(self::EXP_NUM_GROUPS_NUMBER_REGEXP, $strValue, $capture)) {
             if ($scale === null) {
                 if ($capture['sign'] == '-') {
                     $scale = $capture['exp'] + \strlen($capture['dec']);
@@ -122,37 +126,26 @@ class Decimal
     {
         self::paramsValidation($strValue, $scale);
 
-        if (\preg_match('/^([+\-]?)0*(([1-9][0-9]*|[0-9])(\.[0-9]+)?)$/', $strValue, $captures) === 1) {
+        if (\preg_match(self::CLASSIC_DECIMAL_NUMBER_REGEXP, $strValue, $captures) === 1) {
 
             // Now it's time to strip leading zeros in order to normalize inner values
             $value = self::normalizeSign($captures[1]) . $captures[2];
             $min_scale = isset($captures[4]) ? \max(0, \strlen($captures[4]) - 1) : 0;
 
-        } elseif (\preg_match('/([+\-]?)0*([0-9](\.[0-9]+)?)[eE]([+\-]?)(\d+)/', $strValue, $captures) === 1) {
-
-            $mantissa_scale = \max(\strlen($captures[3]) - 1, 0);
-
-            $exp_val = (int)$captures[5];
-
-            if (self::normalizeSign($captures[4]) === '') {
-                $min_scale = \max($mantissa_scale - $exp_val, 0);
-                $tmp_multiplier = \bcpow('10', (string)$exp_val);
-            } else {
-                $min_scale = $mantissa_scale + $exp_val;
-                $tmp_multiplier = \bcpow('10', (string)-$exp_val, $exp_val);
-            }
-
-            $value = self::normalizeSign($captures[1]) . \bcmul(
+        } elseif (\preg_match(self::EXP_NOTATION_NUMBER_REGEXP, $strValue, $captures) === 1) {
+            list($min_scale, $value) = self::fromExpNotationString(
+                $scale,
+                $captures[1],
                 $captures[2],
-                $tmp_multiplier,
-                \max($min_scale, $scale !== null ? $scale : 0)
+                $captures[3],
+                $captures[4],
+                (int)$captures[5]
             );
-
         } else {
             throw new NaNInputError('strValue must be a number');
         }
 
-        $scale = ($scale!==null) ? $scale : $min_scale;
+        $scale = (null !== $scale) ? $scale : $min_scale;
         if ($scale < $min_scale) {
             $value = self::innerRound($value, $scale);
         }
@@ -1090,6 +1083,40 @@ class Decimal
     public function __toString(): string
     {
         return $this->value;
+    }
+
+    /*
+     *
+     */
+    private static function fromExpNotationString(
+        int $scale = null,
+        string $sign,
+        string $mantissa,
+        string $mantissaDecimals,
+        string $expSign,
+        int $expVal
+    ): array
+    {
+        $mantissaScale = \max(\strlen($mantissaDecimals) - 1, 0);
+
+        if (self::normalizeSign($expSign) === '') {
+            $minScale = \max($mantissaScale - $expVal, 0);
+            $tmp_multiplier = \bcpow('10', (string)$expVal);
+        } else {
+            $minScale = $mantissaScale + $expVal;
+            $tmp_multiplier = \bcpow('10', (string)-$expVal, $expVal);
+        }
+
+        $value = (
+            self::normalizeSign($sign) .
+            \bcmul(
+                $mantissa,
+                $tmp_multiplier,
+                \max($minScale, $scale ?? 0)
+            )
+        );
+
+        return [$minScale, $value];
     }
 
     /**
