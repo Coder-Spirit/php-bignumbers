@@ -4,6 +4,8 @@ namespace Litipk\BigNumbers;
 
 use Litipk\BigNumbers\DecimalConstants as DecimalConstants;
 
+use Litipk\BigNumbers\Errors\InfiniteInputError;
+use Litipk\BigNumbers\Errors\NaNInputError;
 use Litipk\BigNumbers\Errors\NotImplementedError;
 use Litipk\Exceptions\InvalidArgumentTypeException as InvalidArgumentTypeException;
 
@@ -80,11 +82,9 @@ class Decimal
         self::paramsValidation($fltValue, $scale);
 
         if (\is_infinite($fltValue)) {
-            throw new \InvalidArgumentException('fltValue must be a finite number');
+            throw new InfiniteInputError('fltValue must be a finite number');
         } elseif (\is_nan($fltValue)) {
-            throw new \DomainException(
-                "To ensure consistency, this class doesn't handle NaN objects."
-            );
+            throw new NaNInputError("To ensure consistency, this class doesn't handle NaN objects.");
         }
 
         $defaultScale = 16;
