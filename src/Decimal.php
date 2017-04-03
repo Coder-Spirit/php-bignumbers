@@ -17,8 +17,8 @@ use Litipk\BigNumbers\Errors\NotImplementedError;
 class Decimal
 {
     const CLASSIC_DECIMAL_NUMBER_REGEXP = '/^([+\-]?)0*(([1-9][0-9]*|[0-9])(\.[0-9]+)?)$/';
-    const EXP_NOTATION_NUMBER_REGEXP = '/([+\-]?)0*([0-9](\.[0-9]+)?)[eE]([+\-]?)(\d+)/';
-    const EXP_NUM_GROUPS_NUMBER_REGEXP = "/^ (?P<int> \d*) (?: \. (?P<dec> \d+) ) E (?P<sign>[\+\-]) (?P<exp>\d+) $/x";
+    const EXP_NOTATION_NUMBER_REGEXP = '/^ (?P<sign> [+\-]?) 0*(?P<mantissa> [0-9](?P<decimals> \.[0-9]+)?) [eE] (?P<expSign> [+\-]?)(?P<exp> \d+)$/x';
+    const EXP_NUM_GROUPS_NUMBER_REGEXP = '/^ (?P<int> \d*) (?: \. (?P<dec> \d+) ) E (?P<sign>[\+\-]) (?P<exp>\d+) $/x';
 
     /**
      * Internal numeric value
@@ -135,11 +135,11 @@ class Decimal
         } elseif (\preg_match(self::EXP_NOTATION_NUMBER_REGEXP, $strValue, $captures) === 1) {
             list($min_scale, $value) = self::fromExpNotationString(
                 $scale,
-                $captures[1],
-                $captures[2],
-                $captures[3],
-                $captures[4],
-                (int)$captures[5]
+                $captures['sign'],
+                $captures['mantissa'],
+                \strlen($captures['mantissa']) - 1,
+                $captures['expSign'],
+                (int)$captures['exp']
             );
         } else {
             throw new NaNInputError('strValue must be a number');
@@ -1092,12 +1092,12 @@ class Decimal
         int $scale = null,
         string $sign,
         string $mantissa,
-        string $mantissaDecimals,
+        int $nDecimals,
         string $expSign,
         int $expVal
     ): array
     {
-        $mantissaScale = \max(\strlen($mantissaDecimals) - 1, 0);
+        $mantissaScale = \max($nDecimals, 0);
 
         if (self::normalizeSign($expSign) === '') {
             $minScale = \max($mantissaScale - $expVal, 0);
