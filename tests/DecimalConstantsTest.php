@@ -2,12 +2,11 @@
 
 use Litipk\BigNumbers\DecimalConstants as DecimalConstants;
 use Litipk\BigNumbers\Decimal as Decimal;
-
+use PHPUnit\Framework\TestCase;
 
 date_default_timezone_set('UTC');
 
-
-class DecimalConstantsTest extends PHPUnit_Framework_TestCase
+class DecimalConstantsTest extends TestCase
 {
     public function testFiniteAbs()
     {
@@ -45,14 +44,6 @@ class DecimalConstantsTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(DecimalConstants::e(16)->equals(
             Decimal::fromString("2.7182818284590452")
         ));
-    }
-
-    /**
-     * @expectedException Litipk\Exceptions\InvalidArgumentTypeException
-     */
-    public function testIncorrectTypedParamsOnE()
-    {
-        DecimalConstants::e("hello");
     }
 
     /**

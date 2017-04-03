@@ -2,13 +2,12 @@
 
 use Litipk\BigNumbers\Decimal as Decimal;
 use Litipk\BigNumbers\DecimalConstants as DecimalConstants;
-use Litipk\Exceptions\NotImplementedException as NotImplementedException;
-
+use Litipk\BigNumbers\Errors\NotImplementedError;
+use PHPUnit\Framework\TestCase;
 
 date_default_timezone_set('UTC');
 
-
-class DecimalPowTest extends PHPUnit_Framework_TestCase
+class DecimalPowTest extends TestCase
 {
     public function testZeroPositive()
     {
@@ -102,7 +101,7 @@ class DecimalPowTest extends PHPUnit_Framework_TestCase
         $catched = false;
         try {
             $nThree->pow($half);
-        } catch (NotImplementedException $e) {
+        } catch (NotImplementedError $e) {
             $catched = true;
         }
         $this->assertTrue($catched);

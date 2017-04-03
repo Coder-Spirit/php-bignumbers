@@ -1,11 +1,12 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group sin
  */
-class DecimalSinTest extends PHPUnit_Framework_TestCase
+class DecimalSinTest extends TestCase
 {
     public function sinProvider() {
         // Some values providede by mathematica

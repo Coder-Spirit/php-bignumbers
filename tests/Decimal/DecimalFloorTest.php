@@ -1,12 +1,11 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
-
+use PHPUnit\Framework\TestCase;
 
 date_default_timezone_set('UTC');
 
-
-class DecimalFloorTest extends PHPUnit_Framework_TestCase
+class DecimalFloorTest extends TestCase
 {
     public function testIntegerFloor()
     {

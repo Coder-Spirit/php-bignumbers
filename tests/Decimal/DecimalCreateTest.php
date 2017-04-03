@@ -2,22 +2,20 @@
 
 use Litipk\BigNumbers\Decimal as Decimal;
 use Litipk\Exceptions\InvalidArgumentTypeException;
-
+use PHPUnit\Framework\TestCase;
 
 date_default_timezone_set('UTC');
 
-
 class A {}  // Empty class used for testing
 
-
-class DecimalCreateTest extends PHPUnit_Framework_TestCase
+class DecimalCreateTest extends TestCase
 {
     public function testCreateWithInvalidType()
     {
         $thrown = false;
         try {
             Decimal::create([25, 67]);
-        } catch (InvalidArgumentTypeException $e) {
+        } catch (\TypeError $e) {
             $thrown = true;
         }
         $this->assertTrue($thrown);
@@ -25,7 +23,7 @@ class DecimalCreateTest extends PHPUnit_Framework_TestCase
         $thrown = false;
         try {
             Decimal::create(new A());
-        } catch (InvalidArgumentTypeException $e) {
+        } catch (\TypeError $e) {
             $thrown = true;
         }
         $this->assertTrue($thrown);
@@ -43,9 +41,6 @@ class DecimalCreateTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(Decimal::create(-35.125)->equals(Decimal::fromFloat(-35.125)));
         $this->assertTrue(Decimal::create(0.0)->equals(Decimal::fromFloat(0.0)));
         $this->assertTrue(Decimal::create(35.125)->equals(Decimal::fromFloat(35.125)));
-
-        $this->assertTrue(Decimal::create(INF)->equals(Decimal::getPositiveInfinite()));
-        $this->assertTrue(Decimal::create(-INF)->equals(Decimal::getNegativeInfinite()));
     }
 
     public function testCreateFromString()

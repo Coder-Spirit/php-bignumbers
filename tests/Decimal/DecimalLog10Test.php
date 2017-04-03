@@ -1,21 +1,20 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
-
+use PHPUnit\Framework\TestCase;
 
 date_default_timezone_set('UTC');
 
-
-class DecimalLog10Test extends PHPUnit_Framework_TestCase
+class DecimalLog10Test extends TestCase
 {
+    /**
+     * @expectedException \DomainException
+     * @expectedExceptionMessage Decimal can't represent infinite numbers.
+     */
     public function testZeroLog10()
     {
         $zero = Decimal::fromInteger(0);
-
-        $zero_log = $zero->log10();
-
-        $this->assertTrue($zero_log->isNegative());
-        $this->assertTrue($zero_log->isInfinite());
+        $zero->log10();
     }
 
     

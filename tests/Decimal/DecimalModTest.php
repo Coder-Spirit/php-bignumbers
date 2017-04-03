@@ -1,11 +1,12 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group mod
  */
-class DecimalModTest extends PHPUnit_Framework_TestCase
+class DecimalModTest extends TestCase
 {
     public function modProvider() {
         return [

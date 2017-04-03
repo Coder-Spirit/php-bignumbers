@@ -1,11 +1,12 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group cosec
  */
-class DecimalCosecTest extends PHPUnit_Framework_TestCase
+class DecimalCosecTest extends TestCase
 {
     public function cosecProvider() {
         // Some values provided by Mathematica

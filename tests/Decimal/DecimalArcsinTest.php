@@ -1,11 +1,12 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group arcsin
  */
-class DecimalArcsinTest extends PHPUnit_Framework_TestCase
+class DecimalArcsinTest extends TestCase
 {
     public function arcsinProvider() {
         // Some values provided by wolframalpha

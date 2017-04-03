@@ -1,11 +1,12 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group arcsec
  */
-class DecimalArcsecTest extends PHPUnit_Framework_TestCase
+class DecimalArcsecTest extends TestCase
 {
     public function arcsecProvider() {
         // Some values provided by wolframalpha

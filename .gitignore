@@ -1,3 +1,4 @@
+vendor/
+coverage_report/
+.idea/
 composer.lock
-vendor
-coverage_report

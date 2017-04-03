@@ -1,11 +1,12 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group cos
  */
-class DecimalExpTest extends PHPUnit_Framework_TestCase
+class DecimalExpTest extends TestCase
 {
     public function expProvider() {
         // Some values provided by Mathematica

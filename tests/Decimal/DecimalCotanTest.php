@@ -2,11 +2,12 @@
 
 use \Litipk\BigNumbers\Decimal as Decimal;
 use \Litipk\BigNumbers\DecimalConstants as DecimalConstants;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group cotan
  */
-class DecimalCotanTest extends PHPUnit_Framework_TestCase
+class DecimalCotanTest extends TestCase
 {
     public function cotanProvider() {
         // Some values providede by mathematica

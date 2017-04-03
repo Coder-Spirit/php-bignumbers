@@ -1,12 +1,13 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
+use PHPUnit\Framework\TestCase;
 
 
 date_default_timezone_set('UTC');
 
 
-class DecimalSerializationTest extends PHPUnit_Framework_TestCase
+class DecimalSerializationTest extends TestCase
 {
     public function testBaseCase()
     {

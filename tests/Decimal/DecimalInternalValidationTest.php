@@ -1,16 +1,14 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
-
+use PHPUnit\Framework\TestCase;
 
 date_default_timezone_set('UTC');
 
-
-class DecimalInternalValidationTest extends PHPUnit_Framework_TestCase
+class DecimalInternalValidationTest extends TestCase
 {
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage $value must be a non null number
+     * @expectedException \TypeError
      */
     public function testConstructorNullValueValidation()
     {
@@ -24,15 +22,6 @@ class DecimalInternalValidationTest extends PHPUnit_Framework_TestCase
     public function testConstructorNegativeScaleValidation()
     {
         Decimal::fromString("25", -15);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage $scale must be a positive integer
-     */
-    public function testConstructorNotIntegerScaleValidation()
-    {
-        Decimal::fromString("25", "hola mundo");
     }
 
     /**

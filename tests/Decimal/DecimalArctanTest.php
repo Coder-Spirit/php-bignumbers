@@ -1,11 +1,12 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group arctan
  */
-class DecimalArctanTest extends PHPUnit_Framework_TestCase
+class DecimalArctanTest extends TestCase
 {
     public function arctanProvider() {
         // Some values provided by wolframalpha

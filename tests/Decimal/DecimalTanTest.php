@@ -2,11 +2,12 @@
 
 use \Litipk\BigNumbers\Decimal as Decimal;
 use \Litipk\BigNumbers\DecimalConstants as DecimalConstants;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group tan
  */
-class DecimalTanTest extends PHPUnit_Framework_TestCase
+class DecimalTanTest extends TestCase
 {
     public function tanProvider() {
         // Some values providede by mathematica

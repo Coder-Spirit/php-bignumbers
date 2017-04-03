@@ -1,16 +1,15 @@
 <?php
+declare(strict_types=1);
 
 use Litipk\BigNumbers\Decimal as Decimal;
+use PHPUnit\Framework\TestCase;
 
+\date_default_timezone_set('UTC');
 
-date_default_timezone_set('UTC');
-
-
-class DecimalFromIntegerTest extends PHPUnit_Framework_TestCase
+class DecimalFromIntegerTest extends TestCase
 {
     /**
-     * @expectedException Litipk\Exceptions\InvalidArgumentTypeException
-     * @expectedExceptionMessage $intValue must be of type int
+     * @expectedException \TypeError
      */
     public function testNoInteger()
     {

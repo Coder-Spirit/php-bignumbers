@@ -1,11 +1,12 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group sec
  */
-class DecimalSecTest extends PHPUnit_Framework_TestCase
+class DecimalSecTest extends TestCase
 {
     public function SecProvider() {
         // Some values provided by Mathematica

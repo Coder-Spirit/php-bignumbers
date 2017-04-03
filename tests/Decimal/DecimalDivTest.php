@@ -1,12 +1,11 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
-
+use PHPUnit\Framework\TestCase;
 
 date_default_timezone_set('UTC');
 
-
-class DecimalDivTest extends PHPUnit_Framework_TestCase
+class DecimalDivTest extends TestCase
 {
     public function testZeroFiniteDiv()
     {

@@ -1,11 +1,12 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group arccot
  */
-class DecimalArccotTest extends PHPUnit_Framework_TestCase
+class DecimalArccotTest extends TestCase
 {
     public function arccotProvider() {
         // Some values provided by wolframalpha

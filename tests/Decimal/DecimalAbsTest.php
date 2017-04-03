@@ -1,12 +1,11 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
-
+use PHPUnit\Framework\TestCase;
 
 date_default_timezone_set('UTC');
 
-
-class DecimalAbsTest extends PHPUnit_Framework_TestCase
+class DecimalAbsTest extends TestCase
 {
     public function testAbs()
     {

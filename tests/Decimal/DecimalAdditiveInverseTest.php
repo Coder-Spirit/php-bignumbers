@@ -1,12 +1,11 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
-
+use PHPUnit\Framework\TestCase;
 
 date_default_timezone_set('UTC');
 
-
-class DecimalAdditiveInverseTest extends PHPUnit_Framework_TestCase
+class DecimalAdditiveInverseTest extends TestCase
 {
     public function testZeroAdditiveInverse()
     {

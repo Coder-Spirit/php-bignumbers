@@ -1,12 +1,11 @@
 <?php
 
 use Litipk\BigNumbers\Decimal as Decimal;
-
+use PHPUnit\Framework\TestCase;
 
 date_default_timezone_set('UTC');
 
-
-class DecimalMulTest extends PHPUnit_Framework_TestCase
+class DecimalMulTest extends TestCase
 {
     public function testZeroFiniteMul()
     {
@@ -21,54 +20,6 @@ class DecimalMulTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($r1->isZero());
         $this->assertTrue($r2->isZero());
-    }
-
-    /**
-     * @expectedException \DomainException
-     * @expectedExceptionMessage Zero multiplied by infinite is not allowed.
-     */
-    public function testZeroPInfiniteMul()
-    {
-        $pInf = Decimal::getPositiveInfinite();
-        $zero = Decimal::fromInteger(0);
-
-        $zero->mul($pInf);
-    }
-
-    /**
-     * @expectedException \DomainException
-     * @expectedExceptionMessage Zero multiplied by infinite is not allowed.
-     */
-    public function testZeroNInfiniteMul()
-    {
-        $nInf = Decimal::getNegativeInfinite();
-        $zero = Decimal::fromInteger(0);
-
-        $zero->mul($nInf);
-    }
-
-    /**
-     * @expectedException \DomainException
-     * @expectedExceptionMessage Zero multiplied by infinite is not allowed.
-     */
-    public function testPInfiniteZeroMul()
-    {
-        $pInf = Decimal::getPositiveInfinite();
-        $zero = Decimal::fromInteger(0);
-
-        $pInf->mul($zero);
-    }
-
-    /**
-     * @expectedException \DomainException
-     * @expectedExceptionMessage Zero multiplied by infinite is not allowed.
-     */
-    public function testNInfiniteZeroMul()
-    {
-        $nInf = Decimal::getNegativeInfinite();
-        $zero = Decimal::fromInteger(0);
-
-        $nInf->mul($zero);
     }
 
     public function testSignsMul()
@@ -94,30 +45,5 @@ class DecimalMulTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($n12->isPositive());
         $this->assertFalse($n21->isPositive());
-    }
-
-    public function testInfiniteMul()
-    {
-        $pInf = Decimal::getPositiveInfinite();
-        $nInf = Decimal::getNegativeInfinite();
-
-        $pOne = Decimal::fromInteger(1);
-        $nOne = Decimal::fromInteger(-1);
-
-        $oipp = $pOne->mul($pInf);
-        $oipn = $pOne->mul($nInf);
-        $oinp = $nOne->mul($pInf);
-        $oinn = $nOne->mul($nInf);
-
-        $this->assertTrue($oipp->isPositive());
-        $this->assertTrue($oinn->isPositive());
-
-        $this->assertTrue($oinp->isNegative());
-        $this->assertTrue($oipn->isNegative());
-
-        $this->assertTrue($oipp->isInfinite());
-        $this->assertTrue($oipn->isInfinite());
-        $this->assertTrue($oinp->isInfinite());
-        $this->assertTrue($oinn->isInfinite());
     }
 }
