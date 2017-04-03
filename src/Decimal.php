@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Litipk\BigNumbers;
 
@@ -7,7 +8,6 @@ use Litipk\BigNumbers\DecimalConstants as DecimalConstants;
 use Litipk\BigNumbers\Errors\InfiniteInputError;
 use Litipk\BigNumbers\Errors\NaNInputError;
 use Litipk\BigNumbers\Errors\NotImplementedError;
-use Litipk\Exceptions\InvalidArgumentTypeException as InvalidArgumentTypeException;
 
 /**
  * Immutable object that represents a rational number
@@ -136,10 +136,10 @@ class Decimal
 
             if (self::normalizeSign($captures[4]) === '') {
                 $min_scale = \max($mantissa_scale - $exp_val, 0);
-                $tmp_multiplier = \bcpow(10, $exp_val);
+                $tmp_multiplier = \bcpow('10', (string)$exp_val);
             } else {
                 $min_scale = $mantissa_scale + $exp_val;
-                $tmp_multiplier = \bcpow(10, -$exp_val, $exp_val);
+                $tmp_multiplier = \bcpow('10', (string)-$exp_val, $exp_val);
             }
 
             $value = self::normalizeSign($captures[1]) . \bcmul(
@@ -540,8 +540,8 @@ class Decimal
 
         if ($mustTruncate) {
             $rounded = $ceil
-                ? \bcadd($rounded, \bcpow('10', -$scale, $scale), $scale)
-                : \bcsub($rounded, \bcpow('10', -$scale, $scale), $scale);
+                ? \bcadd($rounded, \bcpow('10', (string)-$scale, $scale), $scale)
+                : \bcsub($rounded, \bcpow('10', (string)-$scale, $scale), $scale);
         }
 
         return self::fromString($rounded, $scale);
@@ -1110,8 +1110,8 @@ class Decimal
 
         if ($diffDigit >= 5) {
             $rounded = ($diffDigit >= 5 && $value[0] !== '-')
-                ? \bcadd($rounded, \bcpow('10', -$scale, $scale), $scale)
-                : \bcsub($rounded, \bcpow('10', -$scale, $scale), $scale);
+                ? \bcadd($rounded, \bcpow('10', (string)-$scale, $scale), $scale)
+                : \bcsub($rounded, \bcpow('10', (string)-$scale, $scale), $scale);
         }
 
         return $rounded;
@@ -1136,10 +1136,10 @@ class Decimal
                 $value_log10_approx = $value_len - ($in_scale > 0 ? ($in_scale+2) : 1);
 
                 return \bcadd(
-                    $value_log10_approx,
-                    \log10(\bcdiv(
+                    (string)$value_log10_approx,
+                    (string)\log10((float)\bcdiv(
                         $value,
-                        \bcpow('10', $value_log10_approx),
+                        \bcpow('10', (string)$value_log10_approx),
                         \min($value_len, $out_scale)
                     )),
                     $out_scale
@@ -1149,10 +1149,10 @@ class Decimal
                 $value_log10_approx = -\strlen($captures[1])-1;
 
                 return \bcadd(
-                    $value_log10_approx,
-                    \log10(\bcmul(
+                    (string)$value_log10_approx,
+                    (string)\log10((float)\bcmul(
                         $value,
-                        \bcpow('10', -$value_log10_approx),
+                        \bcpow('10', (string)-$value_log10_approx),
                         $in_scale + $value_log10_approx
                     )),
                     $out_scale
@@ -1178,7 +1178,7 @@ class Decimal
         int $out_scale
     ): string
     {
-        $inner_scale = \ceil($exp_scale * \log(10) / \log(2)) + 1;
+        $inner_scale = (int)\ceil($exp_scale * \log(10) / \log(2)) + 1;
 
         $result_a = '1';
         $result_b = '0';
@@ -1216,10 +1216,10 @@ class Decimal
         int $inner_scale
     ): array
     {
-        $actual_rt = \bcpow('0.5', $actual_index, $exp_scale);
+        $actual_rt = \bcpow('0.5', (string)$actual_index, $exp_scale);
         $r = \bcsub($exponent_remaining, $actual_rt, $inner_scale);
 
-        while (\bccomp($r, 0, $exp_scale) === -1) {
+        while (\bccomp($r, '0', $exp_scale) === -1) {
             ++$actual_index;
             $actual_rt = \bcmul('0.5', $actual_rt, $inner_scale);
             $r = \bcsub($exponent_remaining, $actual_rt, $inner_scale);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Litipk\BigNumbers;
 
@@ -6,7 +7,7 @@ use Litipk\BigNumbers\Decimal as Decimal;
 
 
 /**
- * git statu class that holds many important numeric constants
+ * Class that holds many important numeric constants
  *
  * @author Andreu Correa Casablanca <castarco@litipk.com>
  */
