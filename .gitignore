@@ -1,4 +1,6 @@
-vendor/
-coverage_report/
 .idea/
+coverage/
+coverage_report/
+vendor/
 composer.lock
+coverage.xml
