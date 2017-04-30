@@ -16,6 +16,7 @@ use Litipk\BigNumbers\Errors\NotImplementedError;
  */
 class Decimal
 {
+    const DEFAULT_SCALE = 16;
     const CLASSIC_DECIMAL_NUMBER_REGEXP = '/^([+\-]?)0*(([1-9][0-9]*|[0-9])(\.[0-9]+)?)$/';
     const EXP_NOTATION_NUMBER_REGEXP = '/^ (?P<sign> [+\-]?) 0*(?P<mantissa> [0-9](?P<decimals> \.[0-9]+)?) [eE] (?P<expSign> [+\-]?)(?P<exp> \d+)$/x';
     const EXP_NUM_GROUPS_NUMBER_REGEXP = '/^ (?P<int> \d*) (?: \. (?P<dec> \d+) ) E (?P<sign>[\+\-]) (?P<exp>\d+) $/x';
@@ -91,16 +92,14 @@ class Decimal
             throw new NaNInputError("fltValue can't be NaN");
         }
 
-        $defaultScale = 16;
+        $defaultScale = self::DEFAULT_SCALE;
 
         $strValue = (string) $fltValue;
         if (\preg_match(self::EXP_NUM_GROUPS_NUMBER_REGEXP, $strValue, $capture)) {
-            if ($scale === null) {
-                if ($capture['sign'] == '-') {
-                    $scale = $capture['exp'] + \strlen($capture['dec']);
-                } else {
-                    $scale = $defaultScale;
-                }
+            if (null === $scale) {
+                $scale = ('-' === $capture['sign'])
+                    ? $capture['exp'] + \strlen($capture['dec'])
+                    : $defaultScale;
             }
             $strValue = \number_format($fltValue, $scale, '.', '');
         }
@@ -250,7 +249,7 @@ class Decimal
         } elseif ($this->isZero()) {
             return DecimalConstants::Zero();
         } else {
-            if ($scale !== null) {
+            if (null !== $scale) {
                 $divscale = $scale;
             } else {
                 // $divscale is calculated in order to maintain a reasonable precision
@@ -323,7 +322,7 @@ class Decimal
             return DecimalConstants::One()->div(
                 $this->pow($b->additiveInverse()), $scale
             );
-        } elseif ($b->scale == 0) {
+        } elseif ($b->scale === 0) {
             $pow_scale = $scale === null ?
                 \max($this->scale, $b->scale) : \max($this->scale, $b->scale, $scale);
 
@@ -435,7 +434,7 @@ class Decimal
                     self::innerRound($this->value, $cmp_scale),
                     self::innerRound($b->value, $cmp_scale),
                     $cmp_scale
-                ) == 0
+                ) === 0
             );
         }
     }
@@ -878,10 +877,10 @@ class Decimal
             return DecimalConstants::one();
         }
 
-        $scale = ($scale === null) ? \max(
+        $scale = $scale ?? \max(
             $this->scale,
-            (int)($this->isNegative() ? self::innerLog10($this->value, $this->scale, 0) : 16)
-        ) : $scale;
+            (int)($this->isNegative() ? self::innerLog10($this->value, $this->scale, 0) : self::DEFAULT_SCALE)
+        );
 
         return self::factorialSerie(
             $this, DecimalConstants::one(), function ($i) { return DecimalConstants::one(); }, $scale
@@ -945,9 +944,9 @@ class Decimal
         for ($i = 1; !$change->floor($scale + 2)->isZero(); $i++) {
             $xPowerN = $xPowerN->mul($x);
 
-            if ($i % 2 == 0) {
+            if ($i % 2 === 0) {
                 $factorN = DecimalConstants::zero();
-            } elseif ($i == 1) {
+            } elseif ($i === 1) {
                 $factorN = DecimalConstants::one();
             } else {
                 $incrementNum = Decimal::fromInteger($i - 2);
