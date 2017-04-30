@@ -340,20 +340,16 @@ class Decimal
                     $pow_scale
                 );
             } else { // elseif ($this->isNegative())
-                if ($b->isInteger()) {
-                    if (\preg_match('/^[+\-]?[0-9]*[02468](\.0+)?$/', $b->value, $captures) === 1) {
-                        // $b is an even number
-                        return $this->additiveInverse()->pow($b, $scale);
-                    } else {
-                        // $b is an odd number
-                        return $this->additiveInverse()->pow($b, $scale)->additiveInverse();
-                    }
+                if (!$b->isInteger()) {
+                    throw new NotImplementedError(
+                        "Usually negative numbers can't be powered to non integer numbers. " .
+                        "The cases where is possible are not implemented."
+                    );
                 }
 
-                throw new NotImplementedError(
-                    "Usually negative numbers can't be powered to non integer numbers. " .
-                    "The cases where is possible are not implemented."
-                );
+                return (\preg_match('/^[+\-]?[0-9]*[02468](\.0+)?$/', $b->value, $captures) === 1)
+                    ? $this->additiveInverse()->pow($b, $scale)                      // $b is an even number
+                    : $this->additiveInverse()->pow($b, $scale)->additiveInverse();  // $b is an odd number
             }
         }
     }
