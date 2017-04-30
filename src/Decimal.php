@@ -48,17 +48,16 @@ class Decimal
      *
      * @param  mixed $value
      * @param  int   $scale
-     * @param  bool  $removeZeros If true then removes trailing zeros from the number representation
      * @return Decimal
      */
-    public static function create($value, int $scale = null, bool $removeZeros = false): Decimal
+    public static function create($value, int $scale = null): Decimal
     {
         if (\is_int($value)) {
             return self::fromInteger($value);
         } elseif (\is_float($value)) {
-            return self::fromFloat($value, $scale, $removeZeros);
+            return self::fromFloat($value, $scale);
         } elseif (\is_string($value)) {
-            return self::fromString($value, $scale, $removeZeros);
+            return self::fromString($value, $scale);
         } elseif ($value instanceof Decimal) {
             return self::fromDecimal($value, $scale);
         } else {
@@ -79,10 +78,9 @@ class Decimal
     /**
      * @param  float $fltValue
      * @param  int   $scale
-     * @param  bool  $removeZeros If true then removes trailing zeros from the number representation
      * @return Decimal
      */
-    public static function fromFloat(float $fltValue, int $scale = null, bool $removeZeros = false): Decimal
+    public static function fromFloat(float $fltValue, int $scale = null): Decimal
     {
         self::paramsValidation($fltValue, $scale);
 
@@ -92,24 +90,22 @@ class Decimal
             throw new NaNInputError("fltValue can't be NaN");
         }
 
-        $defaultScale = self::DEFAULT_SCALE;
-
         $strValue = (string) $fltValue;
         if (\preg_match(self::EXP_NUM_GROUPS_NUMBER_REGEXP, $strValue, $capture)) {
             if (null === $scale) {
                 $scale = ('-' === $capture['sign'])
                     ? $capture['exp'] + \strlen($capture['dec'])
-                    : $defaultScale;
+                    : self::DEFAULT_SCALE;
             }
             $strValue = \number_format($fltValue, $scale, '.', '');
-        }
+        } else {
+            $naturalScale = \strlen((string)fmod($fltValue, 1.0)) - 2 - (($fltValue < 0) ? 1 : 0);
 
-        if (null === $scale) {
-            $scale = $defaultScale;
-        }
-
-        if ($removeZeros) {
-            $strValue = self::removeTrailingZeros($strValue, $scale);
+            if (null === $scale) {
+                $scale = $naturalScale;
+            } else {
+                $strValue .= str_pad('', $scale - $naturalScale, '0');
+            }
         }
 
         return new static($strValue, $scale);
@@ -118,10 +114,9 @@ class Decimal
     /**
      * @param  string  $strValue
      * @param  integer $scale
-     * @param  boolean $removeZeros If true then removes trailing zeros from the number representation
      * @return Decimal
      */
-    public static function fromString(string $strValue, int $scale = null, bool $removeZeros = false): Decimal
+    public static function fromString(string $strValue, int $scale = null): Decimal
     {
         self::paramsValidation($strValue, $scale);
 
@@ -144,12 +139,9 @@ class Decimal
             throw new NaNInputError('strValue must be a number');
         }
 
-        $scale = (null !== $scale) ? $scale : $min_scale;
+        $scale = $scale ?? $min_scale;
         if ($scale < $min_scale) {
             $value = self::innerRound($value, $scale);
-        }
-        if ($removeZeros) {
-            $value = self::removeTrailingZeros($value, $scale);
         }
 
         return new static($value, $scale);
@@ -312,19 +304,17 @@ class Decimal
             if ($b->isPositive()) {
                 return Decimal::fromDecimal($this, $scale);
             } else {
-                throw new \DomainException(
-                    "zero can't be powered to zero or negative numbers."
-                );
+                throw new \DomainException("zero can't be powered to zero or negative numbers.");
             }
         } elseif ($b->isZero()) {
             return DecimalConstants::One();
         } else if ($b->isNegative()) {
             return DecimalConstants::One()->div(
-                $this->pow($b->additiveInverse()), $scale
+                $this->pow($b->additiveInverse(), max($scale, self::DEFAULT_SCALE)),
+                max($scale, self::DEFAULT_SCALE)
             );
-        } elseif ($b->scale === 0) {
-            $pow_scale = $scale === null ?
-                \max($this->scale, $b->scale) : \max($this->scale, $b->scale, $scale);
+        } elseif (0 === $b->scale) {
+            $pow_scale = \max($this->scale, $b->scale, $scale ?? 0);
 
             return self::fromString(
                 \bcpow($this->value, $b->value, $pow_scale+1),
@@ -332,8 +322,7 @@ class Decimal
             );
         } else {
             if ($this->isPositive()) {
-                $pow_scale = $scale === null ?
-                    \max($this->scale, $b->scale) : \max($this->scale, $b->scale, $scale);
+                $pow_scale = \max($this->scale, $b->scale, $scale ?? 0);
 
                 $truncated_b = \bcadd($b->value, '0', 0);
                 $remaining_b = \bcsub($b->value, $truncated_b, $b->scale);
@@ -1299,25 +1288,8 @@ class Decimal
         return $sign;
     }
 
-    private static function removeTrailingZeros(string $strValue, int &$scale): string
-    {
-        \preg_match('/^[+\-]?[0-9]+(\.([0-9]*[1-9])?(0+)?)?$/', $strValue, $captures);
-
-        if (\count($captures) === 4) {
-            $toRemove = \strlen($captures[3]);
-            $scale = \strlen($captures[2]);
-            $strValue = \substr(
-                $strValue,
-                0,
-                \strlen($strValue) - $toRemove - (0 === $scale ? 1 : 0)
-            );
-        }
-
-        return $strValue;
-    }
-
     /**
-     * Counts the number of significative digits of $val.
+     * Counts the number of significant digits of $val.
      * Assumes a consistent internal state (without zeros at the end or the start).
      *
      * @param  Decimal $val

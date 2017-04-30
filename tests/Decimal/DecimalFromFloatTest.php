@@ -2,10 +2,7 @@
 declare(strict_types=1);
 
 use Litipk\BigNumbers\Decimal as Decimal;
-use Litipk\Exceptions\InvalidArgumentTypeException as InvalidArgumentTypeException;
 use PHPUnit\Framework\TestCase;
-
-date_default_timezone_set('UTC');
 
 class DecimalFromFloatTest extends TestCase
 {
@@ -27,7 +24,6 @@ class DecimalFromFloatTest extends TestCase
             [-1.1234567890, "-1.123456789"],
             [0.000001, "0.0000010"],
             [0.000001, "0.00", 2],
-            [0.000001, "0.000001", null, !!'removeZeroes'],
             [90.05, "90.05"],
         ];
 
@@ -61,9 +57,9 @@ class DecimalFromFloatTest extends TestCase
     /**
      * @dataProvider floatProvider
      */
-    public function testFromFloat($in, $str, $scale=null, $removeZeroes=false)
+    public function testFromFloat(float $in, string $str, int $scale = null)
     {
-        $v = Decimal::fromFloat($in, $scale, $removeZeroes);
+        $v = Decimal::fromFloat($in, $scale);
         $this->assertSame($str, $v->innerValue());
     }
 }
