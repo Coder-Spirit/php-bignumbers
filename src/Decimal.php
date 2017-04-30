@@ -1104,6 +1104,23 @@ class Decimal
     }
 
     /**
+     * Syntactic sugar: formats the decimal using a Formatter
+     */
+    public function format(array $options=[])
+    {
+        $formatter = new Formatter($options);
+        return $formatter->format($this);
+    }
+
+    /**
+     * Syntactic sugar: formats the decimal using a registered Formatter
+     */
+    public function formatAs($format)
+    {
+        return Formatter::formatAs($format, $this);
+    }
+
+    /**
      * "Rounds" the decimal string to have at most $scale digits after the point
      *
      * @param  string $value
