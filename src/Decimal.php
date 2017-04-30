@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Litipk\BigNumbers;
 
 use Litipk\BigNumbers\DecimalConstants as DecimalConstants;
-
 use Litipk\BigNumbers\Errors\InfiniteInputError;
 use Litipk\BigNumbers\Errors\NaNInputError;
 use Litipk\BigNumbers\Errors\NotImplementedError;
@@ -1216,7 +1215,7 @@ class Decimal
      * @param  int    $actual_index
      * @param  int    $exp_scale           Number of $exponent's significative digits
      * @param  int    $inner_scale         ceil($exp_scale*log(10)/log(2))+1;
-     * @return array
+     * @return string
      */
     private static function computeSquareIndex(
         string $exponent_remaining,
