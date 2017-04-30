@@ -2,7 +2,7 @@ php-bignumbers [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://git
 ==============
 
 A robust library to handle immutable big numbers inside PHP applications
-The current stable version is 0.7.3. Litipk\BigNumbers supports PHP 7.x.
+The current stable version is 0.8.3. Litipk\BigNumbers supports PHP 7.x.
 
 
 Status Label  | Status Value
