@@ -99,14 +99,13 @@ class Decimal
             }
             $strValue = \number_format($fltValue, $scale, '.', '');
         } else {
+            // Determine how many digits the number has after the decimal point
             $naturalScale = \strlen((string)fmod($fltValue, 1.0)) - 2 - (($fltValue < 0) ? 1 : 0);
 
-            // Fix for the case when we have integer number that's been cast to float (e.g. (float)4 that becomes 4.0)
-            if (fmod($fltValue, 1.0) === (float)0) {
-                // In this case, we don't have the point included in the strValue
-                // So we include it explicitly and change naturalScale to reflect the string length change
-                $strValue .= '.';
-                $naturalScale += 1;
+            // Fix for the case when we have an integer number represented as float (e.g. (float)4 that becomes 4.0)
+            if ($naturalScale === -1) {
+                // In this case, we don't have the fraction part included at all in the strValue, so we correct naturalScale
+                $naturalScale = 0;
             }
 
             if (null === $scale) {
