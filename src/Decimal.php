@@ -91,6 +91,8 @@ class Decimal
         }
 
         $strValue = (string) $fltValue;
+        $hasPoint = (false !== \strpos($strValue, '.'));
+
         if (\preg_match(self::EXP_NUM_GROUPS_NUMBER_REGEXP, $strValue, $capture)) {
             if (null === $scale) {
                 $scale = ('-' === $capture['sign'])
@@ -99,12 +101,14 @@ class Decimal
             }
             $strValue = \number_format($fltValue, $scale, '.', '');
         } else {
-            $naturalScale = \strlen((string)fmod($fltValue, 1.0)) - 2 - (($fltValue < 0) ? 1 : 0);
+            $naturalScale = (
+                \strlen((string)\fmod($fltValue, 1.0)) - 2 - (($fltValue < 0) ? 1 : 0) + (!$hasPoint ? 1 : 0)
+            );
 
             if (null === $scale) {
                 $scale = $naturalScale;
             } else {
-                $strValue .= str_pad('', $scale - $naturalScale, '0');
+                $strValue .= ($hasPoint ? '' : '.') . \str_pad('', $scale - $naturalScale, '0');
             }
         }
 
