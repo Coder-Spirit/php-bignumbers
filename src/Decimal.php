@@ -146,6 +146,9 @@ class Decimal
         $scale = $scale ?? $min_scale;
         if ($scale < $min_scale) {
             $value = self::innerRound($value, $scale);
+        } elseif ($min_scale < $scale) {
+            $hasPoint = (false !== \strpos($value, '.'));
+            $value .= ($hasPoint ? '' : '.') . \str_pad('', $scale - $min_scale, '0');
         }
 
         return new static($value, $scale);
