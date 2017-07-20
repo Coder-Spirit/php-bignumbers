@@ -455,6 +455,59 @@ class Decimal
         );
     }
 
+
+    /**
+     * Returns true if $this > $b, otherwise false
+     *
+     * @param  Decimal $b
+     * @param  integer $scale
+     * @return bool
+     */
+    public function isGreaterThan(Decimal $b, int $scale = null): bool
+    {
+        return $this->comp($b, $scale) === 1;
+    }
+
+    /**
+     * Returns true if $this >= $b
+     *
+     * @param  Decimal $b
+     * @param  integer $scale
+     * @return bool
+     */
+    public function isGreaterOrEqualTo(Decimal $b, int $scale = null): bool
+    {
+        $comparisonResult = $this->comp($b, $scale);
+
+        return $comparisonResult === 1 || $comparisonResult === 0;
+    }
+
+    /**
+     * Returns true if $this < $b, otherwise false
+     *
+     * @param  Decimal $b
+     * @param  integer $scale
+     * @return bool
+     */
+    public function isLessThan(Decimal $b, int $scale = null): bool
+    {
+        return $this->comp($b, $scale) === -1;
+    }
+
+    /**
+     * Returns true if $this <= $b, otherwise false
+     *
+     * @param  Decimal $b
+     * @param  integer $scale
+     * @return bool
+     */
+    public function isLessOrEqualTo(Decimal $b, int $scale = null): bool
+    {
+        $comparisonResult = $this->comp($b, $scale);
+
+        return $comparisonResult === -1 || $comparisonResult === 0;
+    }
+
     /**
      * Returns the element's additive inverse.
      * @return Decimal
