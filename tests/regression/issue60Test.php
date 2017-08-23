@@ -15,4 +15,13 @@ class issue60Test extends TestCase
         $this->assertEquals(0.05005, $value->div($divisor)->asFloat());
         $this->assertEquals(0.000434077479319, $value->log10()->asFloat());
     }
+
+    public function test_that_fromFloat_less_than_1_still_correct()
+    {
+        $value = Decimal::fromFloat(0.175);
+        $divisor = Decimal::fromFloat(20);
+
+        $this->assertEquals(0.009, $value->div($divisor)->asFloat());
+        $this->assertEquals(-0.7569, $value->log10()->asFloat());
+    }
 }
