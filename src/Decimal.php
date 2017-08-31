@@ -1203,6 +1203,7 @@ class Decimal
         switch ($cmp) {
             case 1:
                 $value_log10_approx = $value_len - ($in_scale > 0 ? ($in_scale+2) : 1);
+                $value_log10_approx = max(0, $value_log10_approx);
 
                 return \bcadd(
                     (string)$value_log10_approx,
