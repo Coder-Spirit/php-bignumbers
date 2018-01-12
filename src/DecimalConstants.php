@@ -89,7 +89,7 @@ final class DecimalConstants
             throw new \InvalidArgumentException("\$scale must be positive.");
         }
 
-        return self::$ONE->exp($scale);
+        return static::one()->exp($scale);
     }
 
     /**
