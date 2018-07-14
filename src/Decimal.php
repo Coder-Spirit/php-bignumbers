@@ -50,9 +50,9 @@ class Decimal
      *
      * @param  mixed $value
      * @param  int   $scale
-     * @return Decimal
+     * @return self
      */
-    public static function create($value, int $scale = null): Decimal
+    public static function create($value, int $scale = null): self
     {
         if (\is_int($value)) {
             return self::fromInteger($value);
@@ -60,7 +60,7 @@ class Decimal
             return self::fromFloat($value, $scale);
         } elseif (\is_string($value)) {
             return self::fromString($value, $scale);
-        } elseif ($value instanceof Decimal) {
+        } elseif ($value instanceof self) {
             return self::fromDecimal($value, $scale);
         } else {
             throw new \TypeError(
@@ -70,7 +70,7 @@ class Decimal
         }
     }
 
-    public static function fromInteger(int $intValue): Decimal
+    public static function fromInteger(int $intValue): self
     {
         self::paramsValidation($intValue, null);
 
@@ -80,9 +80,9 @@ class Decimal
     /**
      * @param  float $fltValue
      * @param  int   $scale
-     * @return Decimal
+     * @return self
      */
-    public static function fromFloat(float $fltValue, int $scale = null): Decimal
+    public static function fromFloat(float $fltValue, int $scale = null): self
     {
         self::paramsValidation($fltValue, $scale);
 
@@ -120,9 +120,9 @@ class Decimal
     /**
      * @param  string  $strValue
      * @param  integer $scale
-     * @return Decimal
+     * @return self
      */
-    public static function fromString(string $strValue, int $scale = null): Decimal
+    public static function fromString(string $strValue, int $scale = null): self
     {
         self::paramsValidation($strValue, $scale);
 
@@ -160,11 +160,11 @@ class Decimal
      * Constructs a new Decimal object based on a previous one,
      * but changing it's $scale property.
      *
-     * @param  Decimal  $decValue
+     * @param  self     $decValue
      * @param  null|int $scale
-     * @return Decimal
+     * @return self
      */
-    public static function fromDecimal(Decimal $decValue, int $scale = null): Decimal
+    public static function fromDecimal(self $decValue, int $scale = null): self
     {
         self::paramsValidation($decValue, $scale);
 
@@ -181,11 +181,11 @@ class Decimal
 
     /**
      * Adds two Decimal objects
-     * @param  Decimal  $b
+     * @param  self     $b
      * @param  null|int $scale
-     * @return Decimal
+     * @return self
      */
-    public function add(Decimal $b, int $scale = null): Decimal
+    public function add(self $b, int $scale = null): self
     {
         self::paramsValidation($b, $scale);
 
@@ -197,11 +197,11 @@ class Decimal
 
     /**
      * Subtracts two BigNumber objects
-     * @param  Decimal $b
+     * @param  self    $b
      * @param  integer $scale
-     * @return Decimal
+     * @return self
      */
-    public function sub(Decimal $b, int $scale = null): Decimal
+    public function sub(self $b, int $scale = null): self
     {
         self::paramsValidation($b, $scale);
 
@@ -213,11 +213,11 @@ class Decimal
 
     /**
      * Multiplies two BigNumber objects
-     * @param  Decimal $b
+     * @param  self    $b
      * @param  integer $scale
-     * @return Decimal
+     * @return self
      */
-    public function mul(Decimal $b, int $scale = null): Decimal
+    public function mul(self $b, int $scale = null): self
     {
         self::paramsValidation($b, $scale);
 
@@ -237,11 +237,11 @@ class Decimal
      *          integer division because it rounds the
      *          last digit in order to minimize the error.
      *
-     * @param  Decimal $b
+     * @param  self    $b
      * @param  integer $scale
-     * @return Decimal
+     * @return self
      */
-    public function div(Decimal $b, int $scale = null): Decimal
+    public function div(self $b, int $scale = null): self
     {
         self::paramsValidation($b, $scale);
 
@@ -280,9 +280,9 @@ class Decimal
     /**
      * Returns the square root of this object
      * @param  integer $scale
-     * @return Decimal
+     * @return self
      */
-    public function sqrt(int $scale = null): Decimal
+    public function sqrt(int $scale = null): self
     {
         if ($this->isNegative()) {
             throw new \DomainException(
@@ -303,15 +303,15 @@ class Decimal
     /**
      * Powers this value to $b
      *
-     * @param  Decimal  $b      exponent
+     * @param  self     $b      exponent
      * @param  integer  $scale
-     * @return Decimal
+     * @return self
      */
-    public function pow(Decimal $b, int $scale = null): Decimal
+    public function pow(self $b, int $scale = null): self
     {
         if ($this->isZero()) {
             if ($b->isPositive()) {
-                return Decimal::fromDecimal($this, $scale);
+                return self::fromDecimal($this, $scale);
             } else {
                 throw new \DomainException("zero can't be powered to zero or negative numbers.");
             }
@@ -344,7 +344,7 @@ class Decimal
                     $pow_scale+1
                 );
 
-                return Decimal::fromString(
+                return self::fromString(
                     \bcmul($first_pow_approx, $intermediate_root, $pow_scale+1),
                     $pow_scale
                 );
@@ -366,9 +366,9 @@ class Decimal
     /**
      * Returns the object's logarithm in base 10
      * @param  integer $scale
-     * @return Decimal
+     * @return self
      */
-    public function log10(int $scale = null): Decimal
+    public function log10(int $scale = null): self
     {
         if ($this->isNegative()) {
             throw new \DomainException(
@@ -410,11 +410,11 @@ class Decimal
 
     /**
      * Equality comparison between this object and $b
-     * @param  Decimal $b
-     * @param integer $scale
+     * @param  self    $b
+     * @param  integer $scale
      * @return boolean
      */
-    public function equals(Decimal $b, int $scale = null): bool
+    public function equals(self $b, int $scale = null): bool
     {
         self::paramsValidation($b, $scale);
 
@@ -436,11 +436,11 @@ class Decimal
     /**
      * $this > $b : returns 1 , $this < $b : returns -1 , $this == $b : returns 0
      *
-     * @param  Decimal $b
+     * @param  self    $b
      * @param  integer $scale
      * @return integer
      */
-    public function comp(Decimal $b, int $scale = null): int
+    public function comp(self $b, int $scale = null): int
     {
         self::paramsValidation($b, $scale);
 
@@ -461,11 +461,11 @@ class Decimal
     /**
      * Returns true if $this > $b, otherwise false
      *
-     * @param  Decimal $b
+     * @param  self    $b
      * @param  integer $scale
      * @return bool
      */
-    public function isGreaterThan(Decimal $b, int $scale = null): bool
+    public function isGreaterThan(self $b, int $scale = null): bool
     {
         return $this->comp($b, $scale) === 1;
     }
@@ -473,11 +473,11 @@ class Decimal
     /**
      * Returns true if $this >= $b
      *
-     * @param  Decimal $b
+     * @param  self    $b
      * @param  integer $scale
      * @return bool
      */
-    public function isGreaterOrEqualTo(Decimal $b, int $scale = null): bool
+    public function isGreaterOrEqualTo(self $b, int $scale = null): bool
     {
         $comparisonResult = $this->comp($b, $scale);
 
@@ -487,11 +487,11 @@ class Decimal
     /**
      * Returns true if $this < $b, otherwise false
      *
-     * @param  Decimal $b
+     * @param  self    $b
      * @param  integer $scale
      * @return bool
      */
-    public function isLessThan(Decimal $b, int $scale = null): bool
+    public function isLessThan(self $b, int $scale = null): bool
     {
         return $this->comp($b, $scale) === -1;
     }
@@ -499,11 +499,11 @@ class Decimal
     /**
      * Returns true if $this <= $b, otherwise false
      *
-     * @param  Decimal $b
+     * @param  self    $b
      * @param  integer $scale
      * @return bool
      */
-    public function isLessOrEqualTo(Decimal $b, int $scale = null): bool
+    public function isLessOrEqualTo(self $b, int $scale = null): bool
     {
         $comparisonResult = $this->comp($b, $scale);
 
@@ -512,9 +512,9 @@ class Decimal
 
     /**
      * Returns the element's additive inverse.
-     * @return Decimal
+     * @return self
      */
-    public function additiveInverse(): Decimal
+    public function additiveInverse(): self
     {
         if ($this->isZero()) {
             return $this;
@@ -531,9 +531,9 @@ class Decimal
     /**
      * "Rounds" the Decimal to have at most $scale digits after the point
      * @param  integer $scale
-     * @return Decimal
+     * @return self
      */
-    public function round(int $scale = 0): Decimal
+    public function round(int $scale = 0): self
     {
         if ($scale >= $this->scale) {
             return $this;
@@ -545,9 +545,9 @@ class Decimal
     /**
      * "Ceils" the Decimal to have at most $scale digits after the point
      * @param  integer $scale
-     * @return Decimal
+     * @return self
      */
-    public function ceil($scale = 0): Decimal
+    public function ceil($scale = 0): self
     {
         if ($scale >= $this->scale) {
             return $this;
@@ -560,7 +560,7 @@ class Decimal
         return $this->innerTruncate($scale);
     }
 
-    private function innerTruncate(int $scale = 0, bool $ceil = true): Decimal
+    private function innerTruncate(int $scale = 0, bool $ceil = true): self
     {
         $rounded = \bcadd($this->value, '0', $scale);
 
@@ -587,9 +587,9 @@ class Decimal
     /**
      * "Floors" the Decimal to have at most $scale digits after the point
      * @param  integer $scale
-     * @return Decimal
+     * @return self
      */
-    public function floor(int $scale = 0): Decimal
+    public function floor(int $scale = 0): self
     {
         if ($scale >= $this->scale) {
             return $this;
@@ -604,9 +604,9 @@ class Decimal
 
     /**
      * Returns the absolute value (always a positive number)
-     * @return Decimal
+     * @return self
      */
-    public function abs(): Decimal
+    public function abs(): self
     {
         return ($this->isZero() || $this->isPositive())
             ? $this
@@ -615,11 +615,11 @@ class Decimal
 
     /**
      * Calculate modulo with a decimal
-     * @param Decimal $d
+     * @param self    $d
      * @param integer $scale
      * @return $this % $d
      */
-    public function mod(Decimal $d, int $scale = null): Decimal
+    public function mod(self $d, int $scale = null): self
     {
         $div = $this->div($d, 1)->floor();
         return $this->sub($div->mul($d), $scale);
@@ -630,12 +630,12 @@ class Decimal
      * Note that accuracy is limited by the accuracy of predefined PI;
      *
      * @param integer $scale
-     * @return Decimal sin($this)
+     * @return self sin($this)
      */
-    public function sin(int $scale = null): Decimal
+    public function sin(int $scale = null): self
     {
         // First normalise the number in the [0, 2PI] domain
-        $x = $this->mod((self::DECIMAL_CONSTANTS)::PI()->mul(Decimal::fromString("2")));
+        $x = $this->mod((self::DECIMAL_CONSTANTS)::PI()->mul(self::fromString("2")));
 
         // PI has only 32 significant numbers
         $scale = (null === $scale) ? 32 : $scale;
@@ -657,9 +657,9 @@ class Decimal
      * Note that accuracy is limited by the accuracy of predefined PI;
      *
      * @param integer $scale
-     * @return Decimal
+     * @return self
      */
-    public function cosec(int $scale = null): Decimal
+    public function cosec(int $scale = null): self
     {
         $sin = $this->sin($scale + 2);
         if ($sin->isZero()) {
@@ -676,12 +676,12 @@ class Decimal
      * Note that accuracy is limited by the accuracy of predefined PI;
      *
      * @param integer $scale
-     * @return Decimal cos($this)
+     * @return self cos($this)
      */
-    public function cos(int $scale = null): Decimal
+    public function cos(int $scale = null): self
     {
         // First normalise the number in the [0, 2PI] domain
-        $x = $this->mod((self::DECIMAL_CONSTANTS)::PI()->mul(Decimal::fromString("2")));
+        $x = $this->mod((self::DECIMAL_CONSTANTS)::PI()->mul(self::fromString("2")));
 
         // PI has only 32 significant numbers
         $scale = ($scale === null) ? 32 : $scale;
@@ -703,9 +703,9 @@ class Decimal
      * Note that accuracy is limited by the accuracy of predefined PI;
      *
      * @param integer $scale
-     * @return Decimal
+     * @return self
      */
-    public function sec(int $scale = null): Decimal
+    public function sec(int $scale = null): self
     {
         $cos = $this->cos($scale + 2);
         if ($cos->isZero()) {
@@ -721,9 +721,9 @@ class Decimal
      *  Calculates the arcsine of this with the highest possible accuracy
      *
      * @param integer $scale
-     * @return Decimal
+     * @return self
      */
-    public function arcsin(int $scale = null): Decimal
+    public function arcsin(int $scale = null): self
     {
         if($this->comp((self::DECIMAL_CONSTANTS)::one(), $scale + 2) === 1 || $this->comp((self::DECIMAL_CONSTANTS)::negativeOne(), $scale + 2) === -1) {
             throw new \DomainException(
@@ -735,10 +735,10 @@ class Decimal
             return (self::DECIMAL_CONSTANTS)::zero();
         }
         if ($this->round($scale)->equals((self::DECIMAL_CONSTANTS)::one())) {
-            return (self::DECIMAL_CONSTANTS)::pi()->div(Decimal::fromInteger(2))->round($scale);
+            return (self::DECIMAL_CONSTANTS)::pi()->div(self::fromInteger(2))->round($scale);
         }
         if ($this->round($scale)->equals((self::DECIMAL_CONSTANTS)::negativeOne())) {
-            return (self::DECIMAL_CONSTANTS)::pi()->div(Decimal::fromInteger(-2))->round($scale);
+            return (self::DECIMAL_CONSTANTS)::pi()->div(self::fromInteger(-2))->round($scale);
         }
 
         $scale = ($scale === null) ? 32 : $scale;
@@ -754,9 +754,9 @@ class Decimal
      *  Calculates the arccosine of this with the highest possible accuracy
      *
      * @param integer $scale
-     * @return Decimal
+     * @return self
      */
-    public function arccos(int $scale = null): Decimal
+    public function arccos(int $scale = null): self
     {
         if($this->comp((self::DECIMAL_CONSTANTS)::one(), $scale + 2) === 1 || $this->comp((self::DECIMAL_CONSTANTS)::negativeOne(), $scale + 2) === -1) {
             throw new \DomainException(
@@ -764,7 +764,7 @@ class Decimal
             );
         }
 
-        $piOverTwo = (self::DECIMAL_CONSTANTS)::pi()->div(Decimal::fromInteger(2), $scale + 2)->round($scale);
+        $piOverTwo = (self::DECIMAL_CONSTANTS)::pi()->div(self::fromInteger(2), $scale + 2)->round($scale);
 
         if ($this->round($scale)->isZero()) {
             return $piOverTwo;
@@ -791,11 +791,11 @@ class Decimal
      *  Calculates the arctangente of this with the highest possible accuracy
      *
      * @param integer $scale
-     * @return Decimal
+     * @return self
      */
-    public function arctan(int $scale = null): Decimal
+    public function arctan(int $scale = null): self
     {
-        $piOverFour = (self::DECIMAL_CONSTANTS)::pi()->div(Decimal::fromInteger(4), $scale + 2)->round($scale);
+        $piOverFour = (self::DECIMAL_CONSTANTS)::pi()->div(self::fromInteger(4), $scale + 2)->round($scale);
 
         if ($this->round($scale)->isZero()) {
             return (self::DECIMAL_CONSTANTS)::zero();
@@ -820,18 +820,18 @@ class Decimal
      * Calculates the arccotangente of this with the highest possible accuracy
      *
      * @param integer $scale
-     * @return Decimal
+     * @return self
      */
-    public function arccot(int $scale = null): Decimal
+    public function arccot(int $scale = null): self
     {
         $scale = ($scale === null) ? 32 : $scale;
 
-        $piOverTwo = (self::DECIMAL_CONSTANTS)::pi()->div(Decimal::fromInteger(2), $scale + 2);
+        $piOverTwo = (self::DECIMAL_CONSTANTS)::pi()->div(self::fromInteger(2), $scale + 2);
         if ($this->round($scale)->isZero()) {
             return $piOverTwo->round($scale);
         }
 
-        $piOverFour = (self::DECIMAL_CONSTANTS)::pi()->div(Decimal::fromInteger(4), $scale + 2);
+        $piOverFour = (self::DECIMAL_CONSTANTS)::pi()->div(self::fromInteger(4), $scale + 2);
         if ($this->round($scale)->equals((self::DECIMAL_CONSTANTS)::one())) {
             return $piOverFour->round($scale);
         }
@@ -852,9 +852,9 @@ class Decimal
      * Calculates the arcsecant of this with the highest possible accuracy
      *
      * @param integer $scale
-     * @return Decimal
+     * @return self
      */
-    public function arcsec(int $scale = null): Decimal
+    public function arcsec(int $scale = null): self
     {
         if($this->comp((self::DECIMAL_CONSTANTS)::one(), $scale + 2) === -1 && $this->comp((self::DECIMAL_CONSTANTS)::negativeOne(), $scale + 2) === 1) {
             throw new \DomainException(
@@ -862,7 +862,7 @@ class Decimal
             );
         }
 
-        $piOverTwo = (self::DECIMAL_CONSTANTS)::pi()->div(Decimal::fromInteger(2), $scale + 2)->round($scale);
+        $piOverTwo = (self::DECIMAL_CONSTANTS)::pi()->div(self::fromInteger(2), $scale + 2)->round($scale);
 
         if ($this->round($scale)->equals((self::DECIMAL_CONSTANTS)::one())) {
             return (self::DECIMAL_CONSTANTS)::zero();
@@ -886,9 +886,9 @@ class Decimal
      * Calculates the arccosecant of this with the highest possible accuracy
      *
      * @param integer $scale
-     * @return Decimal
+     * @return self
      */
-    public function arccsc(int $scale = null): Decimal
+    public function arccsc(int $scale = null): self
     {
         if($this->comp((self::DECIMAL_CONSTANTS)::one(), $scale + 2) === -1 && $this->comp((self::DECIMAL_CONSTANTS)::negativeOne(), $scale + 2) === 1) {
             throw new \DomainException(
@@ -899,10 +899,10 @@ class Decimal
         $scale = ($scale === null) ? 32 : $scale;
 
         if ($this->round($scale)->equals((self::DECIMAL_CONSTANTS)::one())) {
-            return (self::DECIMAL_CONSTANTS)::pi()->div(Decimal::fromInteger(2), $scale + 2)->round($scale);
+            return (self::DECIMAL_CONSTANTS)::pi()->div(self::fromInteger(2), $scale + 2)->round($scale);
         }
         if ($this->round($scale)->equals((self::DECIMAL_CONSTANTS)::negativeOne())) {
-            return (self::DECIMAL_CONSTANTS)::pi()->div(Decimal::fromInteger(-2), $scale + 2)->round($scale);
+            return (self::DECIMAL_CONSTANTS)::pi()->div(self::fromInteger(-2), $scale + 2)->round($scale);
         }
 
         return self::powerSerie(
@@ -916,9 +916,9 @@ class Decimal
      * Returns exp($this), said in other words: e^$this .
      *
      * @param integer $scale
-     * @return Decimal
+     * @return self
      */
-    public function exp(int $scale = null): Decimal
+    public function exp(int $scale = null): self
     {
         if ($this->isZero()) {
             return (self::DECIMAL_CONSTANTS)::one();
@@ -937,13 +937,13 @@ class Decimal
     /**
      * Internal method used to compute sin, cos and exp
      *
-     * @param Decimal $x
-     * @param Decimal $firstTerm
+     * @param self $x
+     * @param self $firstTerm
      * @param callable $generalTerm
      * @param $scale
-     * @return Decimal
+     * @return self
      */
-    private static function factorialSerie (Decimal $x, Decimal $firstTerm, callable $generalTerm, int $scale): Decimal
+    private static function factorialSerie (self $x, self $firstTerm, callable $generalTerm, int $scale): self
     {
         $approx = $firstTerm;
         $change = (self::DECIMAL_CONSTANTS)::One();
@@ -954,9 +954,9 @@ class Decimal
         for ($i = 1; !$change->floor($scale+1)->isZero(); $i++) {
             // update x^n and n! for this walkthrough
             $xPowerN = $xPowerN->mul($x);
-            $faculty = $faculty->mul(Decimal::fromInteger($i));
+            $faculty = $faculty->mul(self::fromInteger($i));
 
-            /** @var Decimal $multiplier */
+            /** @var self $multiplier */
             $multiplier = $generalTerm($i);
 
             if (!$multiplier->isZero()) {
@@ -972,12 +972,12 @@ class Decimal
     /**
      * Internal method used to compute arcsine and arcosine
      *
-     * @param Decimal $x
-     * @param Decimal $firstTerm
+     * @param self $x
+     * @param self $firstTerm
      * @param $scale
-     * @return Decimal
+     * @return self
      */
-    private static function powerSerie (Decimal $x, Decimal $firstTerm, int $scale): Decimal
+    private static function powerSerie (self $x, self $firstTerm, int $scale): self
     {
         $approx = $firstTerm;
         $change = (self::DECIMAL_CONSTANTS)::One();
@@ -996,11 +996,11 @@ class Decimal
             } elseif ($i === 1) {
                 $factorN = (self::DECIMAL_CONSTANTS)::one();
             } else {
-                $incrementNum = Decimal::fromInteger($i - 2);
+                $incrementNum = self::fromInteger($i - 2);
                 $numerator = $numerator->mul($incrementNum, $scale +2);
 
-                $incrementDen = Decimal::fromInteger($i - 1);
-                $increment = Decimal::fromInteger($i);
+                $incrementDen = self::fromInteger($i - 1);
+                $increment = self::fromInteger($i);
                 $denominator = $denominator
                     ->div($incrementNum, $scale +2)
                     ->mul($incrementDen, $scale +2)
@@ -1021,12 +1021,12 @@ class Decimal
     /**
      * Internal method used to compute arctan and arccotan
      *
-     * @param Decimal $x
-     * @param Decimal $firstTerm
+     * @param self $x
+     * @param self $firstTerm
      * @param $scale
-     * @return Decimal
+     * @return self
      */
-    private static function simplePowerSerie (Decimal $x, Decimal $firstTerm, int $scale): Decimal
+    private static function simplePowerSerie (self $x, self $firstTerm, int $scale): self
     {
         $approx = $firstTerm;
         $change = (self::DECIMAL_CONSTANTS)::One();
@@ -1041,9 +1041,9 @@ class Decimal
                 $factorN = (self::DECIMAL_CONSTANTS)::zero();
             } else {
                  if ($i % 4 === 1) {
-                     $factorN = (self::DECIMAL_CONSTANTS)::one()->div(Decimal::fromInteger($i), $scale + 2);
+                     $factorN = (self::DECIMAL_CONSTANTS)::one()->div(self::fromInteger($i), $scale + 2);
                  } else {
-                     $factorN = (self::DECIMAL_CONSTANTS)::negativeOne()->div(Decimal::fromInteger($i), $scale + 2);
+                     $factorN = (self::DECIMAL_CONSTANTS)::negativeOne()->div(self::fromInteger($i), $scale + 2);
                  }
             }
 
@@ -1061,9 +1061,9 @@ class Decimal
      * Note that accuracy is limited by the accuracy of predefined PI;
      *
      * @param integer $scale
-     * @return Decimal tan($this)
+     * @return self tan($this)
      */
-    public function tan(int $scale = null): Decimal
+    public function tan(int $scale = null): self
     {
         $cos = $this->cos($scale + 2);
         if ($cos->isZero()) {
@@ -1080,9 +1080,9 @@ class Decimal
      * Note that accuracy is limited by the accuracy of predefined PI;
      *
      * @param integer $scale
-     * @return Decimal cotan($this)
+     * @return self cotan($this)
      */
-    public function cotan(int $scale = null): Decimal
+    public function cotan(int $scale = null): self
     {
         $sin = $this->sin($scale + 2);
         if ($sin->isZero()) {
@@ -1097,10 +1097,10 @@ class Decimal
     /**
      * Indicates if the passed parameter has the same sign as the method's bound object.
      *
-     * @param Decimal $b
+     * @param self $b
      * @return bool
      */
-    public function hasSameSign(Decimal $b): bool
+    public function hasSameSign(self $b): bool
     {
         return $this->isPositive() && $b->isPositive() || $this->isNegative() && $b->isNegative();
     }
@@ -1351,11 +1351,11 @@ class Decimal
      * Counts the number of significant digits of $val.
      * Assumes a consistent internal state (without zeros at the end or the start).
      *
-     * @param  Decimal $val
-     * @param  Decimal $abs $val->abs()
+     * @param  self $val
+     * @param  self $abs $val->abs()
      * @return int
      */
-    private static function countSignificativeDigits(Decimal $val, Decimal $abs): int
+    private static function countSignificativeDigits(self $val, self $abs): int
     {
         return \strlen($val->value) - (
             ($abs->comp((self::DECIMAL_CONSTANTS)::One()) === -1) ? 2 : \max($val->scale, 1)
