@@ -635,10 +635,10 @@ class Decimal
     public function sin(int $scale = null): self
     {
         // First normalise the number in the [0, 2PI] domain
-        $x = $this->mod((self::DECIMAL_CONSTANTS)::PI()->mul(self::fromString("2")));
+        $x = $this->mod((self::DECIMAL_CONSTANTS)::pi()->mul(self::fromString("2")));
 
-        // PI has only 32 significant numbers
-        $scale = (null === $scale) ? 32 : $scale;
+        // PI has only limited significant numbers
+        $scale = $scale ?? (self::DECIMAL_CONSTANTS)::pi()->scale;
 
         return self::factorialSerie(
             $x,
@@ -661,6 +661,7 @@ class Decimal
      */
     public function cosec(int $scale = null): self
     {
+        $scale = $scale ?? (self::DECIMAL_CONSTANTS)::pi()->scale;
         $sin = $this->sin($scale + 2);
         if ($sin->isZero()) {
             throw new \DomainException(
@@ -681,10 +682,10 @@ class Decimal
     public function cos(int $scale = null): self
     {
         // First normalise the number in the [0, 2PI] domain
-        $x = $this->mod((self::DECIMAL_CONSTANTS)::PI()->mul(self::fromString("2")));
+        $x = $this->mod((self::DECIMAL_CONSTANTS)::pi()->mul(self::fromString("2")));
 
-        // PI has only 32 significant numbers
-        $scale = ($scale === null) ? 32 : $scale;
+        // PI has only limited significant numbers
+        $scale = $scale ?? (self::DECIMAL_CONSTANTS)::pi()->scale;
 
         return self::factorialSerie(
             $x,
@@ -707,6 +708,7 @@ class Decimal
      */
     public function sec(int $scale = null): self
     {
+        $scale = $scale ?? (self::DECIMAL_CONSTANTS)::pi()->scale;
         $cos = $this->cos($scale + 2);
         if ($cos->isZero()) {
             throw new \DomainException(
@@ -725,6 +727,8 @@ class Decimal
      */
     public function arcsin(int $scale = null): self
     {
+        $scale = $scale ?? (self::DECIMAL_CONSTANTS)::pi()->scale;
+        
         if($this->comp((self::DECIMAL_CONSTANTS)::one(), $scale + 2) === 1 || $this->comp((self::DECIMAL_CONSTANTS)::negativeOne(), $scale + 2) === -1) {
             throw new \DomainException(
                 "The arcsin of this number is undefined."
@@ -741,8 +745,6 @@ class Decimal
             return (self::DECIMAL_CONSTANTS)::pi()->div(self::fromInteger(-2))->round($scale);
         }
 
-        $scale = ($scale === null) ? 32 : $scale;
-
         return self::powerSerie(
             $this,
             (self::DECIMAL_CONSTANTS)::zero(),
@@ -758,7 +760,9 @@ class Decimal
      */
     public function arccos(int $scale = null): self
     {
-        if($this->comp((self::DECIMAL_CONSTANTS)::one(), $scale + 2) === 1 || $this->comp((self::DECIMAL_CONSTANTS)::negativeOne(), $scale + 2) === -1) {
+        $scale = $scale ?? (self::DECIMAL_CONSTANTS)::pi()->scale;
+        
+        if ($this->comp((self::DECIMAL_CONSTANTS)::one(), $scale + 2) === 1 || $this->comp((self::DECIMAL_CONSTANTS)::negativeOne(), $scale + 2) === -1) {
             throw new \DomainException(
                 "The arccos of this number is undefined."
             );
@@ -775,9 +779,7 @@ class Decimal
         if ($this->round($scale)->equals((self::DECIMAL_CONSTANTS)::negativeOne())) {
             return (self::DECIMAL_CONSTANTS)::pi()->round($scale);
         }
-
-        $scale = ($scale === null) ? 32 : $scale;
-
+        
         return $piOverTwo->sub(
             self::powerSerie(
                 $this,
@@ -795,6 +797,7 @@ class Decimal
      */
     public function arctan(int $scale = null): self
     {
+        $scale = $scale ?? (self::DECIMAL_CONSTANTS)::pi()->scale;
         $piOverFour = (self::DECIMAL_CONSTANTS)::pi()->div(self::fromInteger(4), $scale + 2)->round($scale);
 
         if ($this->round($scale)->isZero()) {
@@ -806,8 +809,6 @@ class Decimal
         if ($this->round($scale)->equals((self::DECIMAL_CONSTANTS)::negativeOne())) {
             return (self::DECIMAL_CONSTANTS)::negativeOne()->mul($piOverFour);
         }
-
-        $scale = ($scale === null) ? 32 : $scale;
 
         return self::simplePowerSerie(
             $this,
@@ -824,7 +825,7 @@ class Decimal
      */
     public function arccot(int $scale = null): self
     {
-        $scale = ($scale === null) ? 32 : $scale;
+        $scale = $scale ?? (self::DECIMAL_CONSTANTS)::pi()->scale;
 
         $piOverTwo = (self::DECIMAL_CONSTANTS)::pi()->div(self::fromInteger(2), $scale + 2);
         if ($this->round($scale)->isZero()) {
@@ -856,7 +857,9 @@ class Decimal
      */
     public function arcsec(int $scale = null): self
     {
-        if($this->comp((self::DECIMAL_CONSTANTS)::one(), $scale + 2) === -1 && $this->comp((self::DECIMAL_CONSTANTS)::negativeOne(), $scale + 2) === 1) {
+        $scale = $scale ?? (self::DECIMAL_CONSTANTS)::pi()->scale;
+        
+        if ($this->comp((self::DECIMAL_CONSTANTS)::one(), $scale + 2) === -1 && $this->comp((self::DECIMAL_CONSTANTS)::negativeOne(), $scale + 2) === 1) {
             throw new \DomainException(
                 "The arcsecant of this number is undefined."
             );
@@ -870,9 +873,7 @@ class Decimal
         if ($this->round($scale)->equals((self::DECIMAL_CONSTANTS)::negativeOne())) {
             return (self::DECIMAL_CONSTANTS)::pi()->round($scale);
         }
-
-        $scale = ($scale === null) ? 32 : $scale;
-
+        
         return $piOverTwo->sub(
             self::powerSerie(
                 (self::DECIMAL_CONSTANTS)::one()->div($this, $scale + 2),
@@ -890,14 +891,14 @@ class Decimal
      */
     public function arccsc(int $scale = null): self
     {
-        if($this->comp((self::DECIMAL_CONSTANTS)::one(), $scale + 2) === -1 && $this->comp((self::DECIMAL_CONSTANTS)::negativeOne(), $scale + 2) === 1) {
+        $scale = $scale ?? (self::DECIMAL_CONSTANTS)::pi()->scale;
+        
+        if ($this->comp((self::DECIMAL_CONSTANTS)::one(), $scale + 2) === -1 && $this->comp((self::DECIMAL_CONSTANTS)::negativeOne(), $scale + 2) === 1) {
             throw new \DomainException(
                 "The arccosecant of this number is undefined."
             );
         }
-
-        $scale = ($scale === null) ? 32 : $scale;
-
+        
         if ($this->round($scale)->equals((self::DECIMAL_CONSTANTS)::one())) {
             return (self::DECIMAL_CONSTANTS)::pi()->div(self::fromInteger(2), $scale + 2)->round($scale);
         }
@@ -1065,6 +1066,7 @@ class Decimal
      */
     public function tan(int $scale = null): self
     {
+        $scale = $scale ?? (self::DECIMAL_CONSTANTS)::pi()->scale;
         $cos = $this->cos($scale + 2);
         if ($cos->isZero()) {
             throw new \DomainException(
@@ -1084,6 +1086,7 @@ class Decimal
      */
     public function cotan(int $scale = null): self
     {
+        $scale = $scale ?? (self::DECIMAL_CONSTANTS)::pi()->scale;
         $sin = $this->sin($scale + 2);
         if ($sin->isZero()) {
             throw new \DomainException(

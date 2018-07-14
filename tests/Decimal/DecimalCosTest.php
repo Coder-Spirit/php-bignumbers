@@ -12,6 +12,7 @@ class DecimalCosTest extends TestCase
         // Some values provided by Mathematica
         return [
             ['1', '0.54030230586814', 14],
+            ['1', '0.54030230586813971740093660744298', null],
             ['123.123', '-0.82483472946164834', 17],
             ['15000000000', '-0.72218064388924347683', 20]
         ];
@@ -23,7 +24,7 @@ class DecimalCosTest extends TestCase
     public function testSimple($nr, $answer, $digits)
     {
         $x = Decimal::fromString($nr);
-        $cosX = $x->cos((int)$digits);
+        $cosX = $x->cos($digits);
 
         $this->assertTrue(
             Decimal::fromString($answer)->equals($cosX),

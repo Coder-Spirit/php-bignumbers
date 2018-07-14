@@ -12,6 +12,7 @@ class DecimalSinTest extends TestCase
         // Some values providede by mathematica
         return [
             ['1', '0.84147098480790', 14],
+            ['1', '0.84147098480789650665250232163030', null],
             ['123.123', '-0.56537391969733569', 17],
             ['15000000000', '0.69170450164193502844', 20]
         ];

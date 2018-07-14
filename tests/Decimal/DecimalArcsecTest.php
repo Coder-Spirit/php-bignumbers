@@ -12,6 +12,7 @@ class DecimalArcsecTest extends TestCase
         // Some values provided by wolframalpha
         return [
             ['25.546', '1.53164125102163', 14],
+            ['25.546', '1.53164125102163069847855438539239', null],
             ['1.5', '0.841068', 6],
             ['1', '0', 17],
             ['-1', '3.14159265358979324', 17],

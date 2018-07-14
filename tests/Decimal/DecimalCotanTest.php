@@ -13,6 +13,7 @@ class DecimalCotanTest extends TestCase
         // Some values providede by mathematica
         return [
             ['1', '0.64209261593433', 14],
+            ['1', '0.64209261593433070300641998659427', null],
             ['123.123', '1.45891895739232371', 17],
             ['15000000000', '-1.04405948230055701685', 20]
         ];
@@ -37,8 +38,8 @@ class DecimalCotanTest extends TestCase
      */
     public function testCotanPiDiv()
     {    	
-        $PI  = DecimalConstants::PI();
-        $PI->cotan();
+        $pi = DecimalConstants::pi();
+        $pi->cotan(30);
     }
     
 }
