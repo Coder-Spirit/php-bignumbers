@@ -12,6 +12,7 @@ class DecimalArctanTest extends TestCase
         // Some values provided by wolframalpha
         return [
             ['0.154', '0.15279961393666', 14],
+            ['0.154', '0.15279961393666453143412855733377', null],
             ['0', '0', 17],
             ['-1', '-0.78539816339744831', 17],
         ];

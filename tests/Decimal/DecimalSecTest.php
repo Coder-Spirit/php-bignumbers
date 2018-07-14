@@ -12,6 +12,7 @@ class DecimalSecTest extends TestCase
         // Some values provided by Mathematica
         return [
             ['5', '3.52532008581609', 14],
+            ['5', '3.52532008581608840670180105996324', null],
             ['456.456', '-1.66172995090378344', 17],
             ['28000000000', '-1.11551381955633891873', 20],
         ];
@@ -23,7 +24,7 @@ class DecimalSecTest extends TestCase
     public function testSimple($nr, $answer, $digits)
     {
         $x = Decimal::fromString($nr);
-        $secX = $x->sec((int)$digits);
+        $secX = $x->sec($digits);
 
         $this->assertTrue(
             Decimal::fromString($answer)->equals($secX),
