@@ -11,7 +11,7 @@ use Litipk\BigNumbers\Decimal as Decimal;
  *
  * @author Andreu Correa Casablanca <castarco@litipk.com>
  */
-final class DecimalConstants
+class DecimalConstants
 {
     /** @var Decimal */
     private static $ZERO = null;
