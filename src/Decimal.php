@@ -33,6 +33,12 @@ class Decimal
      */
     private $scale;
 
+    /**
+     * Decimal constructor.
+     *
+     * @param string $value
+     * @param int $scale
+     */
     private function __construct(string $value, int $scale)
     {
         $this->value = $value;
@@ -46,8 +52,9 @@ class Decimal
     /**
      * Decimal "constructor".
      *
-     * @param  mixed $value
-     * @param  int   $scale
+     * @param mixed $value
+     * @param int $scale
+     *
      * @return Decimal
      */
     public static function create($value, int $scale = null): Decimal
@@ -68,6 +75,11 @@ class Decimal
         }
     }
 
+    /**
+     * @param int $intValue
+     *
+     * @return Decimal
+     */
     public static function fromInteger(int $intValue): Decimal
     {
         self::paramsValidation($intValue, null);
@@ -76,8 +88,9 @@ class Decimal
     }
 
     /**
-     * @param  float $fltValue
-     * @param  int   $scale
+     * @param float $fltValue
+     * @param int $scale
+     *
      * @return Decimal
      */
     public static function fromFloat(float $fltValue, int $scale = null): Decimal
@@ -116,8 +129,9 @@ class Decimal
     }
 
     /**
-     * @param  string  $strValue
-     * @param  integer $scale
+     * @param string $strValue
+     * @param integer $scale
+     *
      * @return Decimal
      */
     public static function fromString(string $strValue, int $scale = null): Decimal
@@ -158,8 +172,9 @@ class Decimal
      * Constructs a new Decimal object based on a previous one,
      * but changing it's $scale property.
      *
-     * @param  Decimal  $decValue
-     * @param  null|int $scale
+     * @param Decimal $decValue
+     * @param null|int $scale
+     *
      * @return Decimal
      */
     public static function fromDecimal(Decimal $decValue, int $scale = null): Decimal
@@ -179,8 +194,10 @@ class Decimal
 
     /**
      * Adds two Decimal objects
-     * @param  Decimal  $b
-     * @param  null|int $scale
+     *
+     * @param Decimal $b
+     * @param null|int $scale
+     *
      * @return Decimal
      */
     public function add(Decimal $b, int $scale = null): Decimal
@@ -195,8 +212,10 @@ class Decimal
 
     /**
      * Subtracts two BigNumber objects
-     * @param  Decimal $b
-     * @param  integer $scale
+     *
+     * @param Decimal $b
+     * @param integer $scale
+     *
      * @return Decimal
      */
     public function sub(Decimal $b, int $scale = null): Decimal
@@ -211,8 +230,10 @@ class Decimal
 
     /**
      * Multiplies two BigNumber objects
-     * @param  Decimal $b
-     * @param  integer $scale
+     *
+     * @param Decimal $b
+     * @param integer $scale
+     *
      * @return Decimal
      */
     public function mul(Decimal $b, int $scale = null): Decimal
@@ -235,8 +256,9 @@ class Decimal
      *          integer division because it rounds the
      *          last digit in order to minimize the error.
      *
-     * @param  Decimal $b
-     * @param  integer $scale
+     * @param Decimal $b
+     * @param integer $scale
+     *
      * @return Decimal
      */
     public function div(Decimal $b, int $scale = null): Decimal
@@ -277,7 +299,9 @@ class Decimal
 
     /**
      * Returns the square root of this object
-     * @param  integer $scale
+     *
+     * @param integer $scale
+     *
      * @return Decimal
      */
     public function sqrt(int $scale = null): Decimal
@@ -301,8 +325,9 @@ class Decimal
     /**
      * Powers this value to $b
      *
-     * @param  Decimal  $b      exponent
-     * @param  integer  $scale
+     * @param Decimal $b exponent
+     * @param integer $scale
+     *
      * @return Decimal
      */
     public function pow(Decimal $b, int $scale = null): Decimal
@@ -363,7 +388,9 @@ class Decimal
 
     /**
      * Returns the object's logarithm in base 10
-     * @param  integer $scale
+     *
+     * @param integer $scale
+     *
      * @return Decimal
      */
     public function log10(int $scale = null): Decimal
@@ -384,6 +411,11 @@ class Decimal
         );
     }
 
+    /**
+     * @param int|null $scale
+     *
+     * @return bool
+     */
     public function isZero(int $scale = null): bool
     {
         $cmp_scale = $scale !== null ? $scale : $this->scale;
@@ -391,16 +423,25 @@ class Decimal
         return (\bccomp(self::innerRound($this->value, $cmp_scale), '0', $cmp_scale) === 0);
     }
 
+    /**
+     * @return bool
+     */
     public function isPositive(): bool
     {
         return ($this->value[0] !== '-' && !$this->isZero());
     }
 
+    /**
+     * @return bool
+     */
     public function isNegative(): bool
     {
         return ($this->value[0] === '-');
     }
 
+    /**
+     * @return bool
+     */
     public function isInteger(): bool
     {
         return (\preg_match('/^[+\-]?[0-9]+(\.0+)?$/', $this->value, $captures) === 1);
@@ -408,8 +449,10 @@ class Decimal
 
     /**
      * Equality comparison between this object and $b
-     * @param  Decimal $b
+     *
+     * @param Decimal $b
      * @param integer $scale
+     *
      * @return boolean
      */
     public function equals(Decimal $b, int $scale = null): bool
@@ -434,8 +477,9 @@ class Decimal
     /**
      * $this > $b : returns 1 , $this < $b : returns -1 , $this == $b : returns 0
      *
-     * @param  Decimal $b
-     * @param  integer $scale
+     * @param Decimal $b
+     * @param integer $scale
+     *
      * @return integer
      */
     public function comp(Decimal $b, int $scale = null): int
@@ -459,8 +503,9 @@ class Decimal
     /**
      * Returns true if $this > $b, otherwise false
      *
-     * @param  Decimal $b
-     * @param  integer $scale
+     * @param Decimal $b
+     * @param integer $scale
+     *
      * @return bool
      */
     public function isGreaterThan(Decimal $b, int $scale = null): bool
@@ -471,8 +516,9 @@ class Decimal
     /**
      * Returns true if $this >= $b
      *
-     * @param  Decimal $b
-     * @param  integer $scale
+     * @param Decimal $b
+     * @param integer $scale
+     *
      * @return bool
      */
     public function isGreaterOrEqualTo(Decimal $b, int $scale = null): bool
@@ -485,8 +531,9 @@ class Decimal
     /**
      * Returns true if $this < $b, otherwise false
      *
-     * @param  Decimal $b
-     * @param  integer $scale
+     * @param Decimal $b
+     * @param integer $scale
+     *
      * @return bool
      */
     public function isLessThan(Decimal $b, int $scale = null): bool
@@ -497,8 +544,9 @@ class Decimal
     /**
      * Returns true if $this <= $b, otherwise false
      *
-     * @param  Decimal $b
-     * @param  integer $scale
+     * @param Decimal $b
+     * @param integer $scale
+     *
      * @return bool
      */
     public function isLessOrEqualTo(Decimal $b, int $scale = null): bool
@@ -510,6 +558,7 @@ class Decimal
 
     /**
      * Returns the element's additive inverse.
+     *
      * @return Decimal
      */
     public function additiveInverse(): Decimal
@@ -528,7 +577,9 @@ class Decimal
 
     /**
      * "Rounds" the Decimal to have at most $scale digits after the point
-     * @param  integer $scale
+     *
+     * @param integer $scale
+     *
      * @return Decimal
      */
     public function round(int $scale = 0): Decimal
@@ -542,7 +593,9 @@ class Decimal
 
     /**
      * "Ceils" the Decimal to have at most $scale digits after the point
-     * @param  integer $scale
+     *
+     * @param integer $scale
+     *
      * @return Decimal
      */
     public function ceil($scale = 0): Decimal
@@ -558,6 +611,12 @@ class Decimal
         return $this->innerTruncate($scale);
     }
 
+    /**
+     * @param int $scale
+     * @param bool $ceil
+     *
+     * @return Decimal
+     */
     private function innerTruncate(int $scale = 0, bool $ceil = true): Decimal
     {
         $rounded = \bcadd($this->value, '0', $scale);
@@ -584,7 +643,9 @@ class Decimal
 
     /**
      * "Floors" the Decimal to have at most $scale digits after the point
-     * @param  integer $scale
+     *
+     * @param integer $scale
+     *
      * @return Decimal
      */
     public function floor(int $scale = 0): Decimal
@@ -602,6 +663,7 @@ class Decimal
 
     /**
      * Returns the absolute value (always a positive number)
+     *
      * @return Decimal
      */
     public function abs(): Decimal
@@ -613,8 +675,10 @@ class Decimal
 
     /**
      * Calculate modulo with a decimal
+     *
      * @param Decimal $d
      * @param integer $scale
+     *
      * @return $this % $d
      */
     public function mod(Decimal $d, int $scale = null): Decimal
@@ -628,6 +692,7 @@ class Decimal
      * Note that accuracy is limited by the accuracy of predefined PI;
      *
      * @param integer $scale
+     *
      * @return Decimal sin($this)
      */
     public function sin(int $scale = null): Decimal
@@ -655,6 +720,7 @@ class Decimal
      * Note that accuracy is limited by the accuracy of predefined PI;
      *
      * @param integer $scale
+     *
      * @return Decimal
      */
     public function cosec(int $scale = null): Decimal
@@ -674,6 +740,7 @@ class Decimal
      * Note that accuracy is limited by the accuracy of predefined PI;
      *
      * @param integer $scale
+     *
      * @return Decimal cos($this)
      */
     public function cos(int $scale = null): Decimal
@@ -701,6 +768,7 @@ class Decimal
      * Note that accuracy is limited by the accuracy of predefined PI;
      *
      * @param integer $scale
+     *
      * @return Decimal
      */
     public function sec(int $scale = null): Decimal
@@ -719,6 +787,7 @@ class Decimal
      *	Calculates the arcsine of this with the highest possible accuracy
      *
      * @param integer $scale
+     *
      * @return Decimal
      */
     public function arcsin(int $scale = null): Decimal
@@ -752,6 +821,7 @@ class Decimal
      *	Calculates the arccosine of this with the highest possible accuracy
      *
      * @param integer $scale
+     *
      * @return Decimal
      */
     public function arccos(int $scale = null): Decimal
@@ -789,6 +859,7 @@ class Decimal
      *	Calculates the arctangente of this with the highest possible accuracy
      *
      * @param integer $scale
+     *
      * @return Decimal
      */
     public function arctan(int $scale = null): Decimal
@@ -818,6 +889,7 @@ class Decimal
      * Calculates the arccotangente of this with the highest possible accuracy
      *
      * @param integer $scale
+     *
      * @return Decimal
      */
     public function arccot(int $scale = null): Decimal
@@ -850,6 +922,7 @@ class Decimal
      * Calculates the arcsecant of this with the highest possible accuracy
      *
      * @param integer $scale
+     *
      * @return Decimal
      */
     public function arcsec(int $scale = null): Decimal
@@ -884,6 +957,7 @@ class Decimal
      * Calculates the arccosecant of this with the highest possible accuracy
      *
      * @param integer $scale
+     *
      * @return Decimal
      */
     public function arccsc(int $scale = null): Decimal
@@ -914,6 +988,7 @@ class Decimal
      * Returns exp($this), said in other words: e^$this .
      *
      * @param integer $scale
+     *
      * @return Decimal
      */
     public function exp(int $scale = null): Decimal
@@ -939,6 +1014,7 @@ class Decimal
      * @param Decimal $firstTerm
      * @param callable $generalTerm
      * @param $scale
+     *
      * @return Decimal
      */
     private static function factorialSerie (Decimal $x, Decimal $firstTerm, callable $generalTerm, int $scale): Decimal
@@ -973,6 +1049,7 @@ class Decimal
      * @param Decimal $x
      * @param Decimal $firstTerm
      * @param $scale
+     *
      * @return Decimal
      */
     private static function powerSerie (Decimal $x, Decimal $firstTerm, int $scale): Decimal
@@ -1022,6 +1099,7 @@ class Decimal
      * @param Decimal $x
      * @param Decimal $firstTerm
      * @param $scale
+     *
      * @return Decimal
      */
     private static function simplePowerSerie (Decimal $x, Decimal $firstTerm, int $scale): Decimal
@@ -1037,6 +1115,8 @@ class Decimal
 
             if ($i % 2 === 0) {
                 $factorN = DecimalConstants::zero();
+            } elseif ($i % 4 === 1) {
+                $factorN = DecimalConstants::one()->div(self::fromInteger($i), $scale + 2);
             } else {
                  if ($i % 4 === 1) {
                      $factorN = DecimalConstants::one()->div(Decimal::fromInteger($i), $scale + 2);
@@ -1059,6 +1139,7 @@ class Decimal
      * Note that accuracy is limited by the accuracy of predefined PI;
      *
      * @param integer $scale
+     *
      * @return Decimal tan($this)
      */
     public function tan(int $scale = null): Decimal
@@ -1078,6 +1159,7 @@ class Decimal
      * Note that accuracy is limited by the accuracy of predefined PI;
      *
      * @param integer $scale
+     *
      * @return Decimal cotan($this)
      */
     public function cotan(int $scale = null): Decimal
@@ -1096,6 +1178,7 @@ class Decimal
      * Indicates if the passed parameter has the same sign as the method's bound object.
      *
      * @param Decimal $b
+     *
      * @return bool
      */
     public function hasSameSign(Decimal $b): bool
@@ -1103,11 +1186,17 @@ class Decimal
         return $this->isPositive() && $b->isPositive() || $this->isNegative() && $b->isNegative();
     }
 
+    /**
+     * @return float
+     */
     public function asFloat(): float
     {
         return \floatval($this->value);
     }
 
+    /**
+     * @return int
+     */
     public function asInteger(): int
     {
         return \intval($this->value);
@@ -1115,6 +1204,8 @@ class Decimal
 
     /**
      * WARNING: use with caution! Return the inner representation of the class.
+     *
+     * @return string
      */
     public function innerValue(): string
     {
@@ -1131,6 +1222,7 @@ class Decimal
 
     /*
      *
+     * @return array
      */
     private static function fromExpNotationString(
         int $scale = null,
@@ -1166,8 +1258,9 @@ class Decimal
     /**
      * "Rounds" the decimal string to have at most $scale digits after the point
      *
-     * @param  string $value
-     * @param  int    $scale
+     * @param string $value
+     * @param int $scale
+     *
      * @return string
      */
     private static function innerRound(string $value, int $scale = 0): string
@@ -1189,9 +1282,10 @@ class Decimal
     /**
      * Calculates the logarithm (in base 10) of $value
      *
-     * @param  string $value     The number we want to calculate its logarithm (only positive numbers)
-     * @param  int    $in_scale  Expected scale used by $value (only positive numbers)
-     * @param  int    $out_scale Scale used by the return value (only positive numbers)
+     * @param string $value The number we want to calculate its logarithm (only positive numbers)
+     * @param int $in_scale Expected scale used by $value (only positive numbers)
+     * @param int $out_scale Scale used by the return value (only positive numbers)
+     *
      * @return string
      */
     private static function innerLog10(string $value, int $in_scale, int $out_scale): string
@@ -1235,10 +1329,11 @@ class Decimal
     /**
      * Returns $base^$exponent
      *
-     * @param  string $base
-     * @param  string $exponent   0 < $exponent < 1
-     * @param  int    $exp_scale Number of $exponent's significative digits
-     * @param  int    $out_scale Number of significative digits that we want to compute
+     * @param string $base
+     * @param string $exponent 0 < $exponent < 1
+     * @param int $exp_scale Number of $exponent's significative digits
+     * @param int $out_scale Number of significative digits that we want to compute
+     *
      * @return string
      */
     private static function innerPowWithLittleExponent(
@@ -1273,10 +1368,11 @@ class Decimal
     /**
      * Auxiliar method. It helps us to decompose the exponent into many summands.
      *
-     * @param  string $exponent_remaining
-     * @param  int    $actual_index
-     * @param  int    $exp_scale           Number of $exponent's significative digits
-     * @param  int    $inner_scale         ceil($exp_scale*log(10)/log(2))+1;
+     * @param string $exponent_remaining
+     * @param int $actual_index
+     * @param int $exp_scale Number of $exponent's significative digits
+     * @param int $inner_scale ceil($exp_scale*log(10)/log(2))+1;
+     *
      * @return array
      */
     private static function computeSquareIndex(
@@ -1304,6 +1400,7 @@ class Decimal
      * @param  string  $base
      * @param  integer $index
      * @param  integer $out_scale
+     *
      * @return string
      */
     private static function compute2NRoot(string $base, int $index, int $out_scale): string
@@ -1319,8 +1416,9 @@ class Decimal
 
     /**
      * Validates basic constructor's arguments
-     * @param  mixed    $value
-     * @param  null|int  $scale
+     *
+     * @param mixed $value
+     * @param null|int $scale
      */
     protected static function paramsValidation($value, int $scale = null)
     {
@@ -1334,6 +1432,8 @@ class Decimal
     }
 
     /**
+     * @param string $sign
+     *
      * @return string
      */
     private static function normalizeSign(string $sign): string
@@ -1349,8 +1449,9 @@ class Decimal
      * Counts the number of significant digits of $val.
      * Assumes a consistent internal state (without zeros at the end or the start).
      *
-     * @param  Decimal $val
-     * @param  Decimal $abs $val->abs()
+     * @param Decimal $val
+     * @param Decimal $abs $val->abs()
+     *
      * @return int
      */
     private static function countSignificativeDigits(Decimal $val, Decimal $abs): int

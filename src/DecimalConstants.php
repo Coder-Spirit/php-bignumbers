@@ -32,6 +32,9 @@ final class DecimalConstants
     /** @var Decimal */
     private static $LightSpeed = null;
 
+    /**
+     * DecimalConstants constructor.
+     */
     private function __construct()
     {
     }
@@ -40,6 +43,9 @@ final class DecimalConstants
     {
     }
 
+    /**
+     * @return Decimal
+     */
     public static function zero(): Decimal
     {
         if (null === self::$ZERO) {
@@ -48,6 +54,9 @@ final class DecimalConstants
         return self::$ZERO;
     }
 
+    /**
+     * @return Decimal
+     */
     public static function one(): Decimal
     {
         if (null === self::$ONE) {
@@ -56,6 +65,9 @@ final class DecimalConstants
         return self::$ONE;
     }
 
+    /**
+     * @return Decimal
+     */
     public static function negativeOne(): Decimal
     {
         if (null === self::$NEGATIVE_ONE) {
@@ -66,6 +78,7 @@ final class DecimalConstants
 
     /**
      * Returns the Pi number.
+     *
      * @return Decimal
      */
     public static function pi(): Decimal
@@ -80,7 +93,9 @@ final class DecimalConstants
 
     /**
      * Returns the Euler's E number.
-     * @param  integer $scale
+     *
+     * @param integer $scale
+     *
      * @return Decimal
      */
     public static function e(int $scale = 32): Decimal
@@ -94,6 +109,7 @@ final class DecimalConstants
 
     /**
      * Returns the Euler-Mascheroni constant.
+     *
      * @return Decimal
      */
     public static function eulerMascheroni(): Decimal
@@ -108,6 +124,7 @@ final class DecimalConstants
 
     /**
      * Returns the Golden Ration, also named Phi.
+     *
      * @return Decimal
      */
     public static function goldenRatio(): Decimal
@@ -122,6 +139,7 @@ final class DecimalConstants
 
     /**
      * Returns the Silver Ratio.
+     *
      * @return Decimal
      */
     public static function silverRatio(): Decimal
@@ -136,6 +154,7 @@ final class DecimalConstants
 
     /**
      * Returns the Light of Speed measured in meters / second.
+     *
      * @return Decimal
      */
     public static function lightSpeed(): Decimal
