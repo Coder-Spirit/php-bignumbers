@@ -728,11 +728,10 @@ class Decimal
             $x,
             DecimalConstants::zero(),
             function ($i) {
-                if ($i % 4 === 1) {
-                    return ($i % 2 === 1) ? DecimalConstants::one() : DecimalConstants::zero();
+                if ($i % 2 === 1) {
+                    return ($i % 4 === 1) ? DecimalConstants::one() : DecimalConstants::negativeOne();
                 }
-
-                return ($i % 2 === 1) ? DecimalConstants::negativeOne() : DecimalConstants::zero();
+                return DecimalConstants::zero();
             },
             $scale
         );
