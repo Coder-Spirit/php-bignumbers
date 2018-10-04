@@ -15,8 +15,8 @@ use Litipk\BigNumbers\Errors\NotImplementedError;
 class Decimal
 {
     const DEFAULT_SCALE = 16;
-    const CLASSIC_DECIMAL_NUMBER_REGEXP = '/^([+\-]?)0*(([1-9][0-9]*|[0-9])(\.[0-9]+)?)$/';
-    const EXP_NOTATION_NUMBER_REGEXP = '/^ (?P<sign> [+\-]?) 0*(?P<mantissa> [0-9](?P<decimals> \.[0-9]+)?) [eE] (?P<expSign> [+\-]?)(?P<exp> \d+)$/x';
+    const CLASSIC_DECIMAL_NUMBER_REGEXP = '/^([+\-]?)0*(([1-9]\d*|\d)(\.\d+)?)$/';
+    const EXP_NOTATION_NUMBER_REGEXP = '/^ (?P<sign> [+\-]?) 0*(?P<mantissa> \d(?P<decimals> \.\d+)?) [eE] (?P<expSign> [+\-]?)(?P<exp> \d+)$/x';
     const EXP_NUM_GROUPS_NUMBER_REGEXP = '/^ (?P<int> \d*) (?: \. (?P<dec> \d+) ) E (?P<sign>[\+\-]) (?P<exp>\d+) $/x';
 
     /**
@@ -59,18 +59,24 @@ class Decimal
     {
         if (\is_int($value)) {
             return self::fromInteger($value);
-        } elseif (\is_float($value)) {
-            return self::fromFloat($value, $scale);
-        } elseif (\is_string($value)) {
-            return self::fromString($value, $scale);
-        } elseif ($value instanceof Decimal) {
-            return self::fromDecimal($value, $scale);
-        } else {
-            throw new \TypeError(
-                'Expected (int, float, string, Decimal), but received ' .
-                (\is_object($value) ? \get_class($value) : \gettype($value))
-            );
         }
+
+        if (\is_float($value)) {
+            return self::fromFloat($value, $scale);
+        }
+
+        if (\is_string($value)) {
+            return self::fromString($value, $scale);
+        }
+
+        if ($value instanceof self) {
+            return self::fromDecimal($value, $scale);
+        }
+
+        throw new \TypeError(
+            'Expected (int, float, string, Decimal), but received ' .
+            (\is_object($value) ? \get_class($value) : \gettype($value))
+        );
     }
 
     /**
@@ -97,11 +103,13 @@ class Decimal
 
         if (\is_infinite($fltValue)) {
             throw new InfiniteInputError('fltValue must be a finite number');
-        } elseif (\is_nan($fltValue)) {
+        }
+
+        if (\is_nan($fltValue)) {
             throw new NaNInputError("fltValue can't be NaN");
         }
 
-        $strValue = (string) $fltValue;
+        $strValue = (string)$fltValue;
         $hasPoint = (false !== \strpos($strValue, '.'));
 
         if (\preg_match(self::EXP_NUM_GROUPS_NUMBER_REGEXP, $strValue, $capture)) {
@@ -239,7 +247,7 @@ class Decimal
         self::paramsValidation($b, $scale);
 
         if ($b->isZero()) {
-            return DecimalConstants::Zero();
+            return DecimalConstants::zero();
         }
 
         return self::fromString(
@@ -264,35 +272,37 @@ class Decimal
         self::paramsValidation($b, $scale);
 
         if ($b->isZero()) {
-            throw new \DomainException("Division by zero is not allowed.");
-        } elseif ($this->isZero()) {
-            return DecimalConstants::Zero();
+            throw new \DomainException('Division by zero is not allowed.');
+        }
+
+        if ($this->isZero()) {
+            return DecimalConstants::zero();
+        }
+
+        if (null !== $scale) {
+            $divscale = $scale;
         } else {
-            if (null !== $scale) {
-                $divscale = $scale;
-            } else {
-                // $divscale is calculated in order to maintain a reasonable precision
-                $this_abs = $this->abs();
-                $b_abs    = $b->abs();
+            // $divscale is calculated in order to maintain a reasonable precision
+            $this_abs = $this->abs();
+            $b_abs = $b->abs();
 
-                $log10_result =
-                    self::innerLog10($this_abs->value, $this_abs->scale, 1) -
-                    self::innerLog10($b_abs->value, $b_abs->scale, 1);
+            $log10_result =
+                self::innerLog10($this_abs->value, $this_abs->scale, 1) -
+                self::innerLog10($b_abs->value, $b_abs->scale, 1);
 
-                $divscale = (int)\max(
-                    $this->scale + $b->scale,
-                    \max(
-                        self::countSignificativeDigits($this, $this_abs),
-                        self::countSignificativeDigits($b, $b_abs)
-                    ) - \max(\ceil($log10_result), 0),
-                    \ceil(-$log10_result) + 1
-                );
-            }
-
-            return self::fromString(
-                \bcdiv($this->value, $b->value, $divscale+1), $divscale
+            $divscale = (int)\max(
+                $this->scale + $b->scale,
+                \max(
+                    self::countSignificativeDigits($this, $this_abs),
+                    self::countSignificativeDigits($b, $b_abs)
+                ) - \max(\ceil($log10_result), 0),
+                \ceil(-$log10_result) + 1
             );
         }
+
+        return self::fromString(
+            \bcdiv($this->value, $b->value, $divscale + 1), $divscale
+        );
     }
 
     /**
@@ -308,14 +318,16 @@ class Decimal
             throw new \DomainException(
                 "Decimal can't handle square roots of negative numbers (it's only for real numbers)."
             );
-        } elseif ($this->isZero()) {
-            return DecimalConstants::Zero();
         }
 
-        $sqrt_scale = ($scale !== null ? $scale : $this->scale);
+        if ($this->isZero()) {
+            return DecimalConstants::zero();
+        }
+
+        $sqrt_scale = ($scale ?? $this->scale);
 
         return self::fromString(
-            \bcsqrt($this->value, $sqrt_scale+1),
+            \bcsqrt($this->value, $sqrt_scale + 1),
             $sqrt_scale
         );
     }
@@ -332,56 +344,63 @@ class Decimal
     {
         if ($this->isZero()) {
             if ($b->isPositive()) {
-                return Decimal::fromDecimal($this, $scale);
-            } else {
-                throw new \DomainException("zero can't be powered to zero or negative numbers.");
+                return self::fromDecimal($this, $scale);
             }
-        } elseif ($b->isZero()) {
-            return DecimalConstants::One();
-        } else if ($b->isNegative()) {
-            return DecimalConstants::One()->div(
+
+            throw new \DomainException("zero can't be powered to zero or negative numbers.");
+        }
+
+        if ($b->isZero()) {
+            return DecimalConstants::one();
+        }
+
+        if ($b->isNegative()) {
+            return DecimalConstants::one()->div(
                 $this->pow($b->additiveInverse(), max($scale, self::DEFAULT_SCALE)),
                 max($scale, self::DEFAULT_SCALE)
             );
-        } elseif (0 === $b->scale) {
+        }
+
+        if (0 === $b->scale) {
             $pow_scale = \max($this->scale, $b->scale, $scale ?? 0);
 
             return self::fromString(
-                \bcpow($this->value, $b->value, $pow_scale+1),
+                \bcpow($this->value, $b->value, $pow_scale + 1),
                 $pow_scale
             );
-        } else {
-            if ($this->isPositive()) {
-                $pow_scale = \max($this->scale, $b->scale, $scale ?? 0);
-
-                $truncated_b = \bcadd($b->value, '0', 0);
-                $remaining_b = \bcsub($b->value, $truncated_b, $b->scale);
-
-                $first_pow_approx = \bcpow($this->value, $truncated_b, $pow_scale+1);
-                $intermediate_root = self::innerPowWithLittleExponent(
-                    $this->value,
-                    $remaining_b,
-                    $b->scale,
-                    $pow_scale+1
-                );
-
-                return Decimal::fromString(
-                    \bcmul($first_pow_approx, $intermediate_root, $pow_scale+1),
-                    $pow_scale
-                );
-            } else { // elseif ($this->isNegative())
-                if (!$b->isInteger()) {
-                    throw new NotImplementedError(
-                        "Usually negative numbers can't be powered to non integer numbers. " .
-                        "The cases where is possible are not implemented."
-                    );
-                }
-
-                return (\preg_match('/^[+\-]?[0-9]*[02468](\.0+)?$/', $b->value, $captures) === 1)
-                    ? $this->additiveInverse()->pow($b, $scale)                      // $b is an even number
-                    : $this->additiveInverse()->pow($b, $scale)->additiveInverse();  // $b is an odd number
-            }
         }
+
+        if ($this->isPositive()) {
+            $pow_scale = \max($this->scale, $b->scale, $scale ?? 0);
+
+            $truncated_b = \bcadd($b->value, '0', 0);
+            $remaining_b = \bcsub($b->value, $truncated_b, $b->scale);
+
+            $first_pow_approx = \bcpow($this->value, $truncated_b, $pow_scale + 1);
+            $intermediate_root = self::innerPowWithLittleExponent(
+                $this->value,
+                $remaining_b,
+                $b->scale,
+                $pow_scale + 1
+            );
+
+            return self::fromString(
+                \bcmul($first_pow_approx, $intermediate_root, $pow_scale + 1),
+                $pow_scale
+            );
+        }
+
+        // $this->isNegative()
+        if (!$b->isInteger()) {
+            throw new NotImplementedError(
+                "Usually negative numbers can't be powered to non integer numbers. " .
+                'The cases where is possible are not implemented.'
+            );
+        }
+
+        return (\preg_match('/^[+\-]?\d*[02468](\.0+)?$/', $b->value, $captures) === 1)
+            ? $this->additiveInverse()->pow($b, $scale)                      // $b is an even number
+            : $this->additiveInverse()->pow($b, $scale)->additiveInverse();  // $b is an odd number
     }
 
     /**
@@ -397,14 +416,16 @@ class Decimal
             throw new \DomainException(
                 "Decimal can't handle logarithms of negative numbers (it's only for real numbers)."
             );
-        } elseif ($this->isZero()) {
+        }
+
+        if ($this->isZero()) {
             throw new \DomainException(
                 "Decimal can't represent infinite numbers."
             );
         }
 
         return self::fromString(
-            self::innerLog10($this->value, $this->scale, $scale !== null ? $scale+1 : $this->scale+1),
+            self::innerLog10($this->value, $this->scale, $scale !== null ? $scale + 1 : $this->scale + 1),
             $scale
         );
     }
@@ -416,7 +437,7 @@ class Decimal
      */
     public function isZero(int $scale = null): bool
     {
-        $cmp_scale = $scale !== null ? $scale : $this->scale;
+        $cmp_scale = $scale ?? $this->scale;
 
         return (\bccomp(self::innerRound($this->value, $cmp_scale), '0', $cmp_scale) === 0);
     }
@@ -434,7 +455,7 @@ class Decimal
      */
     public function isNegative(): bool
     {
-        return ($this->value[0] === '-');
+        return (strpos($this->value, '-') === 0);
     }
 
     /**
@@ -442,7 +463,7 @@ class Decimal
      */
     public function isInteger(): bool
     {
-        return (\preg_match('/^[+\-]?[0-9]+(\.0+)?$/', $this->value, $captures) === 1);
+        return (\preg_match('/^[+\-]?\d+(\.0+)?$/', $this->value, $captures) === 1);
     }
 
     /**
@@ -459,17 +480,17 @@ class Decimal
 
         if ($this === $b) {
             return true;
-        } else {
-            $cmp_scale = $scale !== null ? $scale : \max($this->scale, $b->scale);
-
-            return (
-                \bccomp(
-                    self::innerRound($this->value, $cmp_scale),
-                    self::innerRound($b->value, $cmp_scale),
-                    $cmp_scale
-                ) === 0
-            );
         }
+
+        $cmp_scale = $scale ?? \max($this->scale, $b->scale);
+
+        return (
+            \bccomp(
+                self::innerRound($this->value, $cmp_scale),
+                self::innerRound($b->value, $cmp_scale),
+                $cmp_scale
+            ) === 0
+        );
     }
 
     /**
@@ -488,7 +509,7 @@ class Decimal
             return 0;
         }
 
-        $cmp_scale = $scale !== null ? $scale : \max($this->scale, $b->scale);
+        $cmp_scale = $scale ?? \max($this->scale, $b->scale);
 
         return \bccomp(
             self::innerRound($this->value, $cmp_scale),
@@ -563,7 +584,9 @@ class Decimal
     {
         if ($this->isZero()) {
             return $this;
-        } elseif ($this->isNegative()) {
+        }
+
+        if ($this->isNegative()) {
             $value = \substr($this->value, 1);
         } else { // if ($this->isPositive()) {
             $value = '-' . $this->value;
@@ -623,7 +646,7 @@ class Decimal
         $tlen = \strlen($this->value);
 
         $mustTruncate = false;
-        for ($i=$tlen-1; $i >= $rlen; $i--) {
+        for ($i = $tlen - 1; $i >= $rlen; $i--) {
             if ((int)$this->value[$i] > 0) {
                 $mustTruncate = true;
                 break;
@@ -696,18 +719,20 @@ class Decimal
     public function sin(int $scale = null): Decimal
     {
         // First normalise the number in the [0, 2PI] domain
-        $x = $this->mod(DecimalConstants::PI()->mul(Decimal::fromString("2")));
+        $x = $this->mod(DecimalConstants::pi()->mul(self::fromString('2')));
 
         // PI has only 32 significant numbers
-        $scale = (null === $scale) ? 32 : $scale;
+        $scale = $scale ?? 32;
 
         return self::factorialSerie(
             $x,
             DecimalConstants::zero(),
             function ($i) {
-                return ($i % 2 === 1) ? (
-                ($i % 4 === 1) ? DecimalConstants::one() : DecimalConstants::negativeOne()
-                ) : DecimalConstants::zero();
+                if ($i % 4 === 1) {
+                    return ($i % 2 === 1) ? DecimalConstants::one() : DecimalConstants::zero();
+                }
+
+                return ($i % 2 === 1) ? DecimalConstants::negativeOne() : DecimalConstants::zero();
             },
             $scale
         );
@@ -744,18 +769,20 @@ class Decimal
     public function cos(int $scale = null): Decimal
     {
         // First normalise the number in the [0, 2PI] domain
-        $x = $this->mod(DecimalConstants::PI()->mul(Decimal::fromString("2")));
+        $x = $this->mod(DecimalConstants::pi()->mul(self::fromString('2')));
 
         // PI has only 32 significant numbers
-        $scale = ($scale === null) ? 32 : $scale;
+        $scale = $scale ?? 32;
 
         return self::factorialSerie(
             $x,
             DecimalConstants::one(),
             function ($i) {
-                return ($i % 2 === 0) ? (
-                    ($i % 4 === 0) ? DecimalConstants::one() : DecimalConstants::negativeOne()
-                ) : DecimalConstants::zero();
+                if ($i % 4 === 0) {
+                    return ($i % 2 === 0) ? DecimalConstants::one() : DecimalConstants::zero();
+                }
+
+                return ($i % 2 === 0) ? DecimalConstants::negativeOne() : DecimalConstants::zero();
             },
             $scale
         );
@@ -782,7 +809,7 @@ class Decimal
     }
 
     /**
-     *	Calculates the arcsine of this with the highest possible accuracy
+     * Calculates the arcsine of this with the highest possible accuracy
      *
      * @param integer $scale
      *
@@ -790,9 +817,10 @@ class Decimal
      */
     public function arcsin(int $scale = null): Decimal
     {
-        if($this->comp(DecimalConstants::one(), $scale + 2) === 1 || $this->comp(DecimalConstants::negativeOne(), $scale + 2) === -1) {
+        if ($this->comp(DecimalConstants::one(), $scale + 2) === 1 || $this->comp(DecimalConstants::negativeOne(),
+                $scale + 2) === -1) {
             throw new \DomainException(
-                "The arcsin of this number is undefined."
+                'The arcsin of this number is undefined.'
             );
         }
 
@@ -800,13 +828,13 @@ class Decimal
             return DecimalConstants::zero();
         }
         if ($this->round($scale)->equals(DecimalConstants::one())) {
-            return DecimalConstants::pi()->div(Decimal::fromInteger(2))->round($scale);
+            return DecimalConstants::pi()->div(self::fromInteger(2))->round($scale);
         }
         if ($this->round($scale)->equals(DecimalConstants::negativeOne())) {
-            return DecimalConstants::pi()->div(Decimal::fromInteger(-2))->round($scale);
+            return DecimalConstants::pi()->div(self::fromInteger(-2))->round($scale);
         }
 
-        $scale = ($scale === null) ? 32 : $scale;
+        $scale = $scale ?? 32;
 
         return self::powerSerie(
             $this,
@@ -816,7 +844,7 @@ class Decimal
     }
 
     /**
-     *	Calculates the arccosine of this with the highest possible accuracy
+     * Calculates the arccosine of this with the highest possible accuracy
      *
      * @param integer $scale
      *
@@ -824,13 +852,14 @@ class Decimal
      */
     public function arccos(int $scale = null): Decimal
     {
-        if($this->comp(DecimalConstants::one(), $scale + 2) === 1 || $this->comp(DecimalConstants::negativeOne(), $scale + 2) === -1) {
+        if ($this->comp(DecimalConstants::one(), $scale + 2) === 1 || $this->comp(DecimalConstants::negativeOne(),
+                $scale + 2) === -1) {
             throw new \DomainException(
-                "The arccos of this number is undefined."
+                'The arccos of this number is undefined.'
             );
         }
 
-        $piOverTwo = DecimalConstants::pi()->div(Decimal::fromInteger(2), $scale + 2)->round($scale);
+        $piOverTwo = DecimalConstants::pi()->div(self::fromInteger(2), $scale + 2)->round($scale);
 
         if ($this->round($scale)->isZero()) {
             return $piOverTwo;
@@ -842,7 +871,7 @@ class Decimal
             return DecimalConstants::pi()->round($scale);
         }
 
-        $scale = ($scale === null) ? 32 : $scale;
+        $scale = $scale ?? 32;
 
         return $piOverTwo->sub(
             self::powerSerie(
@@ -854,7 +883,7 @@ class Decimal
     }
 
     /**
-     *	Calculates the arctangente of this with the highest possible accuracy
+     * Calculates the arctangente of this with the highest possible accuracy
      *
      * @param integer $scale
      *
@@ -862,7 +891,7 @@ class Decimal
      */
     public function arctan(int $scale = null): Decimal
     {
-        $piOverFour = DecimalConstants::pi()->div(Decimal::fromInteger(4), $scale + 2)->round($scale);
+        $piOverFour = DecimalConstants::pi()->div(self::fromInteger(4), $scale + 2)->round($scale);
 
         if ($this->round($scale)->isZero()) {
             return DecimalConstants::zero();
@@ -874,7 +903,7 @@ class Decimal
             return DecimalConstants::negativeOne()->mul($piOverFour);
         }
 
-        $scale = ($scale === null) ? 32 : $scale;
+        $scale = $scale ?? 32;
 
         return self::simplePowerSerie(
             $this,
@@ -892,14 +921,14 @@ class Decimal
      */
     public function arccot(int $scale = null): Decimal
     {
-        $scale = ($scale === null) ? 32 : $scale;
+        $scale = $scale ?? 32;
 
-        $piOverTwo = DecimalConstants::pi()->div(Decimal::fromInteger(2), $scale + 2);
+        $piOverTwo = DecimalConstants::pi()->div(self::fromInteger(2), $scale + 2);
         if ($this->round($scale)->isZero()) {
             return $piOverTwo->round($scale);
         }
 
-        $piOverFour = DecimalConstants::pi()->div(Decimal::fromInteger(4), $scale + 2);
+        $piOverFour = DecimalConstants::pi()->div(self::fromInteger(4), $scale + 2);
         if ($this->round($scale)->equals(DecimalConstants::one())) {
             return $piOverFour->round($scale);
         }
@@ -925,13 +954,14 @@ class Decimal
      */
     public function arcsec(int $scale = null): Decimal
     {
-        if($this->comp(DecimalConstants::one(), $scale + 2) === -1 && $this->comp(DecimalConstants::negativeOne(), $scale + 2) === 1) {
+        if ($this->comp(DecimalConstants::one(), $scale + 2) === -1 && $this->comp(DecimalConstants::negativeOne(),
+                $scale + 2) === 1) {
             throw new \DomainException(
-                "The arcsecant of this number is undefined."
+                'The arcsecant of this number is undefined.'
             );
         }
 
-        $piOverTwo = DecimalConstants::pi()->div(Decimal::fromInteger(2), $scale + 2)->round($scale);
+        $piOverTwo = DecimalConstants::pi()->div(self::fromInteger(2), $scale + 2)->round($scale);
 
         if ($this->round($scale)->equals(DecimalConstants::one())) {
             return DecimalConstants::zero();
@@ -940,7 +970,7 @@ class Decimal
             return DecimalConstants::pi()->round($scale);
         }
 
-        $scale = ($scale === null) ? 32 : $scale;
+        $scale = $scale ?? 32;
 
         return $piOverTwo->sub(
             self::powerSerie(
@@ -960,19 +990,20 @@ class Decimal
      */
     public function arccsc(int $scale = null): Decimal
     {
-        if($this->comp(DecimalConstants::one(), $scale + 2) === -1 && $this->comp(DecimalConstants::negativeOne(), $scale + 2) === 1) {
+        if ($this->comp(DecimalConstants::one(), $scale + 2) === -1 && $this->comp(DecimalConstants::negativeOne(),
+                $scale + 2) === 1) {
             throw new \DomainException(
-                "The arccosecant of this number is undefined."
+                'The arccosecant of this number is undefined.'
             );
         }
 
-        $scale = ($scale === null) ? 32 : $scale;
+        $scale = $scale ?? 32;
 
         if ($this->round($scale)->equals(DecimalConstants::one())) {
-            return DecimalConstants::pi()->div(Decimal::fromInteger(2), $scale + 2)->round($scale);
+            return DecimalConstants::pi()->div(self::fromInteger(2), $scale + 2)->round($scale);
         }
         if ($this->round($scale)->equals(DecimalConstants::negativeOne())) {
-            return DecimalConstants::pi()->div(Decimal::fromInteger(-2), $scale + 2)->round($scale);
+            return DecimalConstants::pi()->div(self::fromInteger(-2), $scale + 2)->round($scale);
         }
 
         return self::powerSerie(
@@ -996,12 +1027,19 @@ class Decimal
         }
 
         $scale = $scale ?? \max(
-            $this->scale,
-            (int)($this->isNegative() ? self::innerLog10($this->value, $this->scale, 0) : self::DEFAULT_SCALE)
-        );
+                $this->scale,
+                (int)($this->isNegative()
+                    ? self::innerLog10($this->value, $this->scale, 0)
+                    : self::DEFAULT_SCALE)
+            );
 
         return self::factorialSerie(
-            $this, DecimalConstants::one(), function ($i) { return DecimalConstants::one(); }, $scale
+            $this,
+            DecimalConstants::one(),
+            function () {
+                return DecimalConstants::one();
+            },
+            $scale
         );
     }
 
@@ -1015,18 +1053,18 @@ class Decimal
      *
      * @return Decimal
      */
-    private static function factorialSerie (Decimal $x, Decimal $firstTerm, callable $generalTerm, int $scale): Decimal
+    private static function factorialSerie(Decimal $x, Decimal $firstTerm, callable $generalTerm, int $scale): Decimal
     {
         $approx = $firstTerm;
-        $change = DecimalConstants::One();
+        $change = DecimalConstants::one();
 
-        $faculty = DecimalConstants::One();    // Calculates the faculty under the sign
-        $xPowerN = DecimalConstants::One();    // Calculates x^n
+        $faculty = DecimalConstants::one();    // Calculates the faculty under the sign
+        $xPowerN = DecimalConstants::one();    // Calculates x^n
 
-        for ($i = 1; !$change->floor($scale+1)->isZero(); $i++) {
+        for ($i = 1; !$change->floor($scale + 1)->isZero(); $i++) {
             // update x^n and n! for this walkthrough
             $xPowerN = $xPowerN->mul($x);
-            $faculty = $faculty->mul(Decimal::fromInteger($i));
+            $faculty = $faculty->mul(self::fromInteger($i));
 
             /** @var Decimal $multiplier */
             $multiplier = $generalTerm($i);
@@ -1050,13 +1088,12 @@ class Decimal
      *
      * @return Decimal
      */
-    private static function powerSerie (Decimal $x, Decimal $firstTerm, int $scale): Decimal
+    private static function powerSerie(Decimal $x, Decimal $firstTerm, int $scale): Decimal
     {
         $approx = $firstTerm;
-        $change = DecimalConstants::One();
+        $change = DecimalConstants::one();
 
-        $xPowerN = DecimalConstants::One();     // Calculates x^n
-        $factorN = DecimalConstants::One();      // Calculates a_n
+        $xPowerN = DecimalConstants::one();     // Calculates x^n
 
         $numerator = DecimalConstants::one();
         $denominator = DecimalConstants::one();
@@ -1069,15 +1106,15 @@ class Decimal
             } elseif ($i === 1) {
                 $factorN = DecimalConstants::one();
             } else {
-                $incrementNum = Decimal::fromInteger($i - 2);
-                $numerator = $numerator->mul($incrementNum, $scale +2);
+                $incrementNum = self::fromInteger($i - 2);
+                $numerator = $numerator->mul($incrementNum, $scale + 2);
 
-                $incrementDen = Decimal::fromInteger($i - 1);
-                $increment = Decimal::fromInteger($i);
+                $incrementDen = self::fromInteger($i - 1);
+                $increment = self::fromInteger($i);
                 $denominator = $denominator
-                    ->div($incrementNum, $scale +2)
-                    ->mul($incrementDen, $scale +2)
-                    ->mul($increment, $scale +2);
+                    ->div($incrementNum, $scale + 2)
+                    ->mul($incrementDen, $scale + 2)
+                    ->mul($increment, $scale + 2);
 
                 $factorN = $numerator->div($denominator, $scale + 2);
             }
@@ -1100,13 +1137,12 @@ class Decimal
      *
      * @return Decimal
      */
-    private static function simplePowerSerie (Decimal $x, Decimal $firstTerm, int $scale): Decimal
+    private static function simplePowerSerie(Decimal $x, Decimal $firstTerm, int $scale): Decimal
     {
         $approx = $firstTerm;
-        $change = DecimalConstants::One();
+        $change = DecimalConstants::one();
 
-        $xPowerN = DecimalConstants::One();     // Calculates x^n
-        $sign = DecimalConstants::One();      // Calculates a_n
+        $xPowerN = DecimalConstants::one();     // Calculates x^n
 
         for ($i = 1; !$change->floor($scale + 2)->isZero(); $i++) {
             $xPowerN = $xPowerN->mul($x);
@@ -1116,11 +1152,7 @@ class Decimal
             } elseif ($i % 4 === 1) {
                 $factorN = DecimalConstants::one()->div(self::fromInteger($i), $scale + 2);
             } else {
-                 if ($i % 4 === 1) {
-                     $factorN = DecimalConstants::one()->div(Decimal::fromInteger($i), $scale + 2);
-                 } else {
-                     $factorN = DecimalConstants::negativeOne()->div(Decimal::fromInteger($i), $scale + 2);
-                 }
+                $factorN = DecimalConstants::negativeOne()->div(self::fromInteger($i), $scale + 2);
             }
 
             if (!$factorN->isZero()) {
@@ -1142,14 +1174,14 @@ class Decimal
      */
     public function tan(int $scale = null): Decimal
     {
-	    $cos = $this->cos($scale + 2);
-	    if ($cos->isZero()) {
-	        throw new \DomainException(
-	            "The tangent of this 'angle' is undefined."
-	        );
-	    }
+        $cos = $this->cos($scale + 2);
+        if ($cos->isZero()) {
+            throw new \DomainException(
+                "The tangent of this 'angle' is undefined."
+            );
+        }
 
-	    return $this->sin($scale + 2)->div($cos)->round($scale);
+        return $this->sin($scale + 2)->div($cos)->round($scale);
     }
 
     /**
@@ -1162,14 +1194,14 @@ class Decimal
      */
     public function cotan(int $scale = null): Decimal
     {
-	    $sin = $this->sin($scale + 2);
-	    if ($sin->isZero()) {
-	        throw new \DomainException(
-	            "The cotangent of this 'angle' is undefined."
-	        );
-	    }
+        $sin = $this->sin($scale + 2);
+        if ($sin->isZero()) {
+            throw new \DomainException(
+                "The cotangent of this 'angle' is undefined."
+            );
+        }
 
-	    return $this->cos($scale + 2)->div($sin)->round($scale);
+        return $this->cos($scale + 2)->div($sin)->round($scale);
     }
 
     /**
@@ -1181,7 +1213,7 @@ class Decimal
      */
     public function hasSameSign(Decimal $b): bool
     {
-        return $this->isPositive() && $b->isPositive() || $this->isNegative() && $b->isNegative();
+        return ($this->isPositive() && $b->isPositive()) || ($this->isNegative() && $b->isNegative());
     }
 
     /**
@@ -1189,7 +1221,7 @@ class Decimal
      */
     public function asFloat(): float
     {
-        return \floatval($this->value);
+        return (float)$this->value;
     }
 
     /**
@@ -1197,7 +1229,7 @@ class Decimal
      */
     public function asInteger(): int
     {
-        return \intval($this->value);
+        return (int)$this->value;
     }
 
     /**
@@ -1265,8 +1297,8 @@ class Decimal
     {
         $rounded = \bcadd($value, '0', $scale);
 
-        $diffDigit = \bcsub($value, $rounded, $scale+1);
-        $diffDigit = (int)$diffDigit[\strlen($diffDigit)-1];
+        $diffDigit = \bcsub($value, $rounded, $scale + 1);
+        $diffDigit = (int)$diffDigit[\strlen($diffDigit) - 1];
 
         if ($diffDigit >= 5) {
             $rounded = ($diffDigit >= 5 && $value[0] !== '-')
@@ -1294,7 +1326,7 @@ class Decimal
 
         switch ($cmp) {
             case 1:
-                $value_log10_approx = $value_len - ($in_scale > 0 ? ($in_scale+2) : 1);
+                $value_log10_approx = $value_len - ($in_scale > 0 ? ($in_scale + 2) : 1);
                 $value_log10_approx = max(0, $value_log10_approx);
 
                 return \bcadd(
@@ -1306,9 +1338,10 @@ class Decimal
                     )),
                     $out_scale
                 );
+
             case -1:
-                \preg_match('/^0*\.(0*)[1-9][0-9]*$/', $value, $captures);
-                $value_log10_approx = -\strlen($captures[1])-1;
+                \preg_match('/^0*\.(0*)[1-9]\d*$/', $value, $captures);
+                $value_log10_approx = -\strlen($captures[1]) - 1;
 
                 return \bcadd(
                     (string)$value_log10_approx,
@@ -1319,6 +1352,7 @@ class Decimal
                     )),
                     $out_scale
                 );
+
             default: // case 0:
                 return '0';
         }
@@ -1339,8 +1373,7 @@ class Decimal
         string $exponent,
         int $exp_scale,
         int $out_scale
-    ): string
-    {
+    ): string {
         $inner_scale = (int)\ceil($exp_scale * \log(10) / \log(2)) + 1;
 
         $result_a = '1';
@@ -1349,14 +1382,15 @@ class Decimal
         $actual_index = 0;
         $exponent_remaining = $exponent;
 
-        while (\bccomp($result_a, $result_b, $out_scale) !== 0 && \bccomp($exponent_remaining, '0', $inner_scale) !== 0) {
+        while (\bccomp($result_a, $result_b, $out_scale) !== 0
+            && \bccomp($exponent_remaining, '0', $inner_scale) !== 0) {
             $result_b = $result_a;
             $index_info = self::computeSquareIndex($exponent_remaining, $actual_index, $exp_scale, $inner_scale);
             $exponent_remaining = $index_info[1];
             $result_a = \bcmul(
                 $result_a,
-                self::compute2NRoot($base, $index_info[0], 2*($out_scale+1)),
-                2*($out_scale+1)
+                self::compute2NRoot($base, $index_info[0], 2 * ($out_scale + 1)),
+                2 * ($out_scale + 1)
             );
         }
 
@@ -1378,8 +1412,7 @@ class Decimal
         int $actual_index,
         int $exp_scale,
         int $inner_scale
-    ): array
-    {
+    ): array {
         $actual_rt = \bcpow('0.5', (string)$actual_index, $exp_scale);
         $r = \bcsub($exponent_remaining, $actual_rt, $inner_scale);
 
@@ -1395,7 +1428,7 @@ class Decimal
     /**
      * Auxiliar method. Computes $base^((1/2)^$index)
      *
-     * @param  string  $base
+     * @param  string $base
      * @param  integer $index
      * @param  integer $out_scale
      *
@@ -1436,11 +1469,7 @@ class Decimal
      */
     private static function normalizeSign(string $sign): string
     {
-        if ('+' === $sign) {
-            return '';
-        }
-
-        return $sign;
+        return ('+' === $sign) ? '' : $sign;
     }
 
     /**
@@ -1454,8 +1483,8 @@ class Decimal
      */
     private static function countSignificativeDigits(Decimal $val, Decimal $abs): int
     {
-        return \strlen($val->value) - (
-            ($abs->comp(DecimalConstants::One()) === -1) ? 2 : \max($val->scale, 1)
-        ) - ($val->isNegative() ? 1 : 0);
+        return \strlen($val->value)
+            - (($abs->comp(DecimalConstants::one()) === -1) ? 2 : \max($val->scale, 1))
+            - ($val->isNegative() ? 1 : 0);
     }
 }
