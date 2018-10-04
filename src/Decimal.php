@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace Litipk\BigNumbers;
 
-use Litipk\BigNumbers\DecimalConstants as DecimalConstants;
-
 use Litipk\BigNumbers\Errors\InfiniteInputError;
 use Litipk\BigNumbers\Errors\NaNInputError;
 use Litipk\BigNumbers\Errors\NotImplementedError;

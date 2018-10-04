@@ -3,9 +3,6 @@ declare(strict_types=1);
 
 namespace Litipk\BigNumbers;
 
-use Litipk\BigNumbers\Decimal as Decimal;
-
-
 /**
  * Class that holds many important numeric constants
  *
