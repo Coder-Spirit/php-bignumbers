@@ -3,9 +3,6 @@ declare(strict_types=1);
 
 namespace Litipk\BigNumbers;
 
-use Litipk\BigNumbers\Decimal as Decimal;
-
-
 /**
  * Class that holds many important numeric constants
  *
@@ -14,24 +11,34 @@ use Litipk\BigNumbers\Decimal as Decimal;
 final class DecimalConstants
 {
     /** @var Decimal */
-    private static $ZERO = null;
-    /** @var Decimal */
-    private static $ONE = null;
-    /** @var Decimal */
-    private static $NEGATIVE_ONE = null;
+    private static $ZERO;
 
     /** @var Decimal */
-    private static $PI = null;
-    /** @var Decimal */
-    private static $EulerMascheroni = null;
+    private static $ONE;
 
     /** @var Decimal */
-    private static $GoldenRatio = null;
-    /** @var Decimal */
-    private static $SilverRatio = null;
-    /** @var Decimal */
-    private static $LightSpeed = null;
+    private static $NEGATIVE_ONE;
 
+
+    /** @var Decimal */
+    private static $PI;
+
+    /** @var Decimal */
+    private static $EulerMascheroni;
+
+
+    /** @var Decimal */
+    private static $GoldenRatio;
+
+    /** @var Decimal */
+    private static $SilverRatio;
+
+    /** @var Decimal */
+    private static $LightSpeed;
+
+    /**
+     * DecimalConstants constructor.
+     */
     private function __construct()
     {
     }
@@ -40,6 +47,9 @@ final class DecimalConstants
     {
     }
 
+    /**
+     * @return Decimal
+     */
     public static function zero(): Decimal
     {
         if (null === self::$ZERO) {
@@ -48,6 +58,9 @@ final class DecimalConstants
         return self::$ZERO;
     }
 
+    /**
+     * @return Decimal
+     */
     public static function one(): Decimal
     {
         if (null === self::$ONE) {
@@ -56,6 +69,9 @@ final class DecimalConstants
         return self::$ONE;
     }
 
+    /**
+     * @return Decimal
+     */
     public static function negativeOne(): Decimal
     {
         if (null === self::$NEGATIVE_ONE) {
@@ -66,13 +82,14 @@ final class DecimalConstants
 
     /**
      * Returns the Pi number.
+     *
      * @return Decimal
      */
     public static function pi(): Decimal
     {
         if (null === self::$PI) {
             self::$PI = Decimal::fromString(
-                "3.14159265358979323846264338327950"
+                '3.14159265358979323846264338327950'
             );
         }
         return self::$PI;
@@ -80,13 +97,15 @@ final class DecimalConstants
 
     /**
      * Returns the Euler's E number.
-     * @param  integer $scale
+     *
+     * @param integer $scale
+     *
      * @return Decimal
      */
     public static function e(int $scale = 32): Decimal
     {
         if ($scale < 0) {
-            throw new \InvalidArgumentException("\$scale must be positive.");
+            throw new \InvalidArgumentException('$scale must be positive.');
         }
 
         return static::one()->exp($scale);
@@ -94,13 +113,14 @@ final class DecimalConstants
 
     /**
      * Returns the Euler-Mascheroni constant.
+     *
      * @return Decimal
      */
     public static function eulerMascheroni(): Decimal
     {
         if (null === self::$EulerMascheroni) {
             self::$EulerMascheroni = Decimal::fromString(
-                "0.57721566490153286060651209008240"
+                '0.57721566490153286060651209008240'
             );
         }
         return self::$EulerMascheroni;
@@ -108,13 +128,14 @@ final class DecimalConstants
 
     /**
      * Returns the Golden Ration, also named Phi.
+     *
      * @return Decimal
      */
     public static function goldenRatio(): Decimal
     {
         if (null === self::$GoldenRatio) {
             self::$GoldenRatio = Decimal::fromString(
-                "1.61803398874989484820458683436564"
+                '1.61803398874989484820458683436564'
             );
         }
         return self::$GoldenRatio;
@@ -122,13 +143,14 @@ final class DecimalConstants
 
     /**
      * Returns the Silver Ratio.
+     *
      * @return Decimal
      */
     public static function silverRatio(): Decimal
     {
         if (null === self::$SilverRatio) {
             self::$SilverRatio = Decimal::fromString(
-                "2.41421356237309504880168872420970"
+                '2.41421356237309504880168872420970'
             );
         }
         return self::$SilverRatio;
@@ -136,6 +158,7 @@ final class DecimalConstants
 
     /**
      * Returns the Light of Speed measured in meters / second.
+     *
      * @return Decimal
      */
     public static function lightSpeed(): Decimal
