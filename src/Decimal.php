@@ -152,12 +152,12 @@ class Decimal
 
         } elseif (\preg_match(self::EXP_NOTATION_NUMBER_REGEXP, $strValue, $captures) === 1) {
             list($min_scale, $value) = self::fromExpNotationString(
-                $scale,
                 $captures['sign'],
                 $captures['mantissa'],
                 \strlen($captures['mantissa']) - 1,
                 $captures['expSign'],
-                (int)$captures['exp']
+                (int)$captures['exp'],
+                $scale
             );
         } else {
             throw new NaNInputError('strValue must be a number');
@@ -1250,19 +1250,24 @@ class Decimal
         return $this->value;
     }
 
-    /*
+    /**
+     * @param string $sign
+     * @param string $mantissa
+     * @param int $nDecimals
+     * @param string $expSign
+     * @param int $expVal
+     * @param int|null $scale
      *
      * @return array
      */
     private static function fromExpNotationString(
-        int $scale = null,
         string $sign,
         string $mantissa,
         int $nDecimals,
         string $expSign,
-        int $expVal
-    ): array
-    {
+        int $expVal,
+        int $scale = null
+    ): array {
         $mantissaScale = \max($nDecimals, 0);
 
         if (self::normalizeSign($expSign) === '') {
