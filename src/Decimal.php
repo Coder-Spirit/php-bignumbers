@@ -107,8 +107,10 @@ class Decimal
 
             if (null === $scale) {
                 $scale = $naturalScale;
-            } else {
+            } elseif ($scale > $naturalScale) {
                 $strValue .= ($hasPoint ? '' : '.') . \str_pad('', $scale - $naturalScale, '0');
+            } else {
+                $strValue = self::innerRound($strValue, $scale);
             }
         }
 
