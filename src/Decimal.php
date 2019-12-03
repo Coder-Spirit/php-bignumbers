@@ -619,7 +619,7 @@ class Decimal
      */
     public function mod(Decimal $d, int $scale = null): Decimal
     {
-        $div = $this->div($d, 1)->floor();
+        $div = $this->div($d, $scale)->floor();
         return $this->sub($div->mul($d), $scale);
     }
 
