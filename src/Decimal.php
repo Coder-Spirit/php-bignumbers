@@ -90,7 +90,7 @@ class Decimal
             throw new NaNInputError("fltValue can't be NaN");
         }
 
-        $strValue = (string) $fltValue;
+        $strValue = str_replace(',', '.', (string) $fltValue);
         $hasPoint = (false !== \strpos($strValue, '.'));
 
         if (\preg_match(self::EXP_NUM_GROUPS_NUMBER_REGEXP, $strValue, $capture)) {
