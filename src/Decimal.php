@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Litipk\BigNumbers;
 
+use JsonSerializable;
 use Litipk\BigNumbers\DecimalConstants as DecimalConstants;
 
 use Litipk\BigNumbers\Errors\InfiniteInputError;
@@ -14,7 +15,7 @@ use Litipk\BigNumbers\Errors\NotImplementedError;
  *
  * @author Andreu Correa Casablanca <castarco@litipk.com>
  */
-class Decimal
+class Decimal implements JsonSerializable
 {
     const DEFAULT_SCALE = 16;
     const CLASSIC_DECIMAL_NUMBER_REGEXP = '/^([+\-]?)0*(([1-9][0-9]*|[0-9])(\.[0-9]+)?)$/';
@@ -1125,6 +1126,14 @@ class Decimal
      * @return string
      */
     public function __toString(): string
+    {
+        return $this->value;
+    }
+
+    /**
+     * @return string
+     */
+    public function jsonSerialize(): string
     {
         return $this->value;
     }
