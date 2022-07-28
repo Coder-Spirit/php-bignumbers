@@ -18,7 +18,7 @@ class Decimal
 {
     const DEFAULT_SCALE = 16;
     const CLASSIC_DECIMAL_NUMBER_REGEXP = '/^([+\-]?)0*(([1-9][0-9]*|[0-9])(\.[0-9]+)?)$/';
-    const EXP_NOTATION_NUMBER_REGEXP = '/^ (?P<sign> [+\-]?) 0*(?P<mantissa> [0-9](?P<decimals> \.[0-9]+)?) [eE] (?P<expSign> [+\-]?)(?P<exp> \d+)$/x';
+    const EXP_NOTATION_NUMBER_REGEXP = '/^ (?P<sign> [+\-]?) 0*(?P<mantissa> [0-9]+(?P<decimals> \.[0-9]+)?) [eE] (?P<expSign> [+\-]?)(?P<exp> \d+)$/x';
     const EXP_NUM_GROUPS_NUMBER_REGEXP = '/^ (?P<int> \d*) (?: \. (?P<dec> \d+) ) E (?P<sign>[\+\-]) (?P<exp>\d+) $/x';
 
     /**
